@@ -1232,32 +1232,6 @@
             return { kpis, monthlySummary, cashflowRows, journalRows };
         }
 
-        async function fetchLiveExnessKurs() {
-            try {
-                const response = await fetch("https://www.exness.jo/pwapi/api/v1/conversion-rates/?from=USD&to=IDR", {
-                    cache: 'no-store'
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data && data[0] && data[0].multiplier) {
-                        const rate = Math.round(data[0].multiplier);
-                        if (rate > 5000 && rate < 30000) {
-                            currentKurs = rate;
-                            document.getElementById('kurs-value-display').innerText = 'Rp ' + currentKurs.toLocaleString('id-ID');
-                            console.log("Auto-refreshed live Exness Kurs:", rate);
-                            if (activeData) {
-                                renderAllDashboard();
-                            }
-                            return true;
-                        }
-                    }
-                }
-            } catch (err) {
-                console.warn("Exness API Kurs fetch failed (likely CORS or network), keeping existing rate:", err.message);
-            }
-            return false;
-        }
-
         async function fetchLiveData() {
             const statusBadge = document.getElementById('sync-status');
             const statusText = document.getElementById('sync-text');
@@ -1265,9 +1239,6 @@
             
             spinner.style.display = 'inline-block';
             statusText.innerText = 'Sinkronisasi Live...';
-
-            // Start Exness Kurs fetch asynchronously in parallel
-            fetchLiveExnessKurs();
 
             const googleSheetsCSVUrl = "https://docs.google.com/spreadsheets/d/1jbm4tDMYOAMpYnDbRz82QNvcMrBj5shV/export?format=csv&gid=1272196974&t=" + Date.now();
             
@@ -1286,11 +1257,9 @@
                 
                 activeData = parsedLive;
                 
-                // If Exness fetch is still pending, use the sheet's default kurs
-                if (!currentKurs || currentKurs === 18000) {
-                    currentKurs = activeData.kpis.kurs_usd_idr || 18000;
-                    document.getElementById('kurs-value-display').innerText = 'Rp ' + currentKurs.toLocaleString('id-ID');
-                }
+                // Use exchange rate from Google Sheet, fallback to 18000
+                currentKurs = activeData.kpis.kurs_usd_idr || 18000;
+                document.getElementById('kurs-value-display').innerText = 'Rp ' + currentKurs.toLocaleString('id-ID');
                 
                 statusBadge.className = "sync-badge sync-live";
                 statusText.innerText = "Live (Google Sheets)";
@@ -1324,9 +1293,6 @@
 
             // 3. Sync live data in the background silently
             fetchLiveData();
-
-            // 4. Auto-refresh Exness rate every 30 seconds
-            setInterval(fetchLiveExnessKurs, 30000);
         };
 
         let kpisVisible = true;
