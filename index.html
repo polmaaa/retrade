@@ -414,6 +414,34 @@
             font-weight: 600;
         }
 
+        /* Rekapitulasi Column Grouping Pastels */
+        .col-group-deposit { background-color: rgba(99, 102, 241, 0.025) !important; }
+        .col-group-withdraw { background-color: rgba(219, 39, 119, 0.025) !important; }
+        .col-group-server { background-color: rgba(217, 119, 6, 0.025) !important; }
+        .col-group-profit { background-color: rgba(13, 148, 136, 0.025) !important; }
+
+        /* Growth Pill Badge */
+        .growth-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .growth-positive {
+            background-color: rgba(13, 148, 136, 0.08);
+            color: var(--bullish-color);
+        }
+        .growth-negative {
+            background-color: rgba(239, 68, 68, 0.08);
+            color: var(--bearish-color);
+        }
+        .growth-zero {
+            background-color: rgba(0, 0, 0, 0.04);
+            color: var(--text-secondary);
+        }
+
         /* KPI Toggle Container (Mobile only) */
         .kpi-toggle-container {
             display: none;
@@ -774,13 +802,13 @@
                         <thead>
                             <tr>
                                 <th>Bulan</th>
-                                <th>Deposit (IDR)</th>
-                                <th>Deposit (USC)</th>
-                                <th>Withdraw (IDR)</th>
-                                <th>Withdraw (USC)</th>
-                                <th>Biaya Server (IDR)</th>
-                                <th>Trading Profit (USC)</th>
-                                <th>Est. Profit (IDR)</th>
+                                <th class="col-group-deposit">Deposit (IDR)</th>
+                                <th class="col-group-deposit">Deposit (USC)</th>
+                                <th class="col-group-withdraw">Withdraw (IDR)</th>
+                                <th class="col-group-withdraw">Withdraw (USC)</th>
+                                <th class="col-group-server">Biaya Server (IDR)</th>
+                                <th class="col-group-profit">Trading Profit (USC)</th>
+                                <th class="col-group-profit">Est. Profit (IDR)</th>
                                 <th>Growth</th>
                             </tr>
                         </thead>
@@ -1152,6 +1180,32 @@
             return { kpis, monthlySummary, cashflowRows, journalRows };
         }
 
+        async function fetchLiveExnessKurs() {
+            try {
+                const response = await fetch("https://www.exness.jo/pwapi/api/v1/conversion-rates/?from=USD&to=IDR", {
+                    cache: 'no-store'
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data[0] && data[0].multiplier) {
+                        const rate = Math.round(data[0].multiplier);
+                        if (rate > 5000 && rate < 30000) {
+                            currentKurs = rate;
+                            document.getElementById('kurs-value-display').innerText = 'Rp ' + currentKurs.toLocaleString('id-ID');
+                            console.log("Auto-refreshed live Exness Kurs:", rate);
+                            if (activeData) {
+                                renderAllDashboard();
+                            }
+                            return true;
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn("Exness API Kurs fetch failed (likely CORS or network), keeping existing rate:", err.message);
+            }
+            return false;
+        }
+
         // Main loader
         window.onload = async function() {
             const statusBadge = document.getElementById('sync-status');
@@ -1172,8 +1226,12 @@
                 const parsedLive = parseGoogleSheetCSV(csvText);
                 
                 activeData = parsedLive;
-                currentKurs = activeData.kpis.kurs_usd_idr || 18000;
-                document.getElementById('kurs-value-display').innerText = 'Rp ' + currentKurs.toLocaleString('id-ID');
+                
+                const success = await fetchLiveExnessKurs();
+                if (!success) {
+                    currentKurs = activeData.kpis.kurs_usd_idr || 18000;
+                    document.getElementById('kurs-value-display').innerText = 'Rp ' + currentKurs.toLocaleString('id-ID');
+                }
                 
                 statusBadge.className = "sync-badge sync-live";
                 statusText.innerText = "Live (Google Sheets)";
@@ -1182,8 +1240,11 @@
                 console.warn("Live load failed, falling back to local data:", err.message);
                 // Fallback to local data
                 activeData = dashboardData;
-                currentKurs = activeData.kpis.kurs_usd_idr || 18000;
-                document.getElementById('kurs-value-display').innerText = 'Rp ' + currentKurs.toLocaleString('id-ID');
+                const success = await fetchLiveExnessKurs();
+                if (!success) {
+                    currentKurs = activeData.kpis.kurs_usd_idr || 18000;
+                    document.getElementById('kurs-value-display').innerText = 'Rp ' + currentKurs.toLocaleString('id-ID');
+                }
                 
                 statusBadge.className = "sync-badge sync-local";
                 statusText.innerText = "Offline (Lokal)";
@@ -1192,6 +1253,9 @@
             }
 
             renderAllDashboard();
+
+            // Auto-refresh Exness rate every 30 seconds
+            setInterval(fetchLiveExnessKurs, 30000);
         };
 
         let kpisVisible = true;
@@ -1262,17 +1326,16 @@
             const total_saldo_keseluruhan_usc = totalDepositUsc + saldo_saat_ini_usc + totalWithdrawUsc;
             
             // 5. ESTIMASI SALDO BERSIH = TOTAL SALDO KESELURUHAN - TOTAL WD - SALDO MODAL
-            // Note: Saldo Modal = Total Modal
             const est_saldo_bersih_idr = total_saldo_keseluruhan_idr - total_withdraw_idr - total_modal_idr;
             const est_saldo_bersih_usc = total_saldo_keseluruhan_usc - total_withdraw_usc - total_modal_usc;
             
             const kpiContainer = document.getElementById('kpi-container');
             
             kpiContainer.innerHTML = `
-                <div class="kpi-card" onclick="toggleKpiFormula('total-modal', event)">
+                <div class="kpi-card" onclick="toggleKpiFormula('modal', event)">
                     <div class="kpi-card-content">
                         <div class="kpi-header">
-                            <span>Total Modal</span>
+                            <span>Modal</span>
                             <div class="kpi-icon-wrapper modal">
                                 <i data-lucide="arrow-down-left"></i>
                             </div>
@@ -1281,8 +1344,25 @@
                             <div class="kpi-value-idr">${formatRupiah(total_modal_idr)}</div>
                             <div class="kpi-value-usc">${formatDecimal(total_modal_usc)} USC</div>
                         </div>
-                        <div class="kpi-formula" id="formula-total-modal">
+                        <div class="kpi-formula" id="formula-modal">
                             Sumber: DEPOSIT + MODAL SERVER (Rupiah) / DEPOSIT (USC)
+                        </div>
+                    </div>
+                </div>
+                <div class="kpi-card" onclick="toggleKpiFormula('total-saldo', event)">
+                    <div class="kpi-card-content">
+                        <div class="kpi-header">
+                            <span>Total Saldo</span>
+                            <div class="kpi-icon-wrapper saldo">
+                                <i data-lucide="wallet"></i>
+                            </div>
+                        </div>
+                        <div class="kpi-values">
+                            <div class="kpi-value-idr">${formatRupiah(total_saldo_keseluruhan_idr)}</div>
+                            <div class="kpi-value-usc">${formatDecimal(total_saldo_keseluruhan_usc)} USC</div>
+                        </div>
+                        <div class="kpi-formula" id="formula-total-saldo">
+                            Sumber: DEPOSIT + SALDO SAAT INI + WITHDRAW
                         </div>
                     </div>
                 </div>
@@ -1320,40 +1400,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="kpi-card" onclick="toggleKpiFormula('total-saldo', event)">
-                    <div class="kpi-card-content">
-                        <div class="kpi-header">
-                            <span>Total Saldo Keseluruhan</span>
-                            <div class="kpi-icon-wrapper saldo">
-                                <i data-lucide="wallet"></i>
-                            </div>
-                        </div>
-                        <div class="kpi-values">
-                            <div class="kpi-value-idr">${formatRupiah(total_saldo_keseluruhan_idr)}</div>
-                            <div class="kpi-value-usc">${formatDecimal(total_saldo_keseluruhan_usc)} USC</div>
-                        </div>
-                        <div class="kpi-formula" id="formula-total-saldo">
-                            Sumber: DEPOSIT + SALDO SAAT INI + WITHDRAW
-                        </div>
-                    </div>
-                </div>
-                <div class="kpi-card" onclick="toggleKpiFormula('est-saldo-bersih', event)">
-                    <div class="kpi-card-content">
-                        <div class="kpi-header">
-                            <span>Estimasi Saldo Bersih</span>
-                            <div class="kpi-icon-wrapper saldo">
-                                <i data-lucide="coins"></i>
-                            </div>
-                        </div>
-                        <div class="kpi-values">
-                            <div class="kpi-value-idr">${formatRupiah(est_saldo_bersih_idr)}</div>
-                            <div class="kpi-value-usc">${formatDecimal(est_saldo_bersih_usc)} USC</div>
-                        </div>
-                        <div class="kpi-formula" id="formula-est-saldo-bersih">
-                            Sumber: TOTAL SALDO KESELURUHAN - TOTAL WD - SALDO MODAL
-                        </div>
-                    </div>
-                </div>
                 <div class="kpi-card" onclick="toggleKpiFormula('withdraw', event)">
                     <div class="kpi-card-content">
                         <div class="kpi-header">
@@ -1368,6 +1414,23 @@
                         </div>
                         <div class="kpi-formula" id="formula-withdraw">
                             Sumber: Akumulasi penarikan dana dari Arus Kas
+                        </div>
+                    </div>
+                </div>
+                <div class="kpi-card" onclick="toggleKpiFormula('est-saldo-bersih', event)">
+                    <div class="kpi-card-content">
+                        <div class="kpi-header">
+                            <span>Est. Saldo Bersih</span>
+                            <div class="kpi-icon-wrapper saldo">
+                                <i data-lucide="coins"></i>
+                            </div>
+                        </div>
+                        <div class="kpi-values">
+                            <div class="kpi-value-idr">${formatRupiah(est_saldo_bersih_idr)}</div>
+                            <div class="kpi-value-usc">${formatDecimal(est_saldo_bersih_usc)} USC</div>
+                        </div>
+                        <div class="kpi-formula" id="formula-est-saldo-bersih">
+                            Sumber: TOTAL SALDO KESELURUHAN - TOTAL WD - SALDO MODAL
                         </div>
                     </div>
                 </div>
@@ -1480,17 +1543,28 @@
                     trClass = 'dimmed-row';
                 }
 
+                let growthBadgeClass = 'growth-zero';
+                if (growthVal > 0) {
+                    growthBadgeClass = 'growth-positive';
+                } else if (growthVal < 0) {
+                    growthBadgeClass = 'growth-negative';
+                }
+
                 monthlyHtml += `
                     <tr class="${trClass}">
                         <td><strong>${row.bulan}</strong></td>
-                        <td>${formatRupiah(depIdr)}</td>
-                        <td>${formatDecimal(depUsc)}</td>
-                        <td>${formatRupiah(wdIdr)}</td>
-                        <td>${formatDecimal(wdUsc)}</td>
-                        <td>${formatRupiah(serverIdr)}</td>
-                        <td class="${profitClass}">${profitSign}${formatDecimal(row.profit_usc)}</td>
-                        <td class="${idrClass}">${idrSign}${formatRupiah(profitIdr)}</td>
-                        <td class="${growthClass}" style="font-weight:700;">${growthSign}${growthVal.toFixed(2)}%</td>
+                        <td class="col-group-deposit">${formatRupiah(depIdr)}</td>
+                        <td class="col-group-deposit">${formatDecimal(depUsc)}</td>
+                        <td class="col-group-withdraw">${formatRupiah(wdIdr)}</td>
+                        <td class="col-group-withdraw">${formatDecimal(wdUsc)}</td>
+                        <td class="col-group-server">${formatRupiah(serverIdr)}</td>
+                        <td class="col-group-profit ${profitClass}">${profitSign}${formatDecimal(row.profit_usc)}</td>
+                        <td class="col-group-profit ${idrClass}">${idrSign}${formatRupiah(profitIdr)}</td>
+                        <td>
+                            <span class="growth-badge ${growthBadgeClass}">
+                                ${growthSign}${growthVal.toFixed(2)}%
+                            </span>
+                        </td>
                     </tr>
                 `;
             });
