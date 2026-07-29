@@ -210,6 +210,17 @@
             border-color: rgba(99, 102, 241, 0.3);
         }
 
+        .kpi-card-content {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .kpi-values {
+            display: flex;
+            flex-direction: column;
+        }
+
         .kpi-header {
             display: flex;
             justify-content: space-between;
@@ -554,18 +565,51 @@
                 gap: 1.25rem;
             }
             .kpi-grid {
-                grid-template-columns: 1fr;
-                gap: 0.85rem;
+                display: flex !important;
+                flex-direction: column;
+                gap: 0;
+                background-color: var(--surface-color);
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                padding: 0.5rem 1.15rem;
+                box-shadow: var(--card-shadow);
             }
             .kpi-card {
-                padding: 1.15rem;
-                border-radius: 12px;
+                padding: 0.75rem 0 !important;
+                border: none !important;
+                border-bottom: 1px solid #f1f5f9 !important;
+                border-radius: 0 !important;
+                background: transparent !important;
+                box-shadow: none !important;
+                transform: none !important;
+            }
+            .kpi-card:last-child {
+                border-bottom: none !important;
+            }
+            .kpi-card-content {
+                flex-direction: row !important;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
             }
             .kpi-header {
-                margin-bottom: 0.5rem;
+                margin-bottom: 0 !important;
+            }
+            .kpi-icon-wrapper {
+                display: none !important;
+            }
+            .kpi-values {
+                align-items: flex-end;
+                flex-direction: column !important;
             }
             .kpi-value-idr {
-                font-size: 1.35rem;
+                font-size: 0.95rem !important;
+                font-weight: 700 !important;
+                margin-bottom: 0 !important;
+            }
+            .kpi-value-usc {
+                font-size: 0.75rem !important;
+                font-weight: 500 !important;
             }
             .table-controls {
                 width: 100%;
@@ -1131,7 +1175,7 @@
             
             kpisVisible = !kpisVisible;
             if (kpisVisible) {
-                container.style.display = 'grid';
+                container.style.display = '';
                 toggleBtn.classList.remove('collapsed');
                 toggleText.innerText = 'Sembunyikan';
             } else {
@@ -1191,63 +1235,73 @@
             
             kpiContainer.innerHTML = `
                 <div class="kpi-card">
-                    <div>
+                    <div class="kpi-card-content">
                         <div class="kpi-header">
                             <span>Total Modal</span>
                             <div class="kpi-icon-wrapper modal">
                                 <i data-lucide="arrow-down-left"></i>
                             </div>
                         </div>
-                        <div class="kpi-value-idr">${formatRupiah(kpis.total_modal_idr)}</div>
-                        <div class="kpi-value-usc">${formatDecimal(kpis.total_modal_usc)} USC</div>
+                        <div class="kpi-values">
+                            <div class="kpi-value-idr">${formatRupiah(kpis.total_modal_idr)}</div>
+                            <div class="kpi-value-usc">${formatDecimal(kpis.total_modal_usc)} USC</div>
+                        </div>
                     </div>
                 </div>
                 <div class="kpi-card">
-                    <div>
+                    <div class="kpi-card-content">
                         <div class="kpi-header">
                             <span>Total Penarikan (WD)</span>
                             <div class="kpi-icon-wrapper wd">
                                 <i data-lucide="arrow-up-right"></i>
                             </div>
                         </div>
-                        <div class="kpi-value-idr">${formatRupiah(kpis.total_withdraw_idr)}</div>
-                        <div class="kpi-value-usc">${formatDecimal(kpis.total_withdraw_usc)} USC</div>
+                        <div class="kpi-values">
+                            <div class="kpi-value-idr">${formatRupiah(kpis.total_withdraw_idr)}</div>
+                            <div class="kpi-value-usc">${formatDecimal(kpis.total_withdraw_usc)} USC</div>
+                        </div>
                     </div>
                 </div>
                 <div class="kpi-card">
-                    <div>
+                    <div class="kpi-card-content">
                         <div class="kpi-header">
                             <span>Trading Profit</span>
                             <div class="kpi-icon-wrapper profit">
                                 <i data-lucide="trending-up"></i>
                             </div>
                         </div>
-                        <div class="kpi-value-idr">${formatRupiah(kpis.total_trading_profit_idr)}</div>
-                        <div class="kpi-value-usc">${formatDecimal(kpis.total_trading_profit_usc)} USC</div>
+                        <div class="kpi-values">
+                            <div class="kpi-value-idr">${formatRupiah(kpis.total_trading_profit_idr)}</div>
+                            <div class="kpi-value-usc">${formatDecimal(kpis.total_trading_profit_usc)} USC</div>
+                        </div>
                     </div>
                 </div>
                 <div class="kpi-card">
-                    <div>
+                    <div class="kpi-card-content">
                         <div class="kpi-header">
                             <span>Est. Saldo Bersih</span>
                             <div class="kpi-icon-wrapper saldo">
                                 <i data-lucide="coins"></i>
                             </div>
                         </div>
-                        <div class="kpi-value-idr">${formatRupiah(kpis.est_saldo_bersih_idr)}</div>
-                        <div class="kpi-value-usc">${formatDecimal(kpis.est_saldo_bersih_usc)} USC</div>
+                        <div class="kpi-values">
+                            <div class="kpi-value-idr">${formatRupiah(kpis.est_saldo_bersih_idr)}</div>
+                            <div class="kpi-value-usc">${formatDecimal(kpis.est_saldo_bersih_usc)} USC</div>
+                        </div>
                     </div>
                 </div>
                 <div class="kpi-card">
-                    <div>
+                    <div class="kpi-card-content">
                         <div class="kpi-header">
                             <span>Saldo MT5</span>
                             <div class="kpi-icon-wrapper mt5">
                                 <i data-lucide="credit-card"></i>
                             </div>
                         </div>
-                        <div class="kpi-value-idr">${formatRupiah(kpis.keseluruhan_saldo_mt5_idr)}</div>
-                        <div class="kpi-value-usc">${formatDecimal(kpis.keseluruhan_saldo_mt5_usc)} USC</div>
+                        <div class="kpi-values">
+                            <div class="kpi-value-idr">${formatRupiah(kpis.keseluruhan_saldo_mt5_idr)}</div>
+                            <div class="kpi-value-usc">${formatDecimal(kpis.keseluruhan_saldo_mt5_usc)} USC</div>
+                        </div>
                     </div>
                 </div>
             `;
