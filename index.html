@@ -1222,7 +1222,7 @@
             const total_trading_profit_idr = (total_trading_profit_usc / 100) * currentKurs;
             
             const est_saldo_bersih_idr = total_trading_profit_idr - totalServerIdr;
-            const est_saldo_bersih_usc = data.kpis.est_saldo_bersih_usc;
+            const est_saldo_bersih_usc = total_trading_profit_usc - (totalServerIdr / currentKurs) * 100;
             
             const keseluruhan_saldo_mt5_idr = total_modal_idr - total_withdraw_idr + total_trading_profit_idr - totalServerIdr;
             const keseluruhan_saldo_mt5_usc = data.kpis.keseluruhan_saldo_mt5_usc;
@@ -1302,7 +1302,7 @@
                 <div class="kpi-card">
                     <div class="kpi-card-content">
                         <div class="kpi-header">
-                            <span>Saldo MT5</span>
+                            <span>Saldo Saat Ini</span>
                             <div class="kpi-icon-wrapper mt5">
                                 <i data-lucide="credit-card"></i>
                             </div>
