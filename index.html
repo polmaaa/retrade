@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetaPanel - Jurnal & Arus Kas</title>
+    
+    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="lucide.js"></script>
+    
+    <!-- Static Offline Database Fallback -->
+    <script src="dashboard_data.js"></script>
+    
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --surface-color: #ffffff;
+            --surface-hover: #f8fafc;
+            --border-color: #e2e8f0;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            
+            /* Stripe Theme Colors */
+            --primary-color: #6366f1; /* Indigo */
+            --primary-hover: #4f46e5;
+            --bullish-color: #0d9488; /* Teal-Emerald */
+            --bearish-color: #e11d48; /* Rose */
+            
+            --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 
+                           0 10px 15px -3px rgba(0, 0, 0, 0.04), 
+                           0 4px 6px -4px rgba(0, 0, 0, 0.04);
+            --transition-speed: 0.2s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', 'Plus Jakarta Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            background: radial-gradient(at 0% 0%, rgba(244, 63, 94, 0.04) 0px, transparent 40%), 
+                        radial-gradient(at 50% 0%, rgba(99, 102, 241, 0.06) 0px, transparent 45%), 
+                        radial-gradient(at 100% 0%, rgba(234, 179, 8, 0.03) 0px, transparent 35%), 
+                        #f8fafc;
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        header {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1300px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-logo-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-logo i {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+        }
+
+        .header-logo h1 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+        }
+
+        .header-logo span {
+            background: rgba(99, 102, 241, 0.08);
+            color: var(--primary-color);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            border: 1px solid rgba(99, 102, 241, 0.15);
+        }
+
+        .sync-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .sync-live {
+            background: rgba(13, 148, 136, 0.08);
+            color: var(--bullish-color);
+            border: 1px solid rgba(13, 148, 136, 0.15);
+        }
+
+        .sync-local {
+            background: rgba(0, 0, 0, 0.04);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 0.25rem;
+            flex-wrap: wrap;
+            background-color: #f1f5f9;
+            padding: 0.25rem;
+            border-radius: 10px;
+        }
+
+        .nav-tab {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .nav-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            color: var(--text-primary);
+            background-color: var(--surface-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        main {
+            flex: 1;
+            padding: 2.5rem 2rem;
+            max-width: 1300px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        /* KPI Cards Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .kpi-card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: var(--card-shadow);
+            transition: transform var(--transition-speed) ease, border-color var(--transition-speed) ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+        }
+
+        .kpi-icon-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+        }
+
+        .kpi-icon-wrapper.modal { background-color: #eff6ff; color: #2563eb; }
+        .kpi-icon-wrapper.wd { background-color: #fdf2f8; color: #db2777; }
+        .kpi-icon-wrapper.profit { background-color: #f0fdf4; color: #16a34a; }
+        .kpi-icon-wrapper.saldo { background-color: #e0e7ff; color: #4f46e5; }
+        .kpi-icon-wrapper.mt5 { background-color: #fffbeb; color: #d97706; }
+
+        .kpi-value-idr {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.5px;
+        }
+
+        .kpi-value-usc {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        /* Tab Content Panel */
+        .tab-panel {
+            display: none;
+            flex-direction: column;
+            gap: 2rem;
+            animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .tab-panel.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Card Container */
+        .card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .card-title i {
+            color: var(--primary-color);
+            width: 18px;
+            height: 18px;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        /* Data Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+
+        th {
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: rgba(0, 0, 0, 0.01);
+        }
+
+        /* Value Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-win {
+            background: rgba(13, 148, 136, 0.08);
+            color: var(--bullish-color);
+            border: 1px solid rgba(13, 148, 136, 0.15);
+        }
+
+        .badge-loss {
+            background: rgba(225, 29, 72, 0.08);
+            color: var(--bearish-color);
+            border: 1px solid rgba(225, 29, 72, 0.15);
+        }
+
+        .badge-be {
+            background: rgba(100, 116, 139, 0.08);
+            color: var(--text-secondary);
+            border: 1px solid rgba(100, 116, 139, 0.15);
+        }
+
+        .profit-text {
+            color: var(--bullish-color);
+            font-weight: 600;
+        }
+
+        .loss-text {
+            color: var(--bearish-color);
+            font-weight: 600;
+        }
+
+        /* Search and Table Filters */
+        .table-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            max-width: 320px;
+            min-width: 200px;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .search-input {
+            width: 100%;
+            background-color: #f1f5f9;
+            border: 1px solid transparent;
+            color: var(--text-primary);
+            padding: 0.55rem 1rem 0.55rem 2.25rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            background-color: #ffffff;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .filter-select {
+            background-color: #f1f5f9;
+            border: 1px solid transparent;
+            color: var(--text-primary);
+            padding: 0.55rem 1.25rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .kurs-widget {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            padding: 0.45rem 0.8rem;
+            border-radius: 10px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .kurs-widget:hover {
+            border-color: var(--primary-color);
+            background-color: var(--surface-hover);
+        }
+
+        .filter-select:focus {
+            outline: none;
+            background-color: #ffffff;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        tr.total-row td {
+            font-weight: 700 !important;
+            background-color: rgba(0, 0, 0, 0.02);
+            border-top: 2px solid var(--border-color);
+            border-bottom: 2px double var(--border-color);
+        }
+        tr.dimmed-row td {
+            color: #94a3b8 !important;
+            opacity: 0.65;
+        }
+        tr.dimmed-row td strong {
+            color: #94a3b8 !important;
+            font-weight: 500;
+        }
+
+        footer {
+            background-color: var(--surface-color);
+            border-top: 1px solid var(--border-color);
+            padding: 1.5rem 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: auto;
+        }
+
+        /* Responsive changes */
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 1rem;
+                justify-content: center;
+            }
+            .header-nav {
+                width: 100%;
+                justify-content: center;
+            }
+            main {
+                padding: 1.5rem 1rem;
+                gap: 1.5rem;
+            }
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+            .table-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-wrapper {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="header-logo-group">
+                <div class="header-logo">
+                    <i data-lucide="trending-up"></i>
+                    <h1>METAPANEL</h1>
+                    <span>Trading & Cashflow</span>
+                </div>
+                <div class="sync-badge sync-local" id="sync-status">
+                    <i data-lucide="refresh-cw" style="width:11px; height:11px; animation: spin 2s linear infinite; display:none;" id="sync-spinner"></i>
+                    <span id="sync-text">Memuat Data...</span>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                <div class="header-nav">
+                    <button class="nav-tab active" onclick="switchTab('dashboard', this)">
+                        <i data-lucide="layout-dashboard"></i> Dashboard
+                    </button>
+                    <button class="nav-tab" onclick="switchTab('cashflow', this)">
+                        <i data-lucide="wallet"></i> Arus Kas
+                    </button>
+                    <button class="nav-tab" onclick="switchTab('journal', this)">
+                        <i data-lucide="book-open"></i> Jurnal MT
+                    </button>
+                </div>
+                
+                <div class="kurs-widget" id="kurs-widget" onclick="enableKursEdit(event)">
+                    <i data-lucide="coins" style="width:14px; height:14px; color: var(--primary-color);"></i>
+                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">Kurs USD/IDR:</span>
+                    <span id="kurs-value-display" style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary); border-bottom: 1px dashed var(--primary-color);">Rp 18.000</span>
+                    <input type="number" id="kurs-value-input" style="display: none; width: 80px; font-size: 0.85rem; font-weight: 700; border: 1px solid var(--primary-color); border-radius: 6px; padding: 0.15rem 0.3rem; text-align: right;" onblur="disableKursEdit(true)" onkeydown="if(event.key==='Enter') this.blur();" onclick="event.stopPropagation()">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- KPI Row -->
+        <div class="kpi-grid" id="kpi-container">
+            <!-- Dynamically Loaded -->
+        </div>
+
+        <!-- TAB: DASHBOARD -->
+        <div id="panel-dashboard" class="tab-panel active">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i data-lucide="calendar"></i> Rekapitulasi Bulanan 2026
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Bulan</th>
+                                <th>Deposit (IDR)</th>
+                                <th>Deposit (USC)</th>
+                                <th>Withdraw (IDR)</th>
+                                <th>Withdraw (USC)</th>
+                                <th>Biaya Server (IDR)</th>
+                                <th>Trading Profit (USC)</th>
+                                <th>Est. Profit (IDR)</th>
+                                <th>Growth</th>
+                            </tr>
+                        </thead>
+                        <tbody id="monthly-summary-body">
+                            <!-- Loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: CASHFLOW -->
+        <div id="panel-cashflow" class="tab-panel">
+            <div class="card">
+                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div class="card-title">
+                        <i data-lucide="wallet"></i> Worksheet 1: Arus Kas dan Biaya (Tabungan)
+                    </div>
+                    <div class="table-controls" style="display: flex; gap: 0.5rem; margin-bottom: 0;">
+                        <select id="cashflow-month-filter" class="filter-select" onchange="filterCashflow()">
+                            <option value="all">Semua Bulan</option>
+                            <option value="01">Januari</option>
+                            <option value="02">Februari</option>
+                            <option value="03">Maret</option>
+                            <option value="04">April</option>
+                            <option value="05">Mei</option>
+                            <option value="06">Juni</option>
+                            <option value="07">Juli</option>
+                            <option value="08">Agustus</option>
+                            <option value="09">September</option>
+                            <option value="10">Oktober</option>
+                            <option value="11">November</option>
+                            <option value="12">Desember</option>
+                        </select>
+                        <select id="cashflow-filter" class="filter-select" onchange="filterCashflow()">
+                            <option value="all">Semua Tipe</option>
+                            <option value="deposit">Deposit</option>
+                            <option value="withdraw">Withdraw</option>
+                            <option value="server cost">Biaya Server</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th onclick="setCashflowSort('tanggal')" style="cursor: pointer; user-select: none;">
+                                    Tanggal <span id="sort-icon-cashflow-tanggal">▼</span>
+                                </th>
+                                <th onclick="setCashflowSort('tipe')" style="cursor: pointer; user-select: none;">
+                                    Tipe <span id="sort-icon-cashflow-tipe"></span>
+                                </th>
+                                <th onclick="setCashflowSort('keterangan')" style="cursor: pointer; user-select: none;">
+                                    Keterangan <span id="sort-icon-cashflow-keterangan"></span>
+                                </th>
+                                <th onclick="setCashflowSort('nominal_idr')" style="cursor: pointer; user-select: none;">
+                                    Nominal (IDR) <span id="sort-icon-cashflow-nominal_idr"></span>
+                                </th>
+                                <th onclick="setCashflowSort('nominal_usc')" style="cursor: pointer; user-select: none;">
+                                    Nominal (USC) <span id="sort-icon-cashflow-nominal_usc"></span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="cashflow-table-body">
+                            <!-- Loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: JOURNAL -->
+        <div id="panel-journal" class="tab-panel">
+            <div class="card">
+                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div class="card-title">
+                        <i data-lucide="book-open"></i> Worksheet 2: Jurnal Trading Harian (Metatrader)
+                    </div>
+                    <div class="table-controls" style="display: flex; gap: 0.5rem; margin-bottom: 0;">
+                        <select id="journal-month-filter" class="filter-select" onchange="filterJournal()">
+                            <option value="all">Semua Bulan</option>
+                            <option value="01">Januari</option>
+                            <option value="02">Februari</option>
+                            <option value="03">Maret</option>
+                            <option value="04">April</option>
+                            <option value="05">Mei</option>
+                            <option value="06">Juni</option>
+                            <option value="07">Juli</option>
+                            <option value="08">Agustus</option>
+                            <option value="09">September</option>
+                            <option value="10">Oktober</option>
+                            <option value="11">November</option>
+                            <option value="12">Desember</option>
+                        </select>
+                        <select id="journal-filter" class="filter-select" onchange="filterJournal()">
+                            <option value="all">Semua Status</option>
+                            <option value="WIN">WIN</option>
+                            <option value="LOSS">LOSS</option>
+                            <option value="BREAK EVEN">BREAK EVEN</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th onclick="setJournalSort('tanggal')" style="cursor: pointer; user-select: none;">
+                                    Tanggal <span id="sort-icon-journal-tanggal">▼</span>
+                                </th>
+                                <th onclick="setJournalSort('profit_usc')" style="cursor: pointer; user-select: none;">
+                                    Profit/Loss (USC) <span id="sort-icon-journal-profit_usc"></span>
+                                </th>
+                                <th onclick="setJournalSort('est_profit_idr')" style="cursor: pointer; user-select: none;">
+                                    Est. Profit (IDR) <span id="sort-icon-journal-est_profit_idr"></span>
+                                </th>
+                                <th onclick="setJournalSort('status')" style="cursor: pointer; user-select: none;">
+                                    Status <span id="sort-icon-journal-status"></span>
+                                </th>
+                                <th onclick="setJournalSort('akumulasi_idr')" style="cursor: pointer; user-select: none;">
+                                    Akumulasi (IDR) <span id="sort-icon-journal-akumulasi_idr"></span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="journal-table-body">
+                            <!-- Loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 MetaPanel. All rights reserved. Hubungkan trading Anda dengan visualisasi data premium.</p>
+    </footer>
+
+    <script>
+        // Init Lucide
+        lucide.createIcons();
+
+        // Helper to format currency
+        function formatRupiah(number) {
+            if (number === null || number === undefined || isNaN(number)) return 'Rp -';
+            const valStr = Math.abs(number).toLocaleString('id-ID');
+            return (number < 0 ? '- Rp ' : 'Rp ') + valStr;
+        }
+
+        // Helper to format decimals
+        function formatDecimal(num, decimals = 2) {
+            if (num === null || num === undefined || isNaN(num)) return '0.00';
+            return num.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+        }
+
+        // Active tab switching
+        function switchTab(tabName, btnElement) {
+            // Hide all tab panels
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            // Show target panel
+            document.getElementById('panel-' + tabName).classList.add('active');
+            
+            // Remove active class from all nav buttons
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // Add active to clicked button
+            btnElement.classList.add('active');
+        }
+
+        let activeData = null; // Will point to live spreadsheet data or local fallback
+        let currentKurs = 18000;
+
+        function enableKursEdit(event) {
+            event.stopPropagation();
+            const display = document.getElementById('kurs-value-display');
+            const input = document.getElementById('kurs-value-input');
+            
+            display.style.display = 'none';
+            input.style.display = 'inline-block';
+            input.value = currentKurs;
+            input.focus();
+            input.select();
+        }
+
+        function disableKursEdit(save) {
+            const display = document.getElementById('kurs-value-display');
+            const input = document.getElementById('kurs-value-input');
+            
+            if (save) {
+                const val = parseFloat(input.value);
+                if (!isNaN(val) && val > 0) {
+                    currentKurs = val;
+                }
+            }
+            
+            input.style.display = 'none';
+            display.style.display = 'inline-block';
+            display.innerText = 'Rp ' + currentKurs.toLocaleString('id-ID');
+            
+            if (activeData) {
+                renderAllDashboard();
+            }
+        }
+
+        // CSV Parser for live Google Sheets import
+        function parseGoogleSheetCSV(csvText) {
+            const lines = csvText.split('\n').map(line => {
+                const result = [];
+                let current = '';
+                let inQuotes = false;
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        result.push(current.trim());
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                result.push(current.trim());
+                return result;
+            });
+
+            let totalModalHeaderIdx = -1;
+            let cashflowHeaderIdx = -1;
+            
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].includes('TOTAL MODAL')) {
+                    totalModalHeaderIdx = i;
+                }
+                if (lines[i].includes('ARUS KAS DAN BIAYA (TABUNGAN)') || lines[i].includes('ARUS KAS DAN BIAYA')) {
+                    cashflowHeaderIdx = i;
+                }
+            }
+
+            if (totalModalHeaderIdx === -1 || cashflowHeaderIdx === -1) {
+                throw new Error("Format spreadsheet tidak valid");
+            }
+
+            const idrRow = lines[totalModalHeaderIdx + 1];
+            const uscRow = lines[totalModalHeaderIdx + 2];
+            
+            function parseFormattedNumber(val) {
+                if (val === null || val === undefined) return 0;
+                let str = String(val).trim().replace(/Rp/g, '').replace(/%/g, '').replace(/\s/g, '');
+                if (!str) return 0;
+
+                // Case 1: Has both dot and comma
+                if (str.includes('.') && str.includes(',')) {
+                    if (str.indexOf('.') < str.indexOf(',')) {
+                        str = str.replace(/\./g, '').replace(/,/g, '.');
+                    } else {
+                        str = str.replace(/,/g, '');
+                    }
+                } 
+                // Case 2: Only has dots (e.g. 2.500.000 or 79.000)
+                else if (str.includes('.') && !str.includes(',')) {
+                    const dotCount = (str.match(/\./g) || []).length;
+                    if (dotCount > 1) {
+                        str = str.replace(/\./g, '');
+                    } else {
+                        const parts = str.split('.');
+                        if (parts[1].length === 3) {
+                            str = str.replace(/\./g, '');
+                        }
+                    }
+                }
+                // Case 3: Only has commas (e.g. 100,00 or 259,37 or 2,500)
+                else if (str.includes(',') && !str.includes('.')) {
+                    const commaCount = (str.match(/,/g) || []).length;
+                    if (commaCount > 1) {
+                        str = str.replace(/,/g, '');
+                    } else {
+                        const parts = str.split(',');
+                        if (parts[1].length === 3) {
+                            str = str.replace(/,/g, '');
+                        } else {
+                            str = str.replace(/,/g, '.');
+                        }
+                    }
+                }
+
+                const cleaned = str.replace(/[^\d.-]/g, '');
+                return parseFloat(cleaned) || 0;
+            }
+
+            function cleanIDR(val) {
+                return parseFormattedNumber(val);
+            }
+            function cleanUSC(val) {
+                return parseFormattedNumber(val);
+            }
+            
+            const kpis = {
+                total_modal_idr: cleanIDR(idrRow[0]),
+                total_modal_usc: cleanUSC(uscRow[0]),
+                total_withdraw_idr: cleanIDR(idrRow[2]),
+                total_withdraw_usc: cleanUSC(uscRow[2]),
+                est_saldo_bersih_idr: cleanIDR(idrRow[4]),
+                est_saldo_bersih_usc: cleanUSC(uscRow[4]),
+                keseluruhan_saldo_mt5_idr: cleanIDR(idrRow[6]),
+                keseluruhan_saldo_mt5_usc: cleanUSC(uscRow[6]),
+                total_trading_profit_idr: cleanIDR(idrRow[8]),
+                total_trading_profit_usc: cleanUSC(uscRow[8]),
+                kurs_usd_idr: cleanIDR(idrRow[10])
+            };
+
+            let monthlyHeaderIdx = -1;
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].includes('REKAPITULASI BULANAN 2026')) {
+                    monthlyHeaderIdx = i;
+                    break;
+                }
+            }
+            
+            const monthlySummary = [];
+            if (monthlyHeaderIdx !== -1) {
+                for (let i = monthlyHeaderIdx + 2; i < lines.length; i++) {
+                    const row = lines[i];
+                    if (!row || !row[0] || row[0].includes('ARUS KAS')) break;
+                    const bName = row[0].trim();
+                    monthlySummary.push({
+                        bulan: bName,
+                        deposit_idr: cleanIDR(row[1]),
+                        deposit_usc: cleanUSC(row[2]),
+                        withdraw_idr: cleanIDR(row[3]),
+                        withdraw_usc: cleanUSC(row[4]),
+                        server_idr: cleanIDR(row[5]),
+                        profit_usc: cleanUSC(row[6]),
+                        est_profit_idr: cleanIDR(row[7]),
+                        growth: cleanUSC(row[9]) / 100
+                    });
+                    if (bName === 'TOTAL') break;
+                }
+            }
+
+            const cashflowRows = [];
+            const journalRows = [];
+            for (let i = cashflowHeaderIdx + 2; i < lines.length; i++) {
+                const row = lines[i];
+                if (!row) continue;
+                
+                const cashDate = row[0];
+                if (cashDate && cashDate.trim() !== '') {
+                    cashflowRows.push({
+                        tanggal: cashDate,
+                        tipe: row[1] || '',
+                        keterangan: row[2] || '',
+                        nominal_idr: cleanIDR(row[3]),
+                        nominal_usc: cleanUSC(row[4])
+                    });
+                }
+                
+                const journalDate = row[6];
+                if (journalDate && journalDate.trim() !== '') {
+                    journalRows.push({
+                        tanggal: journalDate,
+                        profit_usc: cleanUSC(row[7]),
+                        est_profit_idr: cleanIDR(row[8]),
+                        status: row[9] || '',
+                        akumulasi_idr: cleanIDR(row[10])
+                    });
+                }
+            }
+
+            return { kpis, monthlySummary, cashflowRows, journalRows };
+        }
+
+        // Main loader
+        window.onload = async function() {
+            const statusBadge = document.getElementById('sync-status');
+            const statusText = document.getElementById('sync-text');
+            const spinner = document.getElementById('sync-spinner');
+            
+            spinner.style.display = 'inline-block';
+            statusText.innerText = 'Menghubungkan Google Sheet...';
+
+            const googleSheetsCSVUrl = "https://docs.google.com/spreadsheets/d/1jbm4tDMYOAMpYnDbRz82QNvcMrBj5shV/export?format=csv&gid=1272196974&t=" + Date.now();
+            
+            try {
+                // Try to load live data from Google Sheets
+                const response = await fetch(googleSheetsCSVUrl);
+                if (!response.ok) throw new Error("Gagal mengambil data dari Google Sheets");
+                
+                const csvText = await response.text();
+                const parsedLive = parseGoogleSheetCSV(csvText);
+                
+                activeData = parsedLive;
+                currentKurs = activeData.kpis.kurs_usd_idr || 18000;
+                document.getElementById('kurs-value-display').innerText = 'Rp ' + currentKurs.toLocaleString('id-ID');
+                
+                statusBadge.className = "sync-badge sync-live";
+                statusText.innerText = "Live (Google Sheets)";
+                console.log("Successfully loaded live data from Google Sheets!");
+            } catch (err) {
+                console.warn("Live load failed, falling back to local data:", err.message);
+                // Fallback to local data
+                activeData = dashboardData;
+                currentKurs = activeData.kpis.kurs_usd_idr || 18000;
+                document.getElementById('kurs-value-display').innerText = 'Rp ' + currentKurs.toLocaleString('id-ID');
+                
+                statusBadge.className = "sync-badge sync-local";
+                statusText.innerText = "Offline (Lokal)";
+            } finally {
+                spinner.style.display = 'none';
+            }
+
+            renderAllDashboard();
+        };
+
+        function updateKurs() {
+            currentKurs = parseFloat(document.getElementById('kurs-input').value) || currentKurs;
+            renderAllDashboard();
+        }
+
+        function renderAllDashboard() {
+            const data = activeData;
+            
+            // Calculate manual values directly from Arus Kas rows (no conversion)
+            const totalDepositIdr = data.cashflowRows.filter(r => r.tipe.toLowerCase() === 'deposit').reduce((sum, r) => sum + r.nominal_idr, 0);
+            const totalDepositUsc = data.cashflowRows.filter(r => r.tipe.toLowerCase() === 'deposit').reduce((sum, r) => sum + r.nominal_usc, 0);
+            
+            const totalWithdrawIdr = data.cashflowRows.filter(r => r.tipe.toLowerCase() === 'withdraw').reduce((sum, r) => sum + r.nominal_idr, 0);
+            const totalWithdrawUsc = data.cashflowRows.filter(r => r.tipe.toLowerCase() === 'withdraw').reduce((sum, r) => sum + r.nominal_usc, 0);
+            
+            const totalServerIdr = data.cashflowRows.filter(r => r.tipe.toLowerCase().includes('server') || r.tipe.toLowerCase().includes('cost')).reduce((sum, r) => sum + r.nominal_idr, 0);
+            
+            // Recalculate components based on currentKurs
+            const total_modal_idr = totalDepositIdr + totalServerIdr;
+            const total_modal_usc = totalDepositUsc;
+            
+            const total_withdraw_idr = totalWithdrawIdr;
+            const total_withdraw_usc = totalWithdrawUsc;
+            
+            const total_trading_profit_usc = data.kpis.total_trading_profit_usc;
+            const total_trading_profit_idr = (total_trading_profit_usc / 100) * currentKurs;
+            
+            const est_saldo_bersih_idr = total_trading_profit_idr - totalServerIdr;
+            const est_saldo_bersih_usc = data.kpis.est_saldo_bersih_usc;
+            
+            const keseluruhan_saldo_mt5_idr = total_modal_idr - total_withdraw_idr + total_trading_profit_idr - totalServerIdr;
+            const keseluruhan_saldo_mt5_usc = data.kpis.keseluruhan_saldo_mt5_usc;
+            
+            const kpis = {
+                total_modal_idr,
+                total_modal_usc,
+                total_withdraw_idr,
+                total_withdraw_usc,
+                est_saldo_bersih_idr,
+                est_saldo_bersih_usc,
+                keseluruhan_saldo_mt5_idr,
+                keseluruhan_saldo_mt5_usc,
+                total_trading_profit_idr,
+                total_trading_profit_usc
+            };
+            
+            const kpiContainer = document.getElementById('kpi-container');
+            
+            kpiContainer.innerHTML = `
+                <div class="kpi-card">
+                    <div>
+                        <div class="kpi-header">
+                            <span>Total Modal</span>
+                            <div class="kpi-icon-wrapper modal">
+                                <i data-lucide="arrow-down-left"></i>
+                            </div>
+                        </div>
+                        <div class="kpi-value-idr">${formatRupiah(kpis.total_modal_idr)}</div>
+                        <div class="kpi-value-usc">${formatDecimal(kpis.total_modal_usc)} USC</div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div>
+                        <div class="kpi-header">
+                            <span>Total Penarikan (WD)</span>
+                            <div class="kpi-icon-wrapper wd">
+                                <i data-lucide="arrow-up-right"></i>
+                            </div>
+                        </div>
+                        <div class="kpi-value-idr">${formatRupiah(kpis.total_withdraw_idr)}</div>
+                        <div class="kpi-value-usc">${formatDecimal(kpis.total_withdraw_usc)} USC</div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div>
+                        <div class="kpi-header">
+                            <span>Trading Profit</span>
+                            <div class="kpi-icon-wrapper profit">
+                                <i data-lucide="trending-up"></i>
+                            </div>
+                        </div>
+                        <div class="kpi-value-idr">${formatRupiah(kpis.total_trading_profit_idr)}</div>
+                        <div class="kpi-value-usc">${formatDecimal(kpis.total_trading_profit_usc)} USC</div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div>
+                        <div class="kpi-header">
+                            <span>Est. Saldo Bersih</span>
+                            <div class="kpi-icon-wrapper saldo">
+                                <i data-lucide="coins"></i>
+                            </div>
+                        </div>
+                        <div class="kpi-value-idr">${formatRupiah(kpis.est_saldo_bersih_idr)}</div>
+                        <div class="kpi-value-usc">${formatDecimal(kpis.est_saldo_bersih_usc)} USC</div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div>
+                        <div class="kpi-header">
+                            <span>Saldo MT5</span>
+                            <div class="kpi-icon-wrapper mt5">
+                                <i data-lucide="credit-card"></i>
+                            </div>
+                        </div>
+                        <div class="kpi-value-idr">${formatRupiah(kpis.keseluruhan_saldo_mt5_idr)}</div>
+                        <div class="kpi-value-usc">${formatDecimal(kpis.keseluruhan_saldo_mt5_usc)} USC</div>
+                    </div>
+                </div>
+            `;
+            
+            // 2. Populate Monthly Summary Table with zero-value checks and total/dimmed rows styling
+            const monthlyBody = document.getElementById('monthly-summary-body');
+            let monthlyHtml = '';
+
+            const monthMap = {
+                "Januari": "01",
+                "Februari": "02",
+                "Maret": "03",
+                "April": "04",
+                "Mei": "05",
+                "Juni": "06",
+                "Juli": "07",
+                "Agustus": "08",
+                "September": "09",
+                "Oktober": "10",
+                "November": "11",
+                "Desember": "12"
+            };
+
+            data.monthlySummary.forEach(row => {
+                const profitUsc = parseFloat(row.profit_usc);
+                const growthVal = parseFloat(row.growth) * 100;
+                
+                // Dynamically sum manual values directly from Arus Kas (no conversion)
+                let depIdr = 0;
+                let depUsc = 0;
+                let wdIdr = 0;
+                let wdUsc = 0;
+                let serverIdr = 0;
+                let profitIdr = 0;
+                
+                if (row.bulan !== 'TOTAL') {
+                    const parts = row.bulan.split(' ');
+                    const monthName = parts[0];
+                    const yearNum = parts[1];
+                    const monthNum = monthMap[monthName] || '00';
+                    const prefix = `${yearNum}-${monthNum}`;
+                    
+                    // Sum from cashflowRows
+                    const monthlyCashflow = data.cashflowRows.filter(r => r.tanggal.startsWith(prefix));
+                    depIdr = monthlyCashflow.filter(r => r.tipe.toLowerCase() === 'deposit').reduce((sum, r) => sum + r.nominal_idr, 0);
+                    depUsc = monthlyCashflow.filter(r => r.tipe.toLowerCase() === 'deposit').reduce((sum, r) => sum + r.nominal_usc, 0);
+                    wdIdr = monthlyCashflow.filter(r => r.tipe.toLowerCase() === 'withdraw').reduce((sum, r) => sum + r.nominal_idr, 0);
+                    wdUsc = monthlyCashflow.filter(r => r.tipe.toLowerCase() === 'withdraw').reduce((sum, r) => sum + r.nominal_usc, 0);
+                    serverIdr = monthlyCashflow.filter(r => r.tipe.toLowerCase().includes('server') || r.tipe.toLowerCase().includes('cost')).reduce((sum, r) => sum + r.nominal_idr, 0);
+                    
+                    if (row.profit_usc !== 0) {
+                        profitIdr = (row.profit_usc / 100) * currentKurs;
+                    }
+                } else {
+                    // For TOTAL row: sum the calculated values of all other rows
+                    data.monthlySummary.filter(r => r.bulan !== 'TOTAL').forEach(r => {
+                        const parts = r.bulan.split(' ');
+                        const monthName = parts[0];
+                        const yearNum = parts[1];
+                        const monthNum = monthMap[monthName] || '00';
+                        const prefix = `${yearNum}-${monthNum}`;
+                        
+                        const monthlyCashflow = data.cashflowRows.filter(c => c.tanggal.startsWith(prefix));
+                        depIdr += monthlyCashflow.filter(c => c.tipe.toLowerCase() === 'deposit').reduce((sum, c) => sum + c.nominal_idr, 0);
+                        depUsc += monthlyCashflow.filter(c => c.tipe.toLowerCase() === 'deposit').reduce((sum, c) => sum + c.nominal_usc, 0);
+                        wdIdr += monthlyCashflow.filter(c => c.tipe.toLowerCase() === 'withdraw').reduce((sum, c) => sum + c.nominal_idr, 0);
+                        wdUsc += monthlyCashflow.filter(c => c.tipe.toLowerCase() === 'withdraw').reduce((sum, c) => sum + c.nominal_usc, 0);
+                        serverIdr += monthlyCashflow.filter(c => c.tipe.toLowerCase().includes('server') || c.tipe.toLowerCase().includes('cost')).reduce((sum, c) => sum + c.nominal_idr, 0);
+                    });
+                    
+                    profitIdr = (data.kpis.total_trading_profit_usc / 100) * currentKurs;
+                }
+                
+                let profitClass = '';
+                let profitSign = '';
+                if (profitUsc > 0) {
+                    profitClass = 'profit-text';
+                    profitSign = '+';
+                } else if (profitUsc < 0) {
+                    profitClass = 'loss-text';
+                    profitSign = '';
+                }
+
+                let idrClass = '';
+                let idrSign = '';
+                if (profitIdr > 0) {
+                    idrClass = 'profit-text';
+                    idrSign = '+';
+                } else if (profitIdr < 0) {
+                    idrClass = 'loss-text';
+                    idrSign = '';
+                }
+
+                let growthClass = '';
+                let growthSign = '';
+                if (growthVal > 0) {
+                    growthClass = 'profit-text';
+                    growthSign = '+';
+                } else if (growthVal < 0) {
+                    growthClass = 'loss-text';
+                    growthSign = '';
+                }
+
+                // Determine row class (dimmed if month is inactive, total-row if it's the TOTAL row)
+                let trClass = '';
+                if (row.bulan === 'TOTAL') {
+                    trClass = 'total-row';
+                } else if (depIdr === 0 && wdIdr === 0 && serverIdr === 0 && profitUsc === 0) {
+                    trClass = 'dimmed-row';
+                }
+
+                monthlyHtml += `
+                    <tr class="${trClass}">
+                        <td><strong>${row.bulan}</strong></td>
+                        <td>${formatRupiah(depIdr)}</td>
+                        <td>${formatDecimal(depUsc)}</td>
+                        <td>${formatRupiah(wdIdr)}</td>
+                        <td>${formatDecimal(wdUsc)}</td>
+                        <td>${formatRupiah(serverIdr)}</td>
+                        <td class="${profitClass}">${profitSign}${formatDecimal(row.profit_usc)}</td>
+                        <td class="${idrClass}">${idrSign}${formatRupiah(profitIdr)}</td>
+                        <td class="${growthClass}" style="font-weight:700;">${growthSign}${growthVal.toFixed(2)}%</td>
+                    </tr>
+                `;
+            });
+            monthlyBody.innerHTML = monthlyHtml;
+
+            // 3. Populate Cashflow & Journal tables initially
+            renderCashflow();
+            renderJournal();
+            
+            // Refresh icons dynamically loaded
+            lucide.createIcons();
+        }
+
+        let cashflowSortCol = 'tanggal';
+        let cashflowSortDir = 'desc';
+
+        function setCashflowSort(col) {
+            if (cashflowSortCol === col) {
+                cashflowSortDir = cashflowSortDir === 'asc' ? 'desc' : 'asc';
+            } else {
+                cashflowSortCol = col;
+                cashflowSortDir = 'desc';
+            }
+            
+            const cols = ['tanggal', 'tipe', 'keterangan', 'nominal_idr', 'nominal_usc'];
+            cols.forEach(c => {
+                const el = document.getElementById(`sort-icon-cashflow-${c}`);
+                if (el) {
+                    if (c === cashflowSortCol) {
+                        el.innerText = cashflowSortDir === 'asc' ? ' ▲' : ' ▼';
+                        el.style.color = 'var(--primary-color)';
+                    } else {
+                        el.innerText = '';
+                    }
+                }
+            });
+
+            renderCashflow();
+        }
+
+        let journalSortCol = 'tanggal';
+        let journalSortDir = 'desc';
+
+        function setJournalSort(col) {
+            if (journalSortCol === col) {
+                journalSortDir = journalSortDir === 'asc' ? 'desc' : 'asc';
+            } else {
+                journalSortCol = col;
+                journalSortDir = 'desc';
+            }
+
+            const cols = ['tanggal', 'profit_usc', 'est_profit_idr', 'status', 'akumulasi_idr'];
+            cols.forEach(c => {
+                const el = document.getElementById(`sort-icon-journal-${c}`);
+                if (el) {
+                    if (c === journalSortCol) {
+                        el.innerText = journalSortDir === 'asc' ? ' ▲' : ' ▼';
+                        el.style.color = 'var(--primary-color)';
+                    } else {
+                        el.innerText = '';
+                    }
+                }
+            });
+
+            renderJournal();
+        }
+
+        // Render Cashflow worksheet table
+        function renderCashflow() {
+            const body = document.getElementById('cashflow-table-body');
+            let data = [...activeData.cashflowRows];
+            
+            const monthFilter = document.getElementById('cashflow-month-filter').value;
+            const typeFilter = document.getElementById('cashflow-filter').value;
+            
+            // 1. Filter by Month
+            if (monthFilter !== 'all') {
+                data = data.filter(row => {
+                    const parts = row.tanggal.split('-');
+                    return parts[1] === monthFilter;
+                });
+            }
+            
+            // 2. Filter by Type
+            if (typeFilter !== 'all') {
+                data = data.filter(row => row.tipe.toLowerCase() === typeFilter.toLowerCase());
+            }
+            
+            // 3. Sort the data
+            data.sort((a, b) => {
+                let valA = a[cashflowSortCol];
+                let valB = b[cashflowSortCol];
+                
+                if (typeof valA === 'string') {
+                    return cashflowSortDir === 'asc' 
+                        ? valA.localeCompare(valB) 
+                        : valB.localeCompare(valA);
+                } else {
+                    return cashflowSortDir === 'asc'
+                        ? valA - valB
+                        : valB - valA;
+                }
+            });
+            
+            let html = '';
+            data.forEach(row => {
+                let typeClass = 'badge-be';
+                if (row.tipe.toLowerCase() === 'deposit') typeClass = 'badge-win';
+                else if (row.tipe.toLowerCase() === 'withdraw' || row.tipe.toLowerCase().includes('cost')) typeClass = 'badge-loss';
+                
+                let nominalIdr = row.nominal_idr;
+
+                html += `
+                    <tr>
+                        <td>${row.tanggal}</td>
+                        <td><span class="badge ${typeClass}">${row.tipe}</span></td>
+                        <td>${row.keterangan}</td>
+                        <td>${formatRupiah(nominalIdr)}</td>
+                        <td>${row.nominal_usc ? formatDecimal(row.nominal_usc) + ' USC' : '-'}</td>
+                    </tr>
+                `;
+            });
+            body.innerHTML = html || '<tr><td colspan="5" style="text-align:center; color:var(--text-secondary);">Tidak ada data kas ditemukan</td></tr>';
+        }
+
+        function filterCashflow() {
+            renderCashflow();
+        }
+
+        // Render Journal worksheet table
+        function renderJournal() {
+            const body = document.getElementById('journal-table-body');
+            const rawData = activeData.journalRows;
+            
+            // Recalculate running accumulation based on recalculated values
+            let runningAccum = 0;
+            let data = rawData.map(row => {
+                const pnlVal = parseFloat(row.profit_usc);
+                const estProfitIdr = (pnlVal / 100) * currentKurs;
+                if (row.status !== '') {
+                    runningAccum += estProfitIdr;
+                }
+                return {
+                    ...row,
+                    est_profit_idr_recalc: estProfitIdr,
+                    akumulasi_idr_recalc: runningAccum
+                };
+            });
+            
+            const monthFilter = document.getElementById('journal-month-filter').value;
+            const filter = document.getElementById('journal-filter').value;
+            
+            // 1. Filter by Month
+            if (monthFilter !== 'all') {
+                data = data.filter(row => {
+                    const parts = row.tanggal.split('-');
+                    return parts[1] === monthFilter;
+                });
+            }
+            
+            // 2. Filter by Status
+            if (filter !== 'all') {
+                data = data.filter(row => row.status === filter);
+            }
+            
+            // 3. Sort the data
+            data.sort((a, b) => {
+                let valA = a[journalSortCol];
+                let valB = b[journalSortCol];
+                
+                if (journalSortCol === 'est_profit_idr') {
+                    valA = a.est_profit_idr_recalc;
+                    valB = b.est_profit_idr_recalc;
+                } else if (journalSortCol === 'akumulasi_idr') {
+                    valA = a.akumulasi_idr_recalc;
+                    valB = b.akumulasi_idr_recalc;
+                }
+                
+                if (typeof valA === 'string') {
+                    return journalSortDir === 'asc' 
+                        ? valA.localeCompare(valB) 
+                        : valB.localeCompare(valA);
+                } else {
+                    return journalSortDir === 'asc'
+                        ? valA - valB
+                        : valB - valA;
+                }
+            });
+
+            let html = '';
+            data.forEach(row => {
+                let statusClass = 'badge-be';
+                if (row.status === 'WIN') statusClass = 'badge-win';
+                else if (row.status === 'LOSS') statusClass = 'badge-loss';
+                
+                const pnlVal = parseFloat(row.profit_usc);
+                const pnlClass = pnlVal > 0 ? 'profit-text' : (pnlVal < 0 ? 'loss-text' : '');
+                const sign = pnlVal > 0 ? '+' : '';
+                
+                html += `
+                    <tr>
+                        <td>${row.tanggal}</td>
+                        <td class="${pnlClass}">${sign}${formatDecimal(row.profit_usc)} USC</td>
+                        <td class="${pnlClass}">${pnlVal >= 0 ? '+' : ''}${formatRupiah(row.est_profit_idr_recalc)}</td>
+                        <td><span class="badge ${statusClass}">${row.status}</span></td>
+                        <td>${formatRupiah(row.akumulasi_idr_recalc)}</td>
+                    </tr>
+                `;
+            });
+            body.innerHTML = html || '<tr><td colspan="5" style="text-align:center; color:var(--text-secondary);">Tidak ada data jurnal ditemukan</td></tr>';
+        }
+
+        function filterJournal() {
+            renderJournal();
+        }
+    </script>
+</body>
+</html>
