@@ -222,7 +222,7 @@
         }
 
         .kpi-card {
-            cursor: pointer;
+            cursor: default;
             user-select: none;
         }
 
@@ -233,10 +233,23 @@
             border-top: 1px dashed var(--border-color);
             font-size: 0.72rem;
             color: var(--text-secondary);
-            font-style: italic;
             animation: fadeIn 0.2s ease;
             width: 100%;
-            line-height: 1.3;
+            line-height: 1.35;
+        }
+
+        .kpi-info-trigger {
+            width: 13px;
+            height: 13px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            opacity: 0.55;
+            transition: all var(--transition-speed) ease;
+            vertical-align: middle;
+        }
+        .kpi-info-trigger:hover {
+            opacity: 1 !important;
+            color: var(--primary-color) !important;
         }
 
         .kpi-header {
@@ -414,11 +427,17 @@
             font-weight: 600;
         }
 
-        /* Rekapitulasi Column Grouping Pastels */
-        .col-group-deposit { background-color: rgba(99, 102, 241, 0.025) !important; }
-        .col-group-withdraw { background-color: rgba(219, 39, 119, 0.025) !important; }
-        .col-group-server { background-color: rgba(217, 119, 6, 0.025) !important; }
-        .col-group-profit { background-color: rgba(13, 148, 136, 0.025) !important; }
+        /* Rekapitulasi Column Grouping Pastels - Saturation Increased */
+        .col-group-deposit { background-color: rgba(99, 102, 241, 0.075) !important; }
+        .col-group-withdraw { background-color: rgba(219, 39, 119, 0.075) !important; }
+        .col-group-server { background-color: rgba(217, 119, 6, 0.075) !important; }
+        .col-group-profit { background-color: rgba(13, 148, 136, 0.075) !important; }
+
+        @media (min-width: 1024px) {
+            .kpi-grid {
+                grid-template-columns: repeat(6, 1fr) !important;
+            }
+        }
 
         /* Growth Pill Badge */
         .growth-badge {
@@ -1332,10 +1351,13 @@
             const kpiContainer = document.getElementById('kpi-container');
             
             kpiContainer.innerHTML = `
-                <div class="kpi-card" onclick="toggleKpiFormula('modal', event)">
+                <div class="kpi-card">
                     <div class="kpi-card-content">
                         <div class="kpi-header">
-                            <span>Modal</span>
+                            <span style="display: flex; align-items: center; gap: 0.35rem;">
+                                Modal
+                                <i data-lucide="info" class="kpi-info-trigger" onclick="toggleKpiFormula('modal', event)"></i>
+                            </span>
                             <div class="kpi-icon-wrapper modal">
                                 <i data-lucide="arrow-down-left"></i>
                             </div>
@@ -1345,14 +1367,17 @@
                             <div class="kpi-value-usc">${formatDecimal(total_modal_usc)} USC</div>
                         </div>
                         <div class="kpi-formula" id="formula-modal">
-                            Sumber: DEPOSIT + MODAL SERVER (Rupiah) / DEPOSIT (USC)
+                            Jumlah modal awal yang disetorkan ditambah modal biaya operasional server untuk rupiah, sedangkan untuk USC adalah modal deposit saja.
                         </div>
                     </div>
                 </div>
-                <div class="kpi-card" onclick="toggleKpiFormula('total-saldo', event)">
+                <div class="kpi-card">
                     <div class="kpi-card-content">
                         <div class="kpi-header">
-                            <span>Total Saldo</span>
+                            <span style="display: flex; align-items: center; gap: 0.35rem;">
+                                Total Saldo
+                                <i data-lucide="info" class="kpi-info-trigger" onclick="toggleKpiFormula('total-saldo', event)"></i>
+                            </span>
                             <div class="kpi-icon-wrapper saldo">
                                 <i data-lucide="wallet"></i>
                             </div>
@@ -1362,14 +1387,17 @@
                             <div class="kpi-value-usc">${formatDecimal(total_saldo_keseluruhan_usc)} USC</div>
                         </div>
                         <div class="kpi-formula" id="formula-total-saldo">
-                            Sumber: DEPOSIT + SALDO SAAT INI + WITHDRAW
+                            Hasil penjumlahan kumulatif dari seluruh modal deposit, saldo akun trading saat ini, serta total dana yang telah ditarik (withdraw).
                         </div>
                     </div>
                 </div>
-                <div class="kpi-card" onclick="toggleKpiFormula('saldo-saat-ini', event)">
+                <div class="kpi-card">
                     <div class="kpi-card-content">
                         <div class="kpi-header">
-                            <span>Saldo Saat Ini</span>
+                            <span style="display: flex; align-items: center; gap: 0.35rem;">
+                                Saldo Saat Ini
+                                <i data-lucide="info" class="kpi-info-trigger" onclick="toggleKpiFormula('saldo-saat-ini', event)"></i>
+                            </span>
                             <div class="kpi-icon-wrapper mt5">
                                 <i data-lucide="credit-card"></i>
                             </div>
@@ -1379,14 +1407,17 @@
                             <div class="kpi-value-usc">${formatDecimal(saldo_saat_ini_usc)} USC</div>
                         </div>
                         <div class="kpi-formula" id="formula-saldo-saat-ini">
-                            Sumber: DEPOSIT + TRADING PROFIT - WITHDRAW
+                            Sisa saldo berjalan yang ada pada akun trading aktif saat ini (Deposit awal ditambah Trading Profit dikurangi total Withdraw).
                         </div>
                     </div>
                 </div>
-                <div class="kpi-card" onclick="toggleKpiFormula('trading-profit', event)">
+                <div class="kpi-card">
                     <div class="kpi-card-content">
                         <div class="kpi-header">
-                            <span>Trading Profit</span>
+                            <span style="display: flex; align-items: center; gap: 0.35rem;">
+                                Trading Profit
+                                <i data-lucide="info" class="kpi-info-trigger" onclick="toggleKpiFormula('trading-profit', event)"></i>
+                            </span>
                             <div class="kpi-icon-wrapper profit">
                                 <i data-lucide="trending-up"></i>
                             </div>
@@ -1396,14 +1427,17 @@
                             <div class="kpi-value-usc">${formatDecimal(total_trading_profit_usc)} USC</div>
                         </div>
                         <div class="kpi-formula" id="formula-trading-profit">
-                            Sumber: Hasil akumulasi rekap harian Jurnal MT
+                            Akumulasi seluruh hasil laba/rugi bersih (net profit) yang didapatkan dari riwayat transaksi perdagangan pada Metatrader.
                         </div>
                     </div>
                 </div>
-                <div class="kpi-card" onclick="toggleKpiFormula('withdraw', event)">
+                <div class="kpi-card">
                     <div class="kpi-card-content">
                         <div class="kpi-header">
-                            <span>Withdraw</span>
+                            <span style="display: flex; align-items: center; gap: 0.35rem;">
+                                Withdraw
+                                <i data-lucide="info" class="kpi-info-trigger" onclick="toggleKpiFormula('withdraw', event)"></i>
+                            </span>
                             <div class="kpi-icon-wrapper wd">
                                 <i data-lucide="arrow-up-right"></i>
                             </div>
@@ -1413,14 +1447,17 @@
                             <div class="kpi-value-usc">${formatDecimal(total_withdraw_usc)} USC</div>
                         </div>
                         <div class="kpi-formula" id="formula-withdraw">
-                            Sumber: Akumulasi penarikan dana dari Arus Kas
+                            Total penarikan dana keluar dari akun trading Metatrader yang telah masuk kembali ke rekening tabungan personal.
                         </div>
                     </div>
                 </div>
-                <div class="kpi-card" onclick="toggleKpiFormula('est-saldo-bersih', event)">
+                <div class="kpi-card">
                     <div class="kpi-card-content">
                         <div class="kpi-header">
-                            <span>Est. Saldo Bersih</span>
+                            <span style="display: flex; align-items: center; gap: 0.35rem;">
+                                Est. Saldo Bersih
+                                <i data-lucide="info" class="kpi-info-trigger" onclick="toggleKpiFormula('est-saldo-bersih', event)"></i>
+                            </span>
                             <div class="kpi-icon-wrapper saldo">
                                 <i data-lucide="coins"></i>
                             </div>
@@ -1430,7 +1467,7 @@
                             <div class="kpi-value-usc">${formatDecimal(est_saldo_bersih_usc)} USC</div>
                         </div>
                         <div class="kpi-formula" id="formula-est-saldo-bersih">
-                            Sumber: TOTAL SALDO KESELURUHAN - TOTAL WD - SALDO MODAL
+                            Estimasi keuntungan bersih riil yang tersisa dihitung dari total saldo keseluruhan dikurangi total penarikan dan saldo modal awal.
                         </div>
                     </div>
                 </div>
