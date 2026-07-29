@@ -5,12 +5,12 @@ const dashboardData = {
     "total_modal_usc": 13875,
     "total_withdraw_idr": 809982,
     "total_withdraw_usc": 4500,
-    "est_saldo_bersih_idr": 4939272,
-    "est_saldo_bersih_usc": 27440.4,
-    "keseluruhan_saldo_mt5_idr": 6708290,
-    "keseluruhan_saldo_mt5_usc": 37254.29,
-    "total_trading_profit_idr": 5018272,
-    "total_trading_profit_usc": 27879.29,
+    "est_saldo_bersih_idr": 5014548,
+    "est_saldo_bersih_usc": 27858.6,
+    "keseluruhan_saldo_mt5_idr": 6783566,
+    "keseluruhan_saldo_mt5_usc": 37672.49,
+    "total_trading_profit_idr": 5093548,
+    "total_trading_profit_usc": 28297.49,
     "kurs_usd_idr": 18000
   },
   "monthlySummary": [
@@ -21,9 +21,9 @@ const dashboardData = {
       "withdraw_idr": 809982,
       "withdraw_usc": 4500,
       "server_idr": 79000,
-      "profit_usc": 27879.29,
-      "est_profit_idr": 5018272,
-      "growth": 2.0093
+      "profit_usc": 28297.49,
+      "est_profit_idr": 5093548,
+      "growth": 2.0395
     },
     {
       "bulan": "Agustus 2026",
@@ -87,9 +87,9 @@ const dashboardData = {
       "withdraw_idr": 809982,
       "withdraw_usc": 4500,
       "server_idr": 79000,
-      "profit_usc": 27879.29,
-      "est_profit_idr": 5018272,
-      "growth": 2.0093
+      "profit_usc": 28297.49,
+      "est_profit_idr": 5093548,
+      "growth": 2.0395
     }
   ],
   "cashflowRows": [
@@ -300,24 +300,17 @@ const dashboardData = {
     },
     {
       "tanggal": "2026-07-29",
-      "profit_usc": 449.6,
-      "est_profit_idr": 80928,
+      "profit_usc": 830.7,
+      "est_profit_idr": 149526,
       "status": "WIN",
-      "akumulasi_idr": 5018272
+      "akumulasi_idr": 5086870
     },
     {
       "tanggal": "2026-07-30",
-      "profit_usc": 0,
-      "est_profit_idr": 0,
-      "status": "",
-      "akumulasi_idr": 0
-    },
-    {
-      "tanggal": "2026-07-31",
-      "profit_usc": 0,
-      "est_profit_idr": 0,
-      "status": "",
-      "akumulasi_idr": 0
+      "profit_usc": 37.1,
+      "est_profit_idr": 6678,
+      "status": "WIN",
+      "akumulasi_idr": 5093548
     }
   ]
 };

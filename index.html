@@ -203,6 +203,7 @@
             justify-content: space-between;
             box-shadow: var(--card-shadow);
             transition: transform var(--transition-speed) ease, border-color var(--transition-speed) ease;
+            position: relative;
         }
 
         .kpi-card:hover {
@@ -528,18 +529,24 @@
         }
 
         @media (max-width: 768px) {
+            .kpi-title-wrapper {
+                position: static !important;
+            }
             .kpi-tooltip {
-                left: 50% !important;
-                transform: translateX(-50%) !important;
-                width: 270px !important;
+                left: 0 !important;
+                right: 0 !important;
+                width: auto !important;
+                transform: none !important;
+                top: calc(100% + 8px) !important;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
             }
             .kpi-tooltip::before {
-                left: 50% !important;
-                transform: translateX(-50%) !important;
+                left: 40px !important;
+                transform: none !important;
             }
             .kpi-tooltip::after {
-                left: 50% !important;
-                transform: translateX(-50%) !important;
+                left: 41px !important;
+                transform: none !important;
             }
         }
 
@@ -1435,9 +1442,9 @@
             const saldo_saat_ini_idr = totalDepositIdr + total_trading_profit_idr - totalWithdrawIdr;
             const saldo_saat_ini_usc = totalDepositUsc + total_trading_profit_usc - totalWithdrawUsc;
             
-            // 4. TOTAL SALDO KESELURUHAN = DEPOSIT + SALDO SAAT INI + WITHDRAW
-            const total_saldo_keseluruhan_idr = totalDepositIdr + saldo_saat_ini_idr + totalWithdrawIdr;
-            const total_saldo_keseluruhan_usc = totalDepositUsc + saldo_saat_ini_usc + totalWithdrawUsc;
+            // 4. TOTAL SALDO KESELURUHAN = SALDO SAAT INI + WITHDRAW
+            const total_saldo_keseluruhan_idr = saldo_saat_ini_idr + totalWithdrawIdr;
+            const total_saldo_keseluruhan_usc = saldo_saat_ini_usc + totalWithdrawUsc;
             
             // 5. ESTIMASI SALDO BERSIH = TOTAL SALDO KESELURUHAN - TOTAL WD - SALDO MODAL
             const est_saldo_bersih_idr = total_saldo_keseluruhan_idr - total_withdraw_idr - total_modal_idr;
