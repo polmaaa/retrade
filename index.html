@@ -1258,20 +1258,27 @@
             return false;
         }
 
-        // Main loader
-        window.onload = async function() {
+        async function fetchLiveData() {
             const statusBadge = document.getElementById('sync-status');
             const statusText = document.getElementById('sync-text');
             const spinner = document.getElementById('sync-spinner');
             
             spinner.style.display = 'inline-block';
-            statusText.innerText = 'Menghubungkan Google Sheet...';
+            statusText.innerText = 'Sinkronisasi Live...';
+
+            // Start Exness Kurs fetch asynchronously in parallel
+            fetchLiveExnessKurs();
 
             const googleSheetsCSVUrl = "https://docs.google.com/spreadsheets/d/1jbm4tDMYOAMpYnDbRz82QNvcMrBj5shV/export?format=csv&gid=1272196974&t=" + Date.now();
             
             try {
-                // Try to load live data from Google Sheets
-                const response = await fetch(googleSheetsCSVUrl);
+                // Abort fetch after 6 seconds timeout so it never hangs indefinitely
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 6000);
+                
+                const response = await fetch(googleSheetsCSVUrl, { signal: controller.signal });
+                clearTimeout(timeoutId);
+                
                 if (!response.ok) throw new Error("Gagal mengambil data dari Google Sheets");
                 
                 const csvText = await response.text();
@@ -1279,34 +1286,46 @@
                 
                 activeData = parsedLive;
                 
-                const success = await fetchLiveExnessKurs();
-                if (!success) {
+                // If Exness fetch is still pending, use the sheet's default kurs
+                if (!currentKurs || currentKurs === 18000) {
                     currentKurs = activeData.kpis.kurs_usd_idr || 18000;
                     document.getElementById('kurs-value-display').innerText = 'Rp ' + currentKurs.toLocaleString('id-ID');
                 }
                 
                 statusBadge.className = "sync-badge sync-live";
                 statusText.innerText = "Live (Google Sheets)";
-                console.log("Successfully loaded live data from Google Sheets!");
+                console.log("Successfully synced live data from Google Sheets!");
+                renderAllDashboard();
             } catch (err) {
-                console.warn("Live load failed, falling back to local data:", err.message);
-                // Fallback to local data
-                activeData = dashboardData;
-                const success = await fetchLiveExnessKurs();
-                if (!success) {
-                    currentKurs = activeData.kpis.kurs_usd_idr || 18000;
-                    document.getElementById('kurs-value-display').innerText = 'Rp ' + currentKurs.toLocaleString('id-ID');
-                }
-                
+                console.warn("Live sync failed, keeping local/existing data:", err.message);
                 statusBadge.className = "sync-badge sync-local";
                 statusText.innerText = "Offline (Lokal)";
             } finally {
                 spinner.style.display = 'none';
             }
+        }
 
+        // Main loader - Loads INSTANTLY
+        window.onload = function() {
+            // 1. Render local data immediately for 0ms load speed
+            activeData = dashboardData;
+            currentKurs = activeData.kpis.kurs_usd_idr || 18000;
+            document.getElementById('kurs-value-display').innerText = 'Rp ' + currentKurs.toLocaleString('id-ID');
             renderAllDashboard();
 
-            // Auto-refresh Exness rate every 30 seconds
+            // 2. Set status to offline/local initially
+            const statusBadge = document.getElementById('sync-status');
+            const statusText = document.getElementById('sync-text');
+            const spinner = document.getElementById('sync-spinner');
+            
+            statusBadge.className = "sync-badge sync-local";
+            statusText.innerText = "Offline (Lokal)";
+            spinner.style.display = 'none';
+
+            // 3. Sync live data in the background silently
+            fetchLiveData();
+
+            // 4. Auto-refresh Exness rate every 30 seconds
             setInterval(fetchLiveExnessKurs, 30000);
         };
 
