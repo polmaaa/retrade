@@ -385,6 +385,11 @@
             font-weight: 600;
         }
 
+        /* KPI Toggle Container (Mobile only) */
+        .kpi-toggle-container {
+            display: none;
+        }
+
         /* Search and Table Filters */
         .table-controls {
             display: flex;
@@ -590,6 +595,44 @@
                 padding: 0.75rem 0.5rem;
                 font-size: 0.8rem;
             }
+            .kpi-toggle-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: #ffffff;
+                border: 1px solid var(--border-color);
+                padding: 0.75rem 1rem;
+                border-radius: 12px;
+                cursor: pointer;
+                margin-bottom: 0.75rem;
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: var(--text-primary);
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+                transition: all var(--transition-speed) ease;
+            }
+            .kpi-toggle-container:hover {
+                border-color: var(--primary-color);
+            }
+            .kpi-toggle-action {
+                display: flex;
+                align-items: center;
+                gap: 0.25rem;
+                color: var(--primary-color);
+                font-size: 0.8rem;
+                font-weight: 700;
+                background: none;
+                border: none;
+                cursor: pointer;
+            }
+            .kpi-toggle-action i {
+                width: 16px;
+                height: 16px;
+                transition: transform 0.3s ease;
+            }
+            .kpi-toggle-container.collapsed #kpi-toggle-icon {
+                transform: rotate(-180deg);
+            }
         }
     </style>
 </head>
@@ -630,6 +673,18 @@
     </header>
 
     <main>
+        <!-- KPI Toggle (Mobile only) -->
+        <div class="kpi-toggle-container" id="kpi-toggle-btn" onclick="toggleKPIs()">
+            <span style="display: flex; align-items: center; gap: 0.5rem;">
+                <i data-lucide="bar-chart-2" style="width: 16px; height: 16px; color: var(--primary-color);"></i>
+                Ringkasan Keuangan (KPI)
+            </span>
+            <button class="kpi-toggle-action">
+                <span id="kpi-toggle-text">Sembunyikan</span>
+                <i data-lucide="chevron-up" id="kpi-toggle-icon" style="width:16px; height:16px;"></i>
+            </button>
+        </div>
+
         <!-- KPI Row -->
         <div class="kpi-grid" id="kpi-container">
             <!-- Dynamically Loaded -->
@@ -1067,6 +1122,24 @@
 
             renderAllDashboard();
         };
+
+        let kpisVisible = true;
+        function toggleKPIs() {
+            const container = document.getElementById('kpi-container');
+            const toggleBtn = document.getElementById('kpi-toggle-btn');
+            const toggleText = document.getElementById('kpi-toggle-text');
+            
+            kpisVisible = !kpisVisible;
+            if (kpisVisible) {
+                container.style.display = 'grid';
+                toggleBtn.classList.remove('collapsed');
+                toggleText.innerText = 'Sembunyikan';
+            } else {
+                container.style.display = 'none';
+                toggleBtn.classList.add('collapsed');
+                toggleText.innerText = 'Tampilkan';
+            }
+        }
 
         function updateKurs() {
             currentKurs = parseFloat(document.getElementById('kurs-input').value) || currentKurs;
