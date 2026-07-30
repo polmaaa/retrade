@@ -688,14 +688,32 @@
 
         /* Responsive changes */
         @media (max-width: 768px) {
+            .kpi-section-wrapper {
+                margin-top: 0.75rem !important;
+            }
             .today-profit-mobile-label {
-                display: block;
+                display: flex !important;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
                 font-size: 0.72rem;
-                font-weight: 700;
+                font-weight: 600;
                 color: var(--text-secondary);
-                margin-bottom: 0.5rem;
+                margin-bottom: 0.75rem;
                 padding: 0 0.25rem;
                 text-transform: none;
+            }
+            .today-profit-value {
+                font-weight: 800;
+            }
+            .profit-win {
+                color: var(--bullish-color) !important;
+            }
+            .profit-loss {
+                color: var(--bearish-color) !important;
+            }
+            .profit-zero {
+                color: var(--text-secondary) !important;
             }
             .header-container {
                 display: grid !important;
@@ -1440,6 +1458,9 @@
             const day = String(today.getDate()).padStart(2, '0');
             const todayStr = `${year}-${month}-${day}`;
 
+            const monthsAbbr = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
+            const formattedDate = `${parseInt(day)} ${monthsAbbr[today.getMonth()]}`;
+
             const todayRow = data.journalRows.find(r => r.tanggal === todayStr);
             let todayProfitUsc = 0;
             if (todayRow) {
@@ -1449,7 +1470,17 @@
 
             const todayProfitEl = document.getElementById('today-profit-mobile');
             if (todayProfitEl) {
-                todayProfitEl.innerText = `Profit Hari Ini: ${formatDecimal(todayProfitUsc)} USC (${formatRupiah(todayProfitIdr).replace('Rp ', 'Rp.')})`;
+                let colorClass = 'profit-zero';
+                if (todayProfitUsc > 0) {
+                    colorClass = 'profit-win';
+                } else if (todayProfitUsc < 0) {
+                    colorClass = 'profit-loss';
+                }
+                
+                todayProfitEl.innerHTML = `
+                    <span>Profit Hari Ini (${formattedDate}):</span>
+                    <span class="today-profit-value ${colorClass}">${formatDecimal(todayProfitUsc)} USC (${formatRupiah(todayProfitIdr).replace('Rp ', 'Rp.')})</span>
+                `;
             }
             
             // Calculate manual values directly from Arus Kas rows (no conversion)
