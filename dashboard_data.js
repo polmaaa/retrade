@@ -5,13 +5,13 @@ const dashboardData = {
     "total_modal_usc": 13875,
     "total_withdraw_idr": 809982,
     "total_withdraw_usc": 4500,
-    "est_saldo_bersih_idr": 5252539,
-    "est_saldo_bersih_usc": 29080.61,
-    "keseluruhan_saldo_mt5_idr": 7021557,
+    "est_saldo_bersih_idr": 5252835,
+    "est_saldo_bersih_usc": 29080.63,
+    "keseluruhan_saldo_mt5_idr": 7021853,
     "keseluruhan_saldo_mt5_usc": 38892.99,
-    "total_trading_profit_idr": 5331539,
+    "total_trading_profit_idr": 5331835,
     "total_trading_profit_usc": 29517.99,
-    "kurs_usd_idr": 18062
+    "kurs_usd_idr": 18063
   },
   "monthlySummary": [
     {
@@ -22,7 +22,7 @@ const dashboardData = {
       "withdraw_usc": 4500,
       "server_idr": 79000,
       "profit_usc": 29517.99,
-      "est_profit_idr": 5331539,
+      "est_profit_idr": 5331835,
       "growth": 2.1274
     },
     {
@@ -88,7 +88,7 @@ const dashboardData = {
       "withdraw_usc": 4500,
       "server_idr": 79000,
       "profit_usc": 29517.99,
-      "est_profit_idr": 5331539,
+      "est_profit_idr": 5331835,
       "growth": 2.1274
     }
   ],
@@ -133,44 +133,44 @@ const dashboardData = {
     {
       "tanggal": "2026-07-05",
       "profit_usc": 259.37,
-      "est_profit_idr": 46847,
+      "est_profit_idr": 46850,
       "status": "WIN",
-      "akumulasi_idr": 46847
+      "akumulasi_idr": 46850
     },
     {
       "tanggal": "2026-07-06",
       "profit_usc": 1081.9,
-      "est_profit_idr": 195413,
+      "est_profit_idr": 195424,
       "status": "WIN",
-      "akumulasi_idr": 242260
+      "akumulasi_idr": 242274
     },
     {
       "tanggal": "2026-07-07",
       "profit_usc": 2178.49,
-      "est_profit_idr": 393479,
+      "est_profit_idr": 393501,
       "status": "WIN",
-      "akumulasi_idr": 635739
+      "akumulasi_idr": 635774
     },
     {
       "tanggal": "2026-07-08",
       "profit_usc": 2914.1,
-      "est_profit_idr": 526345,
+      "est_profit_idr": 526374,
       "status": "WIN",
-      "akumulasi_idr": 1162084
+      "akumulasi_idr": 1162148
     },
     {
       "tanggal": "2026-07-09",
       "profit_usc": 1044,
-      "est_profit_idr": 188567,
+      "est_profit_idr": 188578,
       "status": "WIN",
-      "akumulasi_idr": 1350651
+      "akumulasi_idr": 1350726
     },
     {
       "tanggal": "2026-07-10",
       "profit_usc": 82.6,
-      "est_profit_idr": 14919,
+      "est_profit_idr": 14920,
       "status": "WIN",
-      "akumulasi_idr": 1365570
+      "akumulasi_idr": 1365646
     },
     {
       "tanggal": "2026-07-11",
@@ -189,44 +189,44 @@ const dashboardData = {
     {
       "tanggal": "2026-07-13",
       "profit_usc": 1324.3,
-      "est_profit_idr": 239195,
+      "est_profit_idr": 239208,
       "status": "WIN",
-      "akumulasi_idr": 1604765
+      "akumulasi_idr": 1604854
     },
     {
       "tanggal": "2026-07-14",
       "profit_usc": 2241.2,
-      "est_profit_idr": 404806,
+      "est_profit_idr": 404828,
       "status": "WIN",
-      "akumulasi_idr": 2009571
+      "akumulasi_idr": 2009682
     },
     {
       "tanggal": "2026-07-15",
       "profit_usc": 1706.1,
-      "est_profit_idr": 308156,
+      "est_profit_idr": 308173,
       "status": "WIN",
-      "akumulasi_idr": 2317727
+      "akumulasi_idr": 2317855
     },
     {
       "tanggal": "2026-07-16",
       "profit_usc": 5486.1,
-      "est_profit_idr": 990899,
+      "est_profit_idr": 990954,
       "status": "WIN",
-      "akumulasi_idr": 3308626
+      "akumulasi_idr": 3308809
     },
     {
       "tanggal": "2026-07-17",
       "profit_usc": 453.7,
-      "est_profit_idr": 81947,
+      "est_profit_idr": 81952,
       "status": "WIN",
-      "akumulasi_idr": 3390573
+      "akumulasi_idr": 3390761
     },
     {
       "tanggal": "2026-07-18",
       "profit_usc": 315.9,
-      "est_profit_idr": 57058,
+      "est_profit_idr": 57061,
       "status": "WIN",
-      "akumulasi_idr": 3447631
+      "akumulasi_idr": 3447822
     },
     {
       "tanggal": "2026-07-19",
@@ -238,79 +238,79 @@ const dashboardData = {
     {
       "tanggal": "2026-07-20",
       "profit_usc": 1406.8,
-      "est_profit_idr": 254096,
+      "est_profit_idr": 254110,
       "status": "WIN",
-      "akumulasi_idr": 3701727
+      "akumulasi_idr": 3701932
     },
     {
       "tanggal": "2026-07-21",
       "profit_usc": 914.1,
-      "est_profit_idr": 165105,
+      "est_profit_idr": 165114,
       "status": "WIN",
-      "akumulasi_idr": 3866832
+      "akumulasi_idr": 3867046
     },
     {
       "tanggal": "2026-07-22",
       "profit_usc": 267.8,
-      "est_profit_idr": 48370,
+      "est_profit_idr": 48373,
       "status": "WIN",
-      "akumulasi_idr": 3915202
+      "akumulasi_idr": 3915419
     },
     {
       "tanggal": "2026-07-23",
       "profit_usc": 1944.7,
-      "est_profit_idr": 351252,
+      "est_profit_idr": 351271,
       "status": "WIN",
-      "akumulasi_idr": 4266454
+      "akumulasi_idr": 4266690
     },
     {
       "tanggal": "2026-07-24",
       "profit_usc": 1436.1,
-      "est_profit_idr": 259388,
+      "est_profit_idr": 259403,
       "status": "WIN",
-      "akumulasi_idr": 4525842
+      "akumulasi_idr": 4526093
     },
     {
       "tanggal": "2026-07-25",
       "profit_usc": 95.73,
-      "est_profit_idr": 17291,
+      "est_profit_idr": 17292,
       "status": "WIN",
-      "akumulasi_idr": 4543133
+      "akumulasi_idr": 4543385
     },
     {
       "tanggal": "2026-07-26",
       "profit_usc": -11.6,
       "est_profit_idr": -2095,
       "status": "LOSS",
-      "akumulasi_idr": 4541038
+      "akumulasi_idr": 4541289
     },
     {
       "tanggal": "2026-07-27",
       "profit_usc": 1360.5,
-      "est_profit_idr": 245734,
+      "est_profit_idr": 245747,
       "status": "WIN",
-      "akumulasi_idr": 4786771
+      "akumulasi_idr": 4787036
     },
     {
       "tanggal": "2026-07-28",
       "profit_usc": 927.8,
-      "est_profit_idr": 167579,
+      "est_profit_idr": 167589,
       "status": "WIN",
-      "akumulasi_idr": 4954351
+      "akumulasi_idr": 4954625
     },
     {
       "tanggal": "2026-07-29",
       "profit_usc": 830.7,
-      "est_profit_idr": 150041,
+      "est_profit_idr": 150049,
       "status": "WIN",
-      "akumulasi_idr": 5104392
+      "akumulasi_idr": 5104674
     },
     {
       "tanggal": "2026-07-30",
       "profit_usc": 1257.6,
-      "est_profit_idr": 227148,
+      "est_profit_idr": 227160,
       "status": "WIN",
-      "akumulasi_idr": 5331539
+      "akumulasi_idr": 5331835
     }
   ]
 };
