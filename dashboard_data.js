@@ -5,12 +5,12 @@ const dashboardData = {
     "total_modal_usc": 13875,
     "total_withdraw_idr": 809982,
     "total_withdraw_usc": 4500,
-    "est_saldo_bersih_idr": 5014548,
-    "est_saldo_bersih_usc": 27858.6,
-    "keseluruhan_saldo_mt5_idr": 6783566,
-    "keseluruhan_saldo_mt5_usc": 37672.49,
-    "total_trading_profit_idr": 5093548,
-    "total_trading_profit_usc": 28297.49,
+    "est_saldo_bersih_idr": 5234238,
+    "est_saldo_bersih_usc": 29079.1,
+    "keseluruhan_saldo_mt5_idr": 7003256,
+    "keseluruhan_saldo_mt5_usc": 38892.99,
+    "total_trading_profit_idr": 5313238,
+    "total_trading_profit_usc": 29517.99,
     "kurs_usd_idr": 18000
   },
   "monthlySummary": [
@@ -21,9 +21,9 @@ const dashboardData = {
       "withdraw_idr": 809982,
       "withdraw_usc": 4500,
       "server_idr": 79000,
-      "profit_usc": 28297.49,
-      "est_profit_idr": 5093548,
-      "growth": 2.0395
+      "profit_usc": 29517.99,
+      "est_profit_idr": 5313238,
+      "growth": 2.1274
     },
     {
       "bulan": "Agustus 2026",
@@ -87,9 +87,9 @@ const dashboardData = {
       "withdraw_idr": 809982,
       "withdraw_usc": 4500,
       "server_idr": 79000,
-      "profit_usc": 28297.49,
-      "est_profit_idr": 5093548,
-      "growth": 2.0395
+      "profit_usc": 29517.99,
+      "est_profit_idr": 5313238,
+      "growth": 2.1274
     }
   ],
   "cashflowRows": [
@@ -307,10 +307,10 @@ const dashboardData = {
     },
     {
       "tanggal": "2026-07-30",
-      "profit_usc": 37.1,
-      "est_profit_idr": 6678,
+      "profit_usc": 1257.6,
+      "est_profit_idr": 226368,
       "status": "WIN",
-      "akumulasi_idr": 5093548
+      "akumulasi_idr": 5313238
     }
   ]
 };

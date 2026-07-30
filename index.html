@@ -577,6 +577,10 @@
             display: none;
         }
 
+        .today-profit-mobile-label {
+            display: none;
+        }
+
         /* Search and Table Filters */
         .table-controls {
             display: flex;
@@ -684,6 +688,15 @@
 
         /* Responsive changes */
         @media (max-width: 768px) {
+            .today-profit-mobile-label {
+                display: block;
+                font-size: 0.72rem;
+                font-weight: 700;
+                color: var(--text-secondary);
+                margin-bottom: 0.5rem;
+                padding: 0 0.25rem;
+                text-transform: none;
+            }
             .header-container {
                 display: grid !important;
                 grid-template-columns: 1fr auto;
@@ -901,6 +914,7 @@
     <main>
         <!-- KPI Section Wrapper to prevent main-gap spacing on mobile -->
         <div class="kpi-section-wrapper">
+            <div id="today-profit-mobile" class="today-profit-mobile-label"></div>
             <!-- KPI Toggle (Mobile only) -->
             <div class="kpi-toggle-container" id="kpi-toggle-btn" onclick="toggleKPIs()">
                 <span style="display: flex; align-items: center; gap: 0.5rem;">
@@ -1418,6 +1432,25 @@
 
         function renderAllDashboard() {
             const data = activeData;
+
+            // Calculate today's profit from Jurnal MT
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const todayStr = `${year}-${month}-${day}`;
+
+            const todayRow = data.journalRows.find(r => r.tanggal === todayStr);
+            let todayProfitUsc = 0;
+            if (todayRow) {
+                todayProfitUsc = todayRow.profit_usc;
+            }
+            const todayProfitIdr = (todayProfitUsc / 100) * currentKurs;
+
+            const todayProfitEl = document.getElementById('today-profit-mobile');
+            if (todayProfitEl) {
+                todayProfitEl.innerText = `Profit Hari Ini: ${formatDecimal(todayProfitUsc)} USC (${formatRupiah(todayProfitIdr).replace('Rp ', 'Rp.')})`;
+            }
             
             // Calculate manual values directly from Arus Kas rows (no conversion)
             const totalDepositIdr = data.cashflowRows.filter(r => r.tipe.toLowerCase() === 'deposit').reduce((sum, r) => sum + r.nominal_idr, 0);
