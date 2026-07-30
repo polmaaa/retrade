@@ -1459,7 +1459,7 @@
             const todayStr = `${year}-${month}-${day}`;
 
             const monthsAbbr = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
-            const formattedDate = `${parseInt(day)} ${monthsAbbr[today.getMonth()]}`;
+            const formattedDate = `${parseInt(day)} ${monthsAbbr[today.getMonth()]} ${year}`;
 
             const todayRow = data.journalRows.find(r => r.tanggal === todayStr);
             let todayProfitUsc = 0;
