@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MetaPanel - Jurnal & Arus Kas</title>
+    <title>POTRED - Jurnal & Arus Kas</title>
     
     <!-- Google Fonts: Plus Jakarta Sans & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -374,6 +374,22 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideFromRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideFromLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .slide-from-right {
+            animation: slideFromRight 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+        .slide-from-left {
+            animation: slideFromLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
 
         @keyframes slideFromRight {
@@ -916,7 +932,7 @@
             <div class="header-logo-group">
                 <div class="header-logo">
                     <i data-lucide="trending-up"></i>
-                    <h1>METAPANEL</h1>
+                    <h1>POTRED</h1>
                     <span>Trading & Cashflow</span>
                 </div>
                 <div class="sync-badge sync-local" id="sync-status">
@@ -1003,7 +1019,7 @@
             <div class="card">
                 <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                     <div class="card-title">
-                        <i data-lucide="wallet"></i> Worksheet 1: Arus Kas dan Biaya (Tabungan)
+                        <i data-lucide="wallet"></i> Arus Kas dan Biaya (Tabungan)
                     </div>
                     <div class="table-controls" style="display: flex; gap: 0.5rem; margin-bottom: 0;">
                         <select id="cashflow-month-filter" class="filter-select" onchange="filterCashflow()">
@@ -1063,7 +1079,7 @@
             <div class="card">
                 <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                     <div class="card-title">
-                        <i data-lucide="book-open"></i> Worksheet 2: Jurnal Trading Harian (Metatrader)
+                        <i data-lucide="book-open"></i> Jurnal Trading Harian (Metatrader)
                     </div>
                     <div class="table-controls" style="display: flex; gap: 0.5rem; margin-bottom: 0;">
                         <select id="journal-month-filter" class="filter-select" onchange="filterJournal()">
@@ -1120,7 +1136,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 MetaPanel. All rights reserved. Hubungkan trading Anda dengan visualisasi data premium.</p>
+        <p>&copy; 2026 POTRED. All rights reserved. Hubungkan trading Anda dengan visualisasi data premium.</p>
     </footer>
 
     <script>
@@ -1416,32 +1432,48 @@
                 console.log("Successfully synced live data from Google Sheets!");
                 renderAllDashboard();
             } catch (err) {
-                console.warn("Live sync failed, keeping local/existing data:", err.message);
+                console.warn("Live sync failed, falling back to local JSON data:", err.message);
+                
+                // Fall back to local JSON data
+                activeData = dashboardData;
+                currentKurs = activeData.kpis.kurs_usd_idr || 18000;
+                document.getElementById('kurs-value-display').innerText = 'Rp ' + currentKurs.toLocaleString('id-ID');
+                
                 statusBadge.className = "sync-badge sync-local";
                 statusText.innerText = "Offline (Lokal)";
+                renderAllDashboard();
             } finally {
                 spinner.style.display = 'none';
             }
         }
 
-        // Main loader - Loads INSTANTLY
+        // Main loader - Loads with LOADING placeholder, falls back to local data if sync fails
         window.onload = function() {
-            // 1. Render local data immediately for 0ms load speed
-            activeData = dashboardData;
-            currentKurs = activeData.kpis.kurs_usd_idr || 18000;
+            // 1. Initialize with an empty loading state
+            const loadingData = {
+                kpis: {
+                    kurs_usd_idr: 18000,
+                    total_trading_profit_usc: 0
+                },
+                monthlySummary: [],
+                cashflowRows: [],
+                journalRows: []
+            };
+            activeData = loadingData;
+            currentKurs = 18000;
             document.getElementById('kurs-value-display').innerText = 'Rp ' + currentKurs.toLocaleString('id-ID');
             renderAllDashboard();
 
-            // 2. Set status to offline/local initially
+            // 2. Set status badge to loading
             const statusBadge = document.getElementById('sync-status');
             const statusText = document.getElementById('sync-text');
             const spinner = document.getElementById('sync-spinner');
             
             statusBadge.className = "sync-badge sync-local";
-            statusText.innerText = "Offline (Lokal)";
-            spinner.style.display = 'none';
+            statusText.innerText = "Menghubungkan Google Sheet...";
+            spinner.style.display = 'inline-block';
 
-            // 3. Sync live data in the background silently
+            // 3. Trigger live sync
             fetchLiveData();
         };
 
@@ -1737,135 +1769,142 @@
             const monthlyBody = document.getElementById('monthly-summary-body');
             let monthlyHtml = '';
 
-            const monthMap = {
-                "Januari": "01",
-                "Februari": "02",
-                "Maret": "03",
-                "April": "04",
-                "Mei": "05",
-                "Juni": "06",
-                "Juli": "07",
-                "Agustus": "08",
-                "September": "09",
-                "Oktober": "10",
-                "November": "11",
-                "Desember": "12"
-            };
+            const statusText = document.getElementById('sync-text');
+            const isLoading = statusText && statusText.innerText.includes('Menghubungkan');
 
-            data.monthlySummary.forEach(row => {
-                const profitUsc = parseFloat(row.profit_usc);
-                const growthVal = parseFloat(row.growth) * 100;
-                
-                // Dynamically sum manual values directly from Arus Kas (no conversion)
-                let depIdr = 0;
-                let depUsc = 0;
-                let wdIdr = 0;
-                let wdUsc = 0;
-                let serverIdr = 0;
-                let profitIdr = 0;
-                
-                if (row.bulan !== 'TOTAL') {
-                    const parts = row.bulan.split(' ');
-                    const monthName = parts[0];
-                    const yearNum = parts[1];
-                    const monthNum = monthMap[monthName] || '00';
-                    const prefix = `${yearNum}-${monthNum}`;
+            if (isLoading || data.monthlySummary.length === 0) {
+                monthlyBody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:var(--text-secondary); padding: 1.5rem;">Memuat data dari Google Sheets...</td></tr>';
+            } else {
+                const monthMap = {
+                    "Januari": "01",
+                    "Februari": "02",
+                    "Maret": "03",
+                    "April": "04",
+                    "Mei": "05",
+                    "Juni": "06",
+                    "Juli": "07",
+                    "Agustus": "08",
+                    "September": "09",
+                    "Oktober": "10",
+                    "November": "11",
+                    "Desember": "12"
+                };
+
+                data.monthlySummary.forEach(row => {
+                    const profitUsc = parseFloat(row.profit_usc);
+                    const growthVal = parseFloat(row.growth) * 100;
                     
-                    // Sum from cashflowRows
-                    const monthlyCashflow = data.cashflowRows.filter(r => r.tanggal.startsWith(prefix));
-                    depIdr = monthlyCashflow.filter(r => r.tipe.toLowerCase() === 'deposit').reduce((sum, r) => sum + r.nominal_idr, 0);
-                    depUsc = monthlyCashflow.filter(r => r.tipe.toLowerCase() === 'deposit').reduce((sum, r) => sum + r.nominal_usc, 0);
-                    wdIdr = monthlyCashflow.filter(r => r.tipe.toLowerCase() === 'withdraw').reduce((sum, r) => sum + r.nominal_idr, 0);
-                    wdUsc = monthlyCashflow.filter(r => r.tipe.toLowerCase() === 'withdraw').reduce((sum, r) => sum + r.nominal_usc, 0);
-                    serverIdr = monthlyCashflow.filter(r => r.tipe.toLowerCase().includes('server') || r.tipe.toLowerCase().includes('cost')).reduce((sum, r) => sum + r.nominal_idr, 0);
+                    // Dynamically sum manual values directly from Arus Kas (no conversion)
+                    let depIdr = 0;
+                    let depUsc = 0;
+                    let wdIdr = 0;
+                    let wdUsc = 0;
+                    let serverIdr = 0;
+                    let profitIdr = 0;
                     
-                    if (row.profit_usc !== 0) {
-                        profitIdr = (row.profit_usc / 100) * currentKurs;
-                    }
-                } else {
-                    // For TOTAL row: sum the calculated values of all other rows
-                    data.monthlySummary.filter(r => r.bulan !== 'TOTAL').forEach(r => {
-                        const parts = r.bulan.split(' ');
+                    if (row.bulan !== 'TOTAL') {
+                        const parts = row.bulan.split(' ');
                         const monthName = parts[0];
                         const yearNum = parts[1];
                         const monthNum = monthMap[monthName] || '00';
                         const prefix = `${yearNum}-${monthNum}`;
                         
-                        const monthlyCashflow = data.cashflowRows.filter(c => c.tanggal.startsWith(prefix));
-                        depIdr += monthlyCashflow.filter(c => c.tipe.toLowerCase() === 'deposit').reduce((sum, c) => sum + c.nominal_idr, 0);
-                        depUsc += monthlyCashflow.filter(c => c.tipe.toLowerCase() === 'deposit').reduce((sum, c) => sum + c.nominal_usc, 0);
-                        wdIdr += monthlyCashflow.filter(c => c.tipe.toLowerCase() === 'withdraw').reduce((sum, c) => sum + c.nominal_idr, 0);
-                        wdUsc += monthlyCashflow.filter(c => c.tipe.toLowerCase() === 'withdraw').reduce((sum, c) => sum + c.nominal_usc, 0);
-                        serverIdr += monthlyCashflow.filter(c => c.tipe.toLowerCase().includes('server') || c.tipe.toLowerCase().includes('cost')).reduce((sum, c) => sum + c.nominal_idr, 0);
-                    });
+                        // Sum from cashflowRows
+                        const monthlyCashflow = data.cashflowRows.filter(r => r.tanggal.startsWith(prefix));
+                        depIdr = monthlyCashflow.filter(r => r.tipe.toLowerCase() === 'deposit').reduce((sum, r) => sum + r.nominal_idr, 0);
+                        depUsc = monthlyCashflow.filter(r => r.tipe.toLowerCase() === 'deposit').reduce((sum, r) => sum + r.nominal_usc, 0);
+                        wdIdr = monthlyCashflow.filter(r => r.tipe.toLowerCase() === 'withdraw').reduce((sum, r) => sum + r.nominal_idr, 0);
+                        wdUsc = monthlyCashflow.filter(r => r.tipe.toLowerCase() === 'withdraw').reduce((sum, r) => sum + r.nominal_usc, 0);
+                        serverIdr = monthlyCashflow.filter(r => r.tipe.toLowerCase().includes('server') || r.tipe.toLowerCase().includes('cost')).reduce((sum, r) => sum + r.nominal_idr, 0);
+                        
+                        if (row.profit_usc !== 0) {
+                            profitIdr = (row.profit_usc / 100) * currentKurs;
+                        }
+                    } else {
+                        // For TOTAL row: sum the calculated values of all other rows
+                        data.monthlySummary.filter(r => r.bulan !== 'TOTAL').forEach(r => {
+                            const parts = r.bulan.split(' ');
+                            const monthName = parts[0];
+                            const yearNum = parts[1];
+                            const monthNum = monthMap[monthName] || '00';
+                            const prefix = `${yearNum}-${monthNum}`;
+                            
+                            const monthlyCashflow = data.cashflowRows.filter(c => c.tanggal.startsWith(prefix));
+                            depIdr += monthlyCashflow.filter(c => c.tipe.toLowerCase() === 'deposit').reduce((sum, c) => sum + c.nominal_idr, 0);
+                            depUsc += monthlyCashflow.filter(c => c.tipe.toLowerCase() === 'deposit').reduce((sum, c) => sum + c.nominal_usc, 0);
+                            wdIdr += monthlyCashflow.filter(c => c.tipe.toLowerCase() === 'withdraw').reduce((sum, c) => sum + c.nominal_idr, 0);
+                            wdUsc += monthlyCashflow.filter(c => c.tipe.toLowerCase() === 'withdraw').reduce((sum, c) => sum + c.nominal_usc, 0);
+                            serverIdr += monthlyCashflow.filter(c => c.tipe.toLowerCase().includes('server') || c.tipe.toLowerCase().includes('cost')).reduce((sum, c) => sum + c.nominal_idr, 0);
+                        });
+                        
+                        profitIdr = (data.kpis.total_trading_profit_usc / 100) * currentKurs;
+                    }
                     
-                    profitIdr = (data.kpis.total_trading_profit_usc / 100) * currentKurs;
-                }
-                
-                let profitClass = '';
-                let profitSign = '';
-                if (profitUsc > 0) {
-                    profitClass = 'profit-text';
-                    profitSign = '+';
-                } else if (profitUsc < 0) {
-                    profitClass = 'loss-text';
-                    profitSign = '';
-                }
+                    let profitClass = '';
+                    let profitSign = '';
+                    if (profitUsc > 0) {
+                        profitClass = 'profit-text';
+                        profitSign = '+';
+                    } else if (profitUsc < 0) {
+                        profitClass = 'loss-text';
+                        profitSign = '';
+                    }
 
-                let idrClass = '';
-                let idrSign = '';
-                if (profitIdr > 0) {
-                    idrClass = 'profit-text';
-                    idrSign = '+';
-                } else if (profitIdr < 0) {
-                    idrClass = 'loss-text';
-                    idrSign = '';
-                }
+                    let idrClass = '';
+                    let idrSign = '';
+                    if (profitIdr > 0) {
+                        idrClass = 'profit-text';
+                        idrSign = '+';
+                    } else if (profitIdr < 0) {
+                        idrClass = 'loss-text';
+                        idrSign = '';
+                    }
 
-                let growthClass = '';
-                let growthSign = '';
-                if (growthVal > 0) {
-                    growthClass = 'profit-text';
-                    growthSign = '+';
-                } else if (growthVal < 0) {
-                    growthClass = 'loss-text';
-                    growthSign = '';
-                }
+                    let growthClass = '';
+                    let growthSign = '';
+                    if (growthVal > 0) {
+                        growthClass = 'profit-text';
+                        growthSign = '+';
+                    } else if (growthVal < 0) {
+                        growthClass = 'loss-text';
+                        growthSign = '';
+                    }
 
-                // Determine row class (dimmed if month is inactive, total-row if it's the TOTAL row)
-                let trClass = '';
-                if (row.bulan === 'TOTAL') {
-                    trClass = 'total-row';
-                } else if (depIdr === 0 && wdIdr === 0 && serverIdr === 0 && profitUsc === 0) {
-                    trClass = 'dimmed-row';
-                }
+                    // Determine row class (dimmed if month is inactive, total-row if it's the TOTAL row)
+                    let trClass = '';
+                    if (row.bulan === 'TOTAL') {
+                        trClass = 'total-row';
+                    } else if (depIdr === 0 && wdIdr === 0 && serverIdr === 0 && profitUsc === 0) {
+                        trClass = 'dimmed-row';
+                    }
 
-                let growthBadgeClass = 'growth-zero';
-                if (growthVal > 0) {
-                    growthBadgeClass = 'growth-positive';
-                } else if (growthVal < 0) {
-                    growthBadgeClass = 'growth-negative';
-                }
+                    let growthBadgeClass = 'growth-zero';
+                    if (growthVal > 0) {
+                        growthBadgeClass = 'growth-positive';
+                    } else if (growthVal < 0) {
+                        growthBadgeClass = 'growth-negative';
+                    }
 
-                monthlyHtml += `
-                    <tr class="${trClass}">
-                        <td><strong>${row.bulan}</strong></td>
-                        <td class="col-group-deposit">${formatRupiah(depIdr)}</td>
-                        <td class="col-group-deposit">${formatDecimal(depUsc)}</td>
-                        <td class="col-group-withdraw">${formatRupiah(wdIdr)}</td>
-                        <td class="col-group-withdraw">${formatDecimal(wdUsc)}</td>
-                        <td class="col-group-server">${formatRupiah(serverIdr)}</td>
-                        <td class="col-group-profit ${profitClass}">${profitSign}${formatDecimal(row.profit_usc)}</td>
-                        <td class="col-group-profit ${idrClass}">${idrSign}${formatRupiah(profitIdr)}</td>
-                        <td>
-                            <span class="growth-badge ${growthBadgeClass}">
-                                ${growthSign}${growthVal.toFixed(2)}%
-                            </span>
-                        </td>
-                    </tr>
-                `;
-            });
-            monthlyBody.innerHTML = monthlyHtml;
+                    monthlyHtml += `
+                        <tr class="${trClass}">
+                            <td><strong>${row.bulan}</strong></td>
+                            <td class="col-group-deposit">${formatRupiah(depIdr)}</td>
+                            <td class="col-group-deposit">${formatDecimal(depUsc)}</td>
+                            <td class="col-group-withdraw">${formatRupiah(wdIdr)}</td>
+                            <td class="col-group-withdraw">${formatDecimal(wdUsc)}</td>
+                            <td class="col-group-server">${formatRupiah(serverIdr)}</td>
+                            <td class="col-group-profit ${profitClass}">${profitSign}${formatDecimal(row.profit_usc)}</td>
+                            <td class="col-group-profit ${idrClass}">${idrSign}${formatRupiah(profitIdr)}</td>
+                            <td>
+                                <span class="growth-badge ${growthBadgeClass}">
+                                    ${growthSign}${growthVal.toFixed(2)}%
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+                });
+                monthlyBody.innerHTML = monthlyHtml;
+            }
 
             // 3. Populate Cashflow & Journal tables initially
             renderCashflow();
@@ -1984,7 +2023,12 @@
                     </tr>
                 `;
             });
-            body.innerHTML = html || '<tr><td colspan="5" style="text-align:center; color:var(--text-secondary);">Tidak ada data kas ditemukan</td></tr>';
+            const statusText = document.getElementById('sync-text');
+            const isLoading = statusText && statusText.innerText.includes('Menghubungkan');
+            const fallbackMessage = isLoading
+                ? '<tr><td colspan="5" style="text-align:center; color:var(--text-secondary); padding: 1.5rem;">Memuat data dari Google Sheets...</td></tr>'
+                : '<tr><td colspan="5" style="text-align:center; color:var(--text-secondary);">Tidak ada data kas ditemukan</td></tr>';
+            body.innerHTML = html || fallbackMessage;
         }
 
         function filterCashflow() {
@@ -2071,16 +2115,27 @@
                     </tr>
                 `;
             });
-            body.innerHTML = html || '<tr><td colspan="5" style="text-align:center; color:var(--text-secondary);">Tidak ada data jurnal ditemukan</td></tr>';
+            const statusText = document.getElementById('sync-text');
+            const isLoading = statusText && statusText.innerText.includes('Menghubungkan');
+            const fallbackMessage = isLoading
+                ? '<tr><td colspan="5" style="text-align:center; color:var(--text-secondary); padding: 1.5rem;">Memuat data dari Google Sheets...</td></tr>'
+                : '<tr><td colspan="5" style="text-align:center; color:var(--text-secondary);">Tidak ada data jurnal ditemukan</td></tr>';
+            body.innerHTML = html || fallbackMessage;
         }
 
         function filterJournal() {
             renderJournal();
         }
 
-        // Touch Swiping handler for Mobile Tab Navigation
+        // Touch Swiping and Dragging handler for Mobile Tab Navigation
         let touchStartX = 0;
         let touchStartY = 0;
+        let touchDeltaX = 0;
+        let isDragging = false;
+        let activePanel = null;
+        let scrollableAncestor = null;
+        let currentTab = 'dashboard';
+        const tabs = ['dashboard', 'cashflow', 'journal'];
 
         function switchTabByName(tabName) {
             const btn = document.querySelector(`.nav-tab[onclick*="${tabName}"]`);
@@ -2089,72 +2144,137 @@
             }
         }
 
+        // Helper to find scrollable horizontal parent
+        function findScrollableAncestor(element) {
+            let current = element;
+            while (current && current !== document.body) {
+                const style = window.getComputedStyle(current);
+                const overflowX = style.overflowX;
+                if ((overflowX === 'auto' || overflowX === 'scroll') && current.scrollWidth > current.clientWidth) {
+                    return current;
+                }
+                current = current.parentElement;
+            }
+            return null;
+        }
+
         document.addEventListener('touchstart', function(e) {
             if (window.innerWidth > 768) return;
+            
             touchStartX = e.touches[0].clientX;
             touchStartY = e.touches[0].clientY;
+            touchDeltaX = 0;
+            isDragging = false;
+            
+            // Determine active panel
+            activePanel = document.querySelector('.tab-panel.active');
+            if (activePanel) {
+                activePanel.style.transition = 'none';
+            }
+            
+            // Determine current active tab
+            tabs.forEach(t => {
+                const panel = document.getElementById('panel-' + t);
+                if (panel && panel.classList.contains('active')) {
+                    currentTab = t;
+                }
+            });
+            
+            scrollableAncestor = findScrollableAncestor(e.target);
         }, { passive: true });
 
-        document.addEventListener('touchend', function(e) {
-            if (window.innerWidth > 768) return;
+        document.addEventListener('touchmove', function(e) {
+            if (window.innerWidth > 768 || !activePanel) return;
             
-            const touchEndX = e.changedTouches[0].clientX;
-            const touchEndY = e.changedTouches[0].clientY;
+            const currentX = e.touches[0].clientX;
+            const currentY = e.touches[0].clientY;
             
-            const diffX = touchEndX - touchStartX;
-            const diffY = touchEndY - touchStartY;
+            touchDeltaX = currentX - touchStartX;
+            const touchDeltaY = currentY - touchStartY;
             
-            const threshold = 70; // minimum swipe distance
-            
-            // Must be predominantly horizontal swipe
-            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > threshold) {
-                // Find if touch started inside any element that can scroll horizontally (like table card-body)
-                let scrollableAncestor = null;
-                let currentElement = e.target;
-                while (currentElement && currentElement !== document.body) {
-                    const style = window.getComputedStyle(currentElement);
-                    const overflowX = style.overflowX;
-                    if ((overflowX === 'auto' || overflowX === 'scroll') && currentElement.scrollWidth > currentElement.clientWidth) {
-                        scrollableAncestor = currentElement;
-                        break;
-                    }
-                    currentElement = currentElement.parentElement;
+            // Detect if horizontal swipe is dominant to start dragging
+            if (!isDragging) {
+                if (Math.abs(touchDeltaX) > 10 && Math.abs(touchDeltaX) > Math.abs(touchDeltaY)) {
+                    isDragging = true;
                 }
-                
-                // Determine active tab index
-                const tabs = ['dashboard', 'cashflow', 'journal'];
-                let currentTab = 'dashboard';
-                tabs.forEach(t => {
-                    const panel = document.getElementById('panel-' + t);
-                    if (panel && panel.classList.contains('active')) {
-                        currentTab = t;
-                    }
-                });
-                
+            }
+            
+            if (isDragging) {
+                // Check if target swipe direction can be navigated
+                let canSwitch = true;
                 const currentIndex = tabs.indexOf(currentTab);
                 
-                if (diffX < 0) { // Swipe Left -> Next Tab
-                    let canSwitch = true;
+                if (touchDeltaX < 0) { // swiping left -> next tab
                     if (scrollableAncestor) {
-                        // Switch tab only if horizontal scroll has reached the right boundary
                         const isAtRightEdge = scrollableAncestor.scrollLeft + scrollableAncestor.clientWidth >= scrollableAncestor.scrollWidth - 15;
                         if (!isAtRightEdge) canSwitch = false;
                     }
-                    if (canSwitch && currentIndex < tabs.length - 1) {
-                        switchTabByName(tabs[currentIndex + 1]);
+                    if (currentIndex >= tabs.length - 1) {
+                        canSwitch = false; // no next tab
                     }
-                } else { // Swipe Right -> Previous Tab
-                    let canSwitch = true;
+                } else { // swiping right -> prev tab
                     if (scrollableAncestor) {
-                        // Switch tab only if horizontal scroll has reached the left boundary
                         const isAtLeftEdge = scrollableAncestor.scrollLeft <= 15;
                         if (!isAtLeftEdge) canSwitch = false;
                     }
-                    if (canSwitch && currentIndex > 0) {
-                        switchTabByName(tabs[currentIndex - 1]);
+                    if (currentIndex <= 0) {
+                        canSwitch = false; // no prev tab
                     }
                 }
+                
+                if (canSwitch) {
+                    // Translate active card panel in real-time
+                    activePanel.style.transform = `translateX(${touchDeltaX}px)`;
+                    
+                    // Prevent default vertical window scroll while dragging horizontally
+                    if (e.cancelable) {
+                        e.preventDefault();
+                    }
+                } else {
+                    touchDeltaX = 0;
+                }
             }
+        }, { passive: false });
+
+        document.addEventListener('touchend', function(e) {
+            if (window.innerWidth > 768 || !activePanel) return;
+            
+            if (isDragging) {
+                const threshold = 70; // minimum drag distance
+                const currentIndex = tabs.indexOf(currentTab);
+                
+                // Add smooth snapping transition back
+                activePanel.style.transition = 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)';
+                
+                if (Math.abs(touchDeltaX) > threshold) {
+                    if (touchDeltaX < 0 && currentIndex < tabs.length - 1) {
+                        // Switch to next tab
+                        switchTabByName(tabs[currentIndex + 1]);
+                    } else if (touchDeltaX > 0 && currentIndex > 0) {
+                        // Switch to prev tab
+                        switchTabByName(tabs[currentIndex - 1]);
+                    } else {
+                        // Snap back
+                        activePanel.style.transform = 'translateX(0)';
+                    }
+                } else {
+                    // Snap back
+                    activePanel.style.transform = 'translateX(0)';
+                }
+                
+                // Cleanup inline styles after snapping is complete
+                const currentPanel = activePanel;
+                setTimeout(() => {
+                    if (currentPanel) {
+                        currentPanel.style.transform = '';
+                        currentPanel.style.transition = '';
+                    }
+                }, 250);
+            }
+            
+            // Reset
+            isDragging = false;
+            activePanel = null;
         }, { passive: true });
     </script>
 </body>
