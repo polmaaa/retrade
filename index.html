@@ -376,6 +376,22 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        @keyframes slideFromRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideFromLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .slide-from-right {
+            animation: slideFromRight 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+        .slide-from-left {
+            animation: slideFromLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+
         /* Card Container */
         .card {
             background-color: var(--surface-color);
@@ -1126,12 +1142,36 @@
 
         // Active tab switching
         function switchTab(tabName, btnElement) {
-            // Hide all tab panels
-            document.querySelectorAll('.tab-panel').forEach(panel => {
-                panel.classList.remove('active');
+            const tabs = ['dashboard', 'cashflow', 'journal'];
+            
+            // Find current active tab panel index to determine slide direction
+            let prevIndex = -1;
+            tabs.forEach((t, idx) => {
+                const p = document.getElementById('panel-' + t);
+                if (p && p.classList.contains('active')) {
+                    prevIndex = idx;
+                }
             });
-            // Show target panel
-            document.getElementById('panel-' + tabName).classList.add('active');
+            
+            const nextIndex = tabs.indexOf(tabName);
+            
+            // Hide all tab panels and clean up transition classes
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.remove('active', 'slide-from-right', 'slide-from-left');
+            });
+            
+            // Show target panel and apply slide direction animation
+            const targetPanel = document.getElementById('panel-' + tabName);
+            if (targetPanel) {
+                targetPanel.classList.add('active');
+                if (prevIndex !== -1 && prevIndex !== nextIndex) {
+                    if (nextIndex > prevIndex) {
+                        targetPanel.classList.add('slide-from-right');
+                    } else {
+                        targetPanel.classList.add('slide-from-left');
+                    }
+                }
+            }
             
             // Remove active class from all nav buttons
             document.querySelectorAll('.nav-tab').forEach(btn => {
@@ -2037,6 +2077,85 @@
         function filterJournal() {
             renderJournal();
         }
+
+        // Touch Swiping handler for Mobile Tab Navigation
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        function switchTabByName(tabName) {
+            const btn = document.querySelector(`.nav-tab[onclick*="${tabName}"]`);
+            if (btn) {
+                switchTab(tabName, btn);
+            }
+        }
+
+        document.addEventListener('touchstart', function(e) {
+            if (window.innerWidth > 768) return;
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        document.addEventListener('touchend', function(e) {
+            if (window.innerWidth > 768) return;
+            
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            
+            const diffX = touchEndX - touchStartX;
+            const diffY = touchEndY - touchStartY;
+            
+            const threshold = 70; // minimum swipe distance
+            
+            // Must be predominantly horizontal swipe
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > threshold) {
+                // Find if touch started inside any element that can scroll horizontally (like table card-body)
+                let scrollableAncestor = null;
+                let currentElement = e.target;
+                while (currentElement && currentElement !== document.body) {
+                    const style = window.getComputedStyle(currentElement);
+                    const overflowX = style.overflowX;
+                    if ((overflowX === 'auto' || overflowX === 'scroll') && currentElement.scrollWidth > currentElement.clientWidth) {
+                        scrollableAncestor = currentElement;
+                        break;
+                    }
+                    currentElement = currentElement.parentElement;
+                }
+                
+                // Determine active tab index
+                const tabs = ['dashboard', 'cashflow', 'journal'];
+                let currentTab = 'dashboard';
+                tabs.forEach(t => {
+                    const panel = document.getElementById('panel-' + t);
+                    if (panel && panel.classList.contains('active')) {
+                        currentTab = t;
+                    }
+                });
+                
+                const currentIndex = tabs.indexOf(currentTab);
+                
+                if (diffX < 0) { // Swipe Left -> Next Tab
+                    let canSwitch = true;
+                    if (scrollableAncestor) {
+                        // Switch tab only if horizontal scroll has reached the right boundary
+                        const isAtRightEdge = scrollableAncestor.scrollLeft + scrollableAncestor.clientWidth >= scrollableAncestor.scrollWidth - 15;
+                        if (!isAtRightEdge) canSwitch = false;
+                    }
+                    if (canSwitch && currentIndex < tabs.length - 1) {
+                        switchTabByName(tabs[currentIndex + 1]);
+                    }
+                } else { // Swipe Right -> Previous Tab
+                    let canSwitch = true;
+                    if (scrollableAncestor) {
+                        // Switch tab only if horizontal scroll has reached the left boundary
+                        const isAtLeftEdge = scrollableAncestor.scrollLeft <= 15;
+                        if (!isAtLeftEdge) canSwitch = false;
+                    }
+                    if (canSwitch && currentIndex > 0) {
+                        switchTabByName(tabs[currentIndex - 1]);
+                    }
+                }
+            }
+        }, { passive: true });
     </script>
 </body>
 </html>
