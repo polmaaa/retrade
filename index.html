@@ -250,6 +250,14 @@
         }
 
         /* Top Info & KPI Stat Cards */
+        .today-profit-mobile-label {
+            display: none;
+        }
+
+        .kpi-toggle-container {
+            display: none;
+        }
+
         .top-info-bar {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -261,7 +269,7 @@
             background: #ffffff;
             border: 1px solid var(--border);
             border-radius: 6px;
-            padding: 7px 12px;
+            padding: 8px 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -270,6 +278,7 @@
             cursor: default;
             user-select: none;
             position: relative;
+            min-width: 0;
         }
 
         .stat-card:hover {
@@ -278,45 +287,63 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
         }
 
+        .stat-card-info {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .stat-val-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
         .stat-label {
             font-size: 0.67rem;
             font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.03em;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .stat-val {
-            font-size: 1.15rem;
+            font-size: 1.05rem;
             font-weight: 700;
             color: var(--text);
-            margin-top: 1px;
-            line-height: 1.1;
+            margin-top: 2px;
+            line-height: 1.2;
             font-family: 'Plus Jakarta Sans', sans-serif;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .table-meta-text {
             font-size: 0.72rem;
             color: var(--text-muted);
-            font-weight: 500;
+            font-weight: 600;
             font-family: 'Consolas', monospace;
             margin-top: 1px;
         }
 
         .stat-icon {
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.95rem;
             flex-shrink: 0;
+            margin-left: 6px;
         }
 
         .stat-icon svg, .stat-icon i {
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
         }
 
         .icon-teal { background-color: var(--primary-light); color: var(--primary); border: 1px solid var(--primary-border); }
@@ -752,6 +779,10 @@
                 border-radius: 0 !important;
                 box-shadow: none !important;
                 background: transparent !important;
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                align-items: center !important;
             }
             .stat-card:last-child {
                 border-bottom: none !important;
@@ -759,11 +790,18 @@
             .stat-card .stat-icon {
                 display: none !important;
             }
-            .stat-card .kpi-card-content {
+            .stat-card .stat-card-info {
+                display: flex !important;
                 flex-direction: row !important;
                 justify-content: space-between !important;
                 align-items: center !important;
                 width: 100% !important;
+            }
+            .stat-card .stat-val-group {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: flex-end !important;
+                text-align: right !important;
             }
             .stat-card .stat-val {
                 font-size: 0.95rem !important;
@@ -1503,178 +1541,171 @@
             const kpiContainer = document.getElementById('kpi-container');
             
             kpiContainer.innerHTML = `
-                <div class="kpi-card">
-                    <div class="kpi-card-content">
-                        <div class="kpi-header">
-                            <span class="kpi-title-wrapper" style="position: relative; display: inline-flex; align-items: center; gap: 0.35rem;">
-                                Modal
-                                <i data-lucide="info" class="kpi-info-trigger" onclick="toggleKpiTooltip('modal', event)"></i>
-                                <div class="kpi-tooltip" id="tooltip-modal">
-                                    <div class="kpi-tooltip-title">
-                                        <span>Modal</span>
-                                        <span class="kpi-tooltip-badge">Info</span>
-                                    </div>
-                                    <div class="kpi-tooltip-label">
-                                        <i data-lucide="info" style="width: 10px; height: 10px; display: inline-block; vertical-align: middle;"></i> Detail Informasi:
-                                    </div>
-                                    <div class="kpi-tooltip-text">
-                                        Akumulasi modal deposit awal ditambah modal biaya server untuk rupiah, sedangkan untuk USC hanya modal deposit saja.
-                                    </div>
+                <div class="stat-card">
+                    <div class="stat-card-info">
+                        <div class="stat-label">
+                            <span>Modal</span>
+                            <i data-lucide="info" class="kpi-info-trigger" onclick="toggleKpiTooltip('modal', event)"></i>
+                            <div class="kpi-tooltip" id="tooltip-modal">
+                                <div class="kpi-tooltip-title">
+                                    <span>Modal</span>
+                                    <span class="kpi-tooltip-badge">Info</span>
                                 </div>
-                            </span>
-                            <div class="kpi-icon-wrapper modal">
-                                <i data-lucide="arrow-down-left"></i>
+                                <div class="kpi-tooltip-label">
+                                    <i data-lucide="info" style="width: 10px; height: 10px; display: inline-block; vertical-align: middle;"></i> Detail Informasi:
+                                </div>
+                                <div class="kpi-tooltip-text">
+                                    Akumulasi modal deposit awal ditambah modal biaya server untuk rupiah, sedangkan untuk USC hanya modal deposit saja.
+                                </div>
                             </div>
                         </div>
-                        <div class="kpi-values">
-                            <div class="kpi-value-idr">${formatRupiah(total_modal_idr)}</div>
-                            <div class="kpi-value-usc">${formatDecimal(total_modal_usc)} USC</div>
+                        <div class="stat-val-group">
+                            <div class="stat-val">${formatRupiah(total_modal_idr)}</div>
+                            <div class="table-meta-text">${formatDecimal(total_modal_usc)} USC</div>
                         </div>
                     </div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-card-content">
-                        <div class="kpi-header">
-                            <span class="kpi-title-wrapper" style="position: relative; display: inline-flex; align-items: center; gap: 0.35rem;">
-                                Total Saldo
-                                <i data-lucide="info" class="kpi-info-trigger" onclick="toggleKpiTooltip('total-saldo', event)"></i>
-                                <div class="kpi-tooltip" id="tooltip-total-saldo">
-                                    <div class="kpi-tooltip-title">
-                                        <span>Total Saldo</span>
-                                        <span class="kpi-tooltip-badge">Info</span>
-                                    </div>
-                                    <div class="kpi-tooltip-label">
-                                        <i data-lucide="info" style="width: 10px; height: 10px; display: inline-block; vertical-align: middle;"></i> Detail Informasi:
-                                    </div>
-                                    <div class="kpi-tooltip-text">
-                                        Hasil penjumlahan kumulatif dari seluruh modal deposit, saldo akun trading saat ini, serta total dana yang telah ditarik (withdraw).
-                                    </div>
-                                </div>
-                            </span>
-                            <div class="kpi-icon-wrapper saldo">
-                                <i data-lucide="wallet"></i>
-                            </div>
-                        </div>
-                        <div class="kpi-values">
-                            <div class="kpi-value-idr">${formatRupiah(total_saldo_keseluruhan_idr)}</div>
-                            <div class="kpi-value-usc">${formatDecimal(total_saldo_keseluruhan_usc)} USC</div>
-                        </div>
+                    <div class="stat-icon icon-teal">
+                        <i data-lucide="arrow-down-left"></i>
                     </div>
                 </div>
-                <div class="kpi-card">
-                    <div class="kpi-card-content">
-                        <div class="kpi-header">
-                            <span class="kpi-title-wrapper" style="position: relative; display: inline-flex; align-items: center; gap: 0.35rem;">
-                                Saldo Saat Ini
-                                <i data-lucide="info" class="kpi-info-trigger" onclick="toggleKpiTooltip('saldo-saat-ini', event)"></i>
-                                <div class="kpi-tooltip" id="tooltip-saldo-saat-ini">
-                                    <div class="kpi-tooltip-title">
-                                        <span>Saldo Saat Ini</span>
-                                        <span class="kpi-tooltip-badge">Info</span>
-                                    </div>
-                                    <div class="kpi-tooltip-label">
-                                        <i data-lucide="info" style="width: 10px; height: 10px; display: inline-block; vertical-align: middle;"></i> Detail Informasi:
-                                    </div>
-                                    <div class="kpi-tooltip-text">
-                                        Sisa saldo berjalan yang ada pada akun trading aktif saat ini (Deposit awal ditambah Trading Profit dikurangi total Withdraw).
-                                    </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-info">
+                        <div class="stat-label">
+                            <span>Total Saldo</span>
+                            <i data-lucide="info" class="kpi-info-trigger" onclick="toggleKpiTooltip('total-saldo', event)"></i>
+                            <div class="kpi-tooltip" id="tooltip-total-saldo">
+                                <div class="kpi-tooltip-title">
+                                    <span>Total Saldo</span>
+                                    <span class="kpi-tooltip-badge">Info</span>
                                 </div>
-                            </span>
-                            <div class="kpi-icon-wrapper mt5">
-                                <i data-lucide="credit-card"></i>
+                                <div class="kpi-tooltip-label">
+                                    <i data-lucide="info" style="width: 10px; height: 10px; display: inline-block; vertical-align: middle;"></i> Detail Informasi:
+                                </div>
+                                <div class="kpi-tooltip-text">
+                                    Hasil penjumlahan kumulatif dari seluruh modal deposit, saldo akun trading saat ini, serta total dana yang telah ditarik (withdraw).
+                                </div>
                             </div>
                         </div>
-                        <div class="kpi-values">
-                            <div class="kpi-value-idr">${formatRupiah(saldo_saat_ini_idr)}</div>
-                            <div class="kpi-value-usc">${formatDecimal(saldo_saat_ini_usc)} USC</div>
+                        <div class="stat-val-group">
+                            <div class="stat-val">${formatRupiah(total_saldo_keseluruhan_idr)}</div>
+                            <div class="table-meta-text">${formatDecimal(total_saldo_keseluruhan_usc)} USC</div>
                         </div>
                     </div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-card-content">
-                        <div class="kpi-header">
-                            <span class="kpi-title-wrapper" style="position: relative; display: inline-flex; align-items: center; gap: 0.35rem;">
-                                Trading Profit
-                                <i data-lucide="info" class="kpi-info-trigger" onclick="toggleKpiTooltip('trading-profit', event)"></i>
-                                <div class="kpi-tooltip" id="tooltip-trading-profit">
-                                    <div class="kpi-tooltip-title">
-                                        <span>Trading Profit</span>
-                                        <span class="kpi-tooltip-badge">Info</span>
-                                    </div>
-                                    <div class="kpi-tooltip-label">
-                                        <i data-lucide="info" style="width: 10px; height: 10px; display: inline-block; vertical-align: middle;"></i> Detail Informasi:
-                                    </div>
-                                    <div class="kpi-tooltip-text">
-                                        Akumulasi seluruh hasil laba/rugi bersih (net profit) yang didapatkan dari riwayat transaksi perdagangan pada Metatrader.
-                                    </div>
-                                </div>
-                            </span>
-                            <div class="kpi-icon-wrapper profit">
-                                <i data-lucide="trending-up"></i>
-                            </div>
-                        </div>
-                        <div class="kpi-values">
-                            <div class="kpi-value-idr">${formatRupiah(total_trading_profit_idr)}</div>
-                            <div class="kpi-value-usc">${formatDecimal(total_trading_profit_usc)} USC</div>
-                        </div>
+                    <div class="stat-icon icon-sky">
+                        <i data-lucide="wallet"></i>
                     </div>
                 </div>
-                <div class="kpi-card">
-                    <div class="kpi-card-content">
-                        <div class="kpi-header">
-                            <span class="kpi-title-wrapper" style="position: relative; display: inline-flex; align-items: center; gap: 0.35rem;">
-                                Withdraw
-                                <i data-lucide="info" class="kpi-info-trigger" onclick="toggleKpiTooltip('withdraw', event)"></i>
-                                <div class="kpi-tooltip" id="tooltip-withdraw">
-                                    <div class="kpi-tooltip-title">
-                                        <span>Withdraw</span>
-                                        <span class="kpi-tooltip-badge">Info</span>
-                                    </div>
-                                    <div class="kpi-tooltip-label">
-                                        <i data-lucide="info" style="width: 10px; height: 10px; display: inline-block; vertical-align: middle;"></i> Detail Informasi:
-                                    </div>
-                                    <div class="kpi-tooltip-text">
-                                        Total penarikan dana keluar dari akun trading Metatrader yang telah masuk kembali ke rekening tabungan personal.
-                                    </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-info">
+                        <div class="stat-label">
+                            <span>Saldo Saat Ini</span>
+                            <i data-lucide="info" class="kpi-info-trigger" onclick="toggleKpiTooltip('saldo-saat-ini', event)"></i>
+                            <div class="kpi-tooltip" id="tooltip-saldo-saat-ini">
+                                <div class="kpi-tooltip-title">
+                                    <span>Saldo Saat Ini</span>
+                                    <span class="kpi-tooltip-badge">Info</span>
                                 </div>
-                            </span>
-                            <div class="kpi-icon-wrapper wd">
-                                <i data-lucide="arrow-up-right"></i>
+                                <div class="kpi-tooltip-label">
+                                    <i data-lucide="info" style="width: 10px; height: 10px; display: inline-block; vertical-align: middle;"></i> Detail Informasi:
+                                </div>
+                                <div class="kpi-tooltip-text">
+                                    Sisa saldo berjalan yang ada pada akun trading aktif saat ini (Deposit awal ditambah Trading Profit dikurangi total Withdraw).
+                                </div>
                             </div>
                         </div>
-                        <div class="kpi-values">
-                            <div class="kpi-value-idr">${formatRupiah(total_withdraw_idr)}</div>
-                            <div class="kpi-value-usc">${formatDecimal(total_withdraw_usc)} USC</div>
+                        <div class="stat-val-group">
+                            <div class="stat-val">${formatRupiah(saldo_saat_ini_idr)}</div>
+                            <div class="table-meta-text">${formatDecimal(saldo_saat_ini_usc)} USC</div>
                         </div>
                     </div>
+                    <div class="stat-icon icon-purple">
+                        <i data-lucide="credit-card"></i>
+                    </div>
                 </div>
-                <div class="kpi-card">
-                    <div class="kpi-card-content">
-                        <div class="kpi-header">
-                            <span class="kpi-title-wrapper" style="position: relative; display: inline-flex; align-items: center; gap: 0.35rem;">
-                                Est. Saldo Bersih
-                                <i data-lucide="info" class="kpi-info-trigger" onclick="toggleKpiTooltip('est-saldo-bersih', event)"></i>
-                                <div class="kpi-tooltip" id="tooltip-est-saldo-bersih">
-                                    <div class="kpi-tooltip-title">
-                                        <span>Est. Saldo Bersih</span>
-                                        <span class="kpi-tooltip-badge">Info</span>
-                                    </div>
-                                    <div class="kpi-tooltip-label">
-                                        <i data-lucide="info" style="width: 10px; height: 10px; display: inline-block; vertical-align: middle;"></i> Detail Informasi:
-                                    </div>
-                                    <div class="kpi-tooltip-text">
-                                        Estimasi keuntungan bersih riil yang tersisa dihitung dari total saldo keseluruhan dikurangi total penarikan dan saldo modal awal.
-                                    </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-info">
+                        <div class="stat-label">
+                            <span>Trading Profit</span>
+                            <i data-lucide="info" class="kpi-info-trigger" onclick="toggleKpiTooltip('trading-profit', event)"></i>
+                            <div class="kpi-tooltip" id="tooltip-trading-profit">
+                                <div class="kpi-tooltip-title">
+                                    <span>Trading Profit</span>
+                                    <span class="kpi-tooltip-badge">Info</span>
                                 </div>
-                            </span>
-                            <div class="kpi-icon-wrapper saldo">
-                                <i data-lucide="coins"></i>
+                                <div class="kpi-tooltip-label">
+                                    <i data-lucide="info" style="width: 10px; height: 10px; display: inline-block; vertical-align: middle;"></i> Detail Informasi:
+                                </div>
+                                <div class="kpi-tooltip-text">
+                                    Akumulasi seluruh hasil laba/rugi bersih (net profit) yang didapatkan dari riwayat transaksi perdagangan pada Metatrader.
+                                </div>
                             </div>
                         </div>
-                        <div class="kpi-values">
-                            <div class="kpi-value-idr">${formatRupiah(est_saldo_bersih_idr)}</div>
-                            <div class="kpi-value-usc">${formatDecimal(est_saldo_bersih_usc)} USC</div>
+                        <div class="stat-val-group">
+                            <div class="stat-val">${formatRupiah(total_trading_profit_idr)}</div>
+                            <div class="table-meta-text">${formatDecimal(total_trading_profit_usc)} USC</div>
                         </div>
+                    </div>
+                    <div class="stat-icon icon-green">
+                        <i data-lucide="trending-up"></i>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-info">
+                        <div class="stat-label">
+                            <span>Withdraw</span>
+                            <i data-lucide="info" class="kpi-info-trigger" onclick="toggleKpiTooltip('withdraw', event)"></i>
+                            <div class="kpi-tooltip" id="tooltip-withdraw">
+                                <div class="kpi-tooltip-title">
+                                    <span>Withdraw</span>
+                                    <span class="kpi-tooltip-badge">Info</span>
+                                </div>
+                                <div class="kpi-tooltip-label">
+                                    <i data-lucide="info" style="width: 10px; height: 10px; display: inline-block; vertical-align: middle;"></i> Detail Informasi:
+                                </div>
+                                <div class="kpi-tooltip-text">
+                                    Total penarikan dana keluar dari akun trading Metatrader yang telah masuk kembali ke rekening tabungan personal.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-val-group">
+                            <div class="stat-val">${formatRupiah(total_withdraw_idr)}</div>
+                            <div class="table-meta-text">${formatDecimal(total_withdraw_usc)} USC</div>
+                        </div>
+                    </div>
+                    <div class="stat-icon icon-pink">
+                        <i data-lucide="arrow-up-right"></i>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-info">
+                        <div class="stat-label">
+                            <span>Est. Saldo Bersih</span>
+                            <i data-lucide="info" class="kpi-info-trigger" onclick="toggleKpiTooltip('est-saldo-bersih', event)"></i>
+                            <div class="kpi-tooltip" id="tooltip-est-saldo-bersih">
+                                <div class="kpi-tooltip-title">
+                                    <span>Est. Saldo Bersih</span>
+                                    <span class="kpi-tooltip-badge">Info</span>
+                                </div>
+                                <div class="kpi-tooltip-label">
+                                    <i data-lucide="info" style="width: 10px; height: 10px; display: inline-block; vertical-align: middle;"></i> Detail Informasi:
+                                </div>
+                                <div class="kpi-tooltip-text">
+                                    Estimasi keuntungan bersih riil yang tersisa dihitung dari total saldo keseluruhan dikurangi total penarikan dan saldo modal awal.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-val-group">
+                            <div class="stat-val">${formatRupiah(est_saldo_bersih_idr)}</div>
+                            <div class="table-meta-text">${formatDecimal(est_saldo_bersih_usc)} USC</div>
+                        </div>
+                    </div>
+                    <div class="stat-icon icon-amber">
+                        <i data-lucide="coins"></i>
                     </div>
                 </div>
             `;
