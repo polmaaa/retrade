@@ -19,7 +19,7 @@
     <!-- Early Theme Initialization -->
     <script>
         (function() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedTheme = localStorage.getItem('theme') || 'dark';
             document.documentElement.setAttribute('data-bs-theme', savedTheme);
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
@@ -1407,14 +1407,14 @@
 
         // Theme Configuration (Dark / Light Mode)
         function initTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedTheme = localStorage.getItem('theme') || 'dark';
             document.documentElement.setAttribute('data-bs-theme', savedTheme);
             document.documentElement.setAttribute('data-theme', savedTheme);
             updateThemeIcon(savedTheme);
         }
 
         function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-bs-theme') || 'light';
+            const currentTheme = document.documentElement.getAttribute('data-bs-theme') || 'dark';
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-bs-theme', newTheme);
             document.documentElement.setAttribute('data-theme', newTheme);
