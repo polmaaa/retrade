@@ -109,21 +109,15 @@
             padding-bottom: 8px;
             margin-bottom: 2px;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 12px;
             background: transparent;
-        }
-
-        .header-top-row {
-            display: flex;
-            align-items: center;
-            gap: 16px;
         }
 
         .header-title-box {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            gap: 2px;
+            gap: 3px;
         }
 
         .header-title-box h1 {
@@ -144,10 +138,11 @@
             height: 20px;
         }
 
-        .header-nav-row {
+        .header-right-group {
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         /* Target Switcher Box (Compare_Migrasi Right Header Style) */
@@ -757,22 +752,41 @@
                 border-radius: 6px;
             }
             header {
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: stretch !important;
+                display: grid !important;
+                grid-template-columns: 1fr auto !important;
+                grid-template-rows: auto auto !important;
                 gap: 8px !important;
+                align-items: stretch !important;
                 padding-bottom: 8px !important;
             }
-            .header-top-row {
+            .header-title-box {
+                grid-column: 1 / 2 !important;
+                grid-row: 1 / 2 !important;
                 display: flex !important;
-                justify-content: space-between !important;
+                flex-direction: column !important;
+                justify-content: center !important;
                 align-items: flex-start !important;
-                width: 100% !important;
+                gap: 3px !important;
             }
-            .header-nav-row {
-                width: 100% !important;
+            .header-right-group {
+                display: contents !important;
+            }
+            .kurs-widget {
+                grid-column: 2 / 3 !important;
+                grid-row: 1 / 2 !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                align-self: stretch !important;
+                height: 100% !important;
+                box-sizing: border-box !important;
+                padding: 4px 10px !important;
+                font-size: 0.74rem !important;
+                border-radius: 6px !important;
             }
             .pg-target-wrapper {
+                grid-column: 1 / 3 !important;
+                grid-row: 2 / 3 !important;
                 width: 100% !important;
                 justify-content: space-between;
             }
@@ -785,11 +799,6 @@
                 padding: 4px 2px !important;
                 font-size: 0.72rem !important;
                 justify-content: center !important;
-            }
-            .kurs-widget {
-                padding: 2px 6px !important;
-                font-size: 0.72rem !important;
-                align-self: flex-start !important;
             }
             .top-info-bar {
                 grid-template-columns: 1fr !important;
@@ -909,24 +918,15 @@
 
     <div class="container">
         <header>
-            <div class="header-top-row">
-                <div class="header-title-box">
-                    <h1><i data-lucide="trending-up"></i> POTRADE</h1>
-                    <div class="sync-badge sync-local" id="sync-status">
-                        <i data-lucide="refresh-cw" style="width:10px; height:10px; animation: spin 2s linear infinite; display:none;" id="sync-spinner"></i>
-                        <span id="sync-text">Memuat Data...</span>
-                    </div>
-                </div>
-                
-                <div class="kurs-widget" id="kurs-widget" onclick="enableKursEdit(event)">
-                    <i data-lucide="coins" style="width:13px; height:13px; color: var(--primary);"></i>
-                    <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted);">USD/IDR:</span>
-                    <span id="kurs-value-display" style="font-size: 0.76rem; font-weight: 700; color: var(--text); border-bottom: 1.5px dashed var(--primary); font-family: 'Consolas', monospace;">Rp 18.000</span>
-                    <input type="number" id="kurs-value-input" style="display: none; width: 75px; font-size: 0.76rem; font-weight: 700; border: 1.5px solid var(--primary); border-radius: 4px; padding: 2px 5px; text-align: right; font-family: 'Consolas', monospace;" onblur="disableKursEdit(true)" onkeydown="if(event.key==='Enter') this.blur();" onclick="event.stopPropagation()">
+            <div class="header-title-box">
+                <h1><i data-lucide="trending-up"></i> POTRADE</h1>
+                <div class="sync-badge sync-local" id="sync-status">
+                    <i data-lucide="refresh-cw" style="width:10px; height:10px; animation: spin 2s linear infinite; display:none;" id="sync-spinner"></i>
+                    <span id="sync-text">Memuat Data...</span>
                 </div>
             </div>
             
-            <div class="header-nav-row">
+            <div class="header-right-group">
                 <!-- Target Switcher / Tabs -->
                 <div class="pg-target-wrapper">
                     <div class="pg-target-btn-group header-nav">
@@ -940,6 +940,13 @@
                             <span class="indicator-dot"></span> Jurnal MT
                         </button>
                     </div>
+                </div>
+                
+                <div class="kurs-widget" id="kurs-widget" onclick="enableKursEdit(event)">
+                    <i data-lucide="coins" style="width:13px; height:13px; color: var(--primary);"></i>
+                    <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted);">USD/IDR:</span>
+                    <span id="kurs-value-display" style="font-size: 0.76rem; font-weight: 700; color: var(--text); border-bottom: 1.5px dashed var(--primary); font-family: 'Consolas', monospace;">Rp 18.000</span>
+                    <input type="number" id="kurs-value-input" style="display: none; width: 75px; font-size: 0.76rem; font-weight: 700; border: 1.5px solid var(--primary); border-radius: 4px; padding: 2px 5px; text-align: right; font-family: 'Consolas', monospace;" onblur="disableKursEdit(true)" onkeydown="if(event.key==='Enter') this.blur();" onclick="event.stopPropagation()">
                 </div>
             </div>
         </header>
