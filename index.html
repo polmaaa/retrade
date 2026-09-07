@@ -883,7 +883,13 @@
     <div class="container">
         <header>
             <div class="header-title-box">
-                <h1><i data-lucide="trending-up"></i> POTRADE</h1>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <h1><i data-lucide="trending-up"></i> POTRADE</h1>
+                    <div class="sync-badge sync-local" id="sync-status">
+                        <i data-lucide="refresh-cw" style="width:10px; height:10px; animation: spin 2s linear infinite; display:none;" id="sync-spinner"></i>
+                        <span id="sync-text">Memuat Data...</span>
+                    </div>
+                </div>
                 <p>Trading Journal & Multi-Asset Cashflow Management</p>
             </div>
             
@@ -909,11 +915,6 @@
                     <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted);">USD/IDR:</span>
                     <span id="kurs-value-display" style="font-size: 0.76rem; font-weight: 700; color: var(--text); border-bottom: 1.5px dashed var(--primary); font-family: 'Consolas', monospace;">Rp 18.000</span>
                     <input type="number" id="kurs-value-input" style="display: none; width: 75px; font-size: 0.76rem; font-weight: 700; border: 1.5px solid var(--primary); border-radius: 4px; padding: 2px 5px; text-align: right; font-family: 'Consolas', monospace;" onblur="disableKursEdit(true)" onkeydown="if(event.key==='Enter') this.blur();" onclick="event.stopPropagation()">
-                </div>
-
-                <div class="sync-badge sync-local" id="sync-status">
-                    <i data-lucide="refresh-cw" style="width:10px; height:10px; animation: spin 2s linear infinite; display:none;" id="sync-spinner"></i>
-                    <span id="sync-text">Memuat Data...</span>
                 </div>
             </div>
         </header>
