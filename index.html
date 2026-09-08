@@ -19,9 +19,17 @@
     <!-- Early Theme Initialization -->
     <script>
         (function() {
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            document.documentElement.setAttribute('data-bs-theme', savedTheme);
-            document.documentElement.setAttribute('data-theme', savedTheme);
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-bs-theme', savedTheme);
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                return;
+            }
+            const isPhoneOrLandscape = window.matchMedia('(max-width: 768px), (max-height: 520px)').matches || 
+                                      (('ontouchstart' in window || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0)) && window.innerWidth <= 992);
+            const defaultTheme = isPhoneOrLandscape ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-bs-theme', defaultTheme);
+            document.documentElement.setAttribute('data-theme', defaultTheme);
         })();
     </script>
     
@@ -1405,16 +1413,25 @@
         // Init Lucide
         lucide.createIcons();
 
-        // Theme Configuration (Dark / Light Mode)
+        // Theme Configuration (Dark on Desktop, Light on Phone/Landscape)
+        function getDefaultTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) return savedTheme;
+            
+            const isPhoneOrLandscape = window.matchMedia('(max-width: 768px), (max-height: 520px)').matches || 
+                                      (('ontouchstart' in window || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0)) && window.innerWidth <= 992);
+            return isPhoneOrLandscape ? 'light' : 'dark';
+        }
+
         function initTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            document.documentElement.setAttribute('data-bs-theme', savedTheme);
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            updateThemeIcon(savedTheme);
+            const currentTheme = document.documentElement.getAttribute('data-bs-theme') || getDefaultTheme();
+            document.documentElement.setAttribute('data-bs-theme', currentTheme);
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            updateThemeIcon(currentTheme);
         }
 
         function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-bs-theme') || 'dark';
+            const currentTheme = document.documentElement.getAttribute('data-bs-theme') || getDefaultTheme();
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-bs-theme', newTheme);
             document.documentElement.setAttribute('data-theme', newTheme);
@@ -1433,6 +1450,16 @@
                 lucide.createIcons();
             }
         }
+
+        // Auto-adapt theme on screen resize/orientation if user hasn't explicitly saved preference
+        window.addEventListener('resize', function() {
+            if (!localStorage.getItem('theme')) {
+                const autoTheme = getDefaultTheme();
+                document.documentElement.setAttribute('data-bs-theme', autoTheme);
+                document.documentElement.setAttribute('data-theme', autoTheme);
+                updateThemeIcon(autoTheme);
+            }
+        });
 
         // Initialize Theme immediately
         initTheme();
