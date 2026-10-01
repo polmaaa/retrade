@@ -725,7 +725,9 @@
             letter-spacing: 0.02em;
         }
 
-        .badge-win, .badge-success { background: var(--success-bg); color: var(--success); border: 1px solid var(--success-border); }
+        .badge-win, .badge-success, .badge-deposit { background: var(--success-bg); color: var(--success); border: 1px solid var(--success-border); }
+        .badge-withdraw { background: #fdf2f8; color: #db2777; border: 1px solid #fbcfe8; }
+        .badge-server { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
         .badge-loss, .badge-danger { background: var(--error-bg); color: var(--error); border: 1px solid var(--error-border); }
         .badge-be, .badge-gray { background: #f1f5f9; color: var(--text-muted); border: 1px solid var(--border); }
 
@@ -1019,6 +1021,51 @@
         .progress-loss { background-color: var(--error); height: 100%; }
         .progress-be { background-color: var(--text-light); height: 100%; }
 
+        /* Filter Summary Ribbon for Tables */
+        .filter-summary-ribbon {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+            padding: 6px 10px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .ribbon-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .ribbon-item strong {
+            color: var(--text);
+            font-family: 'Consolas', monospace;
+        }
+
+        .ribbon-divider {
+            width: 1px;
+            height: 14px;
+            background: var(--border-dark);
+            margin: 0 4px;
+        }
+
+        .ribbon-badge-count {
+            margin-left: auto;
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--primary-border);
+        }
+
         /* Dark Mode Theme Component Overrides */
         [data-bs-theme="dark"] .container, [data-theme="dark"] .container {
             background: #111827;
@@ -1137,6 +1184,24 @@
             background: #1e293b;
             color: #94a3b8;
             border-color: #334155;
+        }
+
+        [data-bs-theme="dark"] .badge-deposit, [data-theme="dark"] .badge-deposit {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border-color: rgba(52, 211, 153, 0.3);
+        }
+
+        [data-bs-theme="dark"] .badge-withdraw, [data-theme="dark"] .badge-withdraw {
+            background: rgba(244, 114, 182, 0.15);
+            color: #f472b6;
+            border-color: rgba(244, 114, 182, 0.3);
+        }
+
+        [data-bs-theme="dark"] .badge-server, [data-theme="dark"] .badge-server {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border-color: rgba(251, 191, 36, 0.3);
         }
 
         [data-bs-theme="dark"] .kpi-tooltip, [data-theme="dark"] .kpi-tooltip {
@@ -1263,6 +1328,24 @@
         }
         [data-bs-theme="dark"] .dot-be, [data-theme="dark"] .dot-be {
             background-color: #64748b;
+        }
+        [data-bs-theme="dark"] .filter-summary-ribbon, [data-theme="dark"] .filter-summary-ribbon {
+            background: #0f172a;
+            border-color: #334155;
+        }
+        [data-bs-theme="dark"] .ribbon-item, [data-theme="dark"] .ribbon-item {
+            color: #94a3b8;
+        }
+        [data-bs-theme="dark"] .ribbon-item strong, [data-theme="dark"] .ribbon-item strong {
+            color: #f8fafc;
+        }
+        [data-bs-theme="dark"] .ribbon-divider, [data-theme="dark"] .ribbon-divider {
+            background: #334155;
+        }
+        [data-bs-theme="dark"] .ribbon-badge-count, [data-theme="dark"] .ribbon-badge-count {
+            background: rgba(20, 184, 166, 0.15);
+            color: #2dd4bf;
+            border-color: rgba(45, 212, 191, 0.3);
         }
 
         footer {
@@ -1634,6 +1717,10 @@
                         <i data-lucide="wallet"></i> Arus Kas dan Biaya (Tabungan)
                     </div>
                     <div class="filter-controls table-controls">
+                        <div class="search-container">
+                            <i data-lucide="search" class="search-icon"></i>
+                            <input type="text" id="cashflow-search-input" class="search-input" placeholder="Cari keterangan..." oninput="filterCashflow()">
+                        </div>
                         <select id="cashflow-month-filter" class="select-filter filter-select" onchange="filterCashflow()">
                             <option value="all">Semua Bulan</option>
                             <option value="01">Januari</option>
@@ -1656,6 +1743,10 @@
                             <option value="server cost">Biaya Server</option>
                         </select>
                     </div>
+                </div>
+                <!-- Mini Summary Ribbon -->
+                <div class="filter-summary-ribbon" id="cashflow-summary-ribbon">
+                    <!-- Populated dynamically via renderCashflow() -->
                 </div>
                 <div class="table-container card-body">
                     <table>
@@ -1692,6 +1783,10 @@
                         <i data-lucide="book-open"></i> Jurnal Trading Harian (Metatrader)
                     </div>
                     <div class="filter-controls table-controls">
+                        <div class="search-container">
+                            <i data-lucide="search" class="search-icon"></i>
+                            <input type="text" id="journal-search-input" class="search-input" placeholder="Cari tanggal..." oninput="filterJournal()">
+                        </div>
                         <select id="journal-month-filter" class="select-filter filter-select" onchange="filterJournal()">
                             <option value="all">Semua Bulan</option>
                             <option value="01">Januari</option>
@@ -1714,6 +1809,10 @@
                             <option value="BREAK EVEN">BREAK EVEN</option>
                         </select>
                     </div>
+                </div>
+                <!-- Mini Performance Ribbon -->
+                <div class="filter-summary-ribbon" id="journal-summary-ribbon">
+                    <!-- Populated dynamically via renderJournal() -->
                 </div>
                 <div class="table-container card-body">
                     <table>
@@ -2638,10 +2737,13 @@
         // Render Cashflow worksheet table
         function renderCashflow() {
             const body = document.getElementById('cashflow-table-body');
+            const ribbonEl = document.getElementById('cashflow-summary-ribbon');
             let data = [...activeData.cashflowRows];
             
             const monthFilter = document.getElementById('cashflow-month-filter').value;
             const typeFilter = document.getElementById('cashflow-filter').value;
+            const searchInput = document.getElementById('cashflow-search-input');
+            const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
             
             // 1. Filter by Month
             if (monthFilter !== 'all') {
@@ -2655,8 +2757,68 @@
             if (typeFilter !== 'all') {
                 data = data.filter(row => row.tipe.toLowerCase() === typeFilter.toLowerCase());
             }
+
+            // 3. Filter by Search Query (keterangan, tanggal, tipe)
+            if (query !== '') {
+                data = data.filter(row => {
+                    const ket = (row.keterangan || '').toLowerCase();
+                    const tgl = (row.tanggal || '').toLowerCase();
+                    const tip = (row.tipe || '').toLowerCase();
+                    return ket.includes(query) || tgl.includes(query) || tip.includes(query);
+                });
+            }
+
+            // Calculate filtered totals for ribbon & footer
+            let totalDepIdr = 0, totalDepUsc = 0;
+            let totalWdIdr = 0, totalWdUsc = 0;
+            let totalServerIdr = 0;
+
+            data.forEach(row => {
+                const t = (row.tipe || '').toLowerCase();
+                const idr = parseFloat(row.nominal_idr) || 0;
+                const usc = parseFloat(row.nominal_usc) || 0;
+                if (t === 'deposit') {
+                    totalDepIdr += idr;
+                    totalDepUsc += usc;
+                } else if (t === 'withdraw') {
+                    totalWdIdr += idr;
+                    totalWdUsc += usc;
+                } else if (t.includes('server') || t.includes('cost')) {
+                    totalServerIdr += idr;
+                }
+            });
+
+            const netCashflowIdr = totalDepIdr - totalWdIdr - totalServerIdr;
+
+            // Render Summary Ribbon
+            if (ribbonEl) {
+                ribbonEl.innerHTML = `
+                    <div class="ribbon-item">
+                        <i data-lucide="arrow-down-circle" style="width:13px; height:13px; color:var(--success);"></i>
+                        <span>Deposit: <strong>${formatRupiah(totalDepIdr)}</strong> <span style="font-size:0.65rem; color:var(--text-muted);">(${formatDecimal(totalDepUsc)} USC)</span></span>
+                    </div>
+                    <div class="ribbon-divider"></div>
+                    <div class="ribbon-item">
+                        <i data-lucide="arrow-up-circle" style="width:13px; height:13px; color:#db2777;"></i>
+                        <span>Withdraw: <strong>${formatRupiah(totalWdIdr)}</strong> <span style="font-size:0.65rem; color:var(--text-muted);">(${formatDecimal(totalWdUsc)} USC)</span></span>
+                    </div>
+                    <div class="ribbon-divider"></div>
+                    <div class="ribbon-item">
+                        <i data-lucide="server" style="width:13px; height:13px; color:var(--warning);"></i>
+                        <span>Biaya Server: <strong>${formatRupiah(totalServerIdr)}</strong></span>
+                    </div>
+                    <div class="ribbon-divider"></div>
+                    <div class="ribbon-item">
+                        <i data-lucide="wallet" style="width:13px; height:13px; color:var(--primary);"></i>
+                        <span>Net Kas: <strong style="color:${netCashflowIdr >= 0 ? 'var(--success)' : 'var(--error)'};">${formatRupiah(netCashflowIdr)}</strong></span>
+                    </div>
+                    <div class="ribbon-badge-count">
+                        ${data.length} transaksi
+                    </div>
+                `;
+            }
             
-            // 3. Sort the data
+            // 4. Sort the data
             data.sort((a, b) => {
                 let valA = a[cashflowSortCol];
                 let valB = b[cashflowSortCol];
@@ -2667,16 +2829,18 @@
                         : valB.localeCompare(valA);
                 } else {
                     return cashflowSortDir === 'asc'
-                        ? valA - valB
-                        : valB - valA;
+                        ? (valA || 0) - (valB || 0)
+                        : (valB || 0) - (valA || 0);
                 }
             });
             
             let html = '';
             data.forEach(row => {
                 let typeClass = 'badge-be';
-                if (row.tipe.toLowerCase() === 'deposit') typeClass = 'badge-win';
-                else if (row.tipe.toLowerCase() === 'withdraw' || row.tipe.toLowerCase().includes('cost')) typeClass = 'badge-loss';
+                const t = (row.tipe || '').toLowerCase();
+                if (t === 'deposit') typeClass = 'badge-deposit';
+                else if (t === 'withdraw') typeClass = 'badge-withdraw';
+                else if (t.includes('server') || t.includes('cost')) typeClass = 'badge-server';
                 
                 let nominalIdr = row.nominal_idr;
 
@@ -2684,18 +2848,31 @@
                     <tr>
                         <td>${row.tanggal}</td>
                         <td><span class="badge ${typeClass}">${row.tipe}</span></td>
-                        <td>${row.keterangan}</td>
-                        <td>${formatRupiah(nominalIdr)}</td>
-                        <td>${row.nominal_usc ? formatDecimal(row.nominal_usc) + ' USC' : '-'}</td>
+                        <td>${row.keterangan || '-'}</td>
+                        <td class="num-val">${formatRupiah(nominalIdr)}</td>
+                        <td class="num-val">${row.nominal_usc ? formatDecimal(row.nominal_usc) + ' USC' : '-'}</td>
                     </tr>
                 `;
             });
+
+            if (data.length > 0) {
+                html += `
+                    <tr class="total-row" style="font-weight: 700;">
+                        <td colspan="3" style="text-align: right; color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em;">Total Terfilter:</td>
+                        <td class="num-val">${formatRupiah(totalDepIdr + totalWdIdr + totalServerIdr)}</td>
+                        <td class="num-val">${formatDecimal(totalDepUsc + totalWdUsc)} USC</td>
+                    </tr>
+                `;
+            }
+
             const statusText = document.getElementById('sync-text');
             const isLoading = statusText && statusText.innerText.includes('Menghubungkan');
             const fallbackMessage = isLoading
                 ? '<tr><td colspan="5" style="text-align:center; color:var(--text-secondary); padding: 1.5rem;">Memuat data dari Google Sheets...</td></tr>'
                 : '<tr><td colspan="5" style="text-align:center; color:var(--text-secondary);">Tidak ada data kas ditemukan</td></tr>';
             body.innerHTML = html || fallbackMessage;
+            
+            lucide.createIcons();
         }
 
         function filterCashflow() {
@@ -2705,12 +2882,13 @@
         // Render Journal worksheet table
         function renderJournal() {
             const body = document.getElementById('journal-table-body');
+            const ribbonEl = document.getElementById('journal-summary-ribbon');
             const rawData = activeData.journalRows;
             
             // Recalculate running accumulation based on recalculated values
             let runningAccum = 0;
             let data = rawData.map(row => {
-                const pnlVal = parseFloat(row.profit_usc);
+                const pnlVal = parseFloat(row.profit_usc) || 0;
                 const estProfitIdr = (pnlVal / 100) * currentKurs;
                 if (row.status !== '') {
                     runningAccum += estProfitIdr;
@@ -2724,6 +2902,8 @@
             
             const monthFilter = document.getElementById('journal-month-filter').value;
             const filter = document.getElementById('journal-filter').value;
+            const searchInput = document.getElementById('journal-search-input');
+            const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
             
             // 1. Filter by Month
             if (monthFilter !== 'all') {
@@ -2737,8 +2917,60 @@
             if (filter !== 'all') {
                 data = data.filter(row => row.status === filter);
             }
+
+            // 3. Filter by Search Query (tanggal, status)
+            if (query !== '') {
+                data = data.filter(row => {
+                    const tgl = (row.tanggal || '').toLowerCase();
+                    const st = (row.status || '').toLowerCase();
+                    return tgl.includes(query) || st.includes(query);
+                });
+            }
+
+            // Calculate filtered performance metrics for Journal Ribbon & Footer
+            let totalProfitUsc = 0;
+            let totalProfitIdr = 0;
+            let winCount = 0;
+            let lossCount = 0;
+            let beCount = 0;
+
+            data.forEach(row => {
+                const pnlVal = parseFloat(row.profit_usc) || 0;
+                totalProfitUsc += pnlVal;
+                totalProfitIdr += row.est_profit_idr_recalc;
+                if (row.status === 'WIN') winCount++;
+                else if (row.status === 'LOSS') lossCount++;
+                else if (row.status === 'BREAK EVEN' || row.status === 'BE') beCount++;
+            });
+
+            const completedTrades = winCount + lossCount;
+            const winRate = completedTrades > 0 ? ((winCount / completedTrades) * 100).toFixed(1) : 0;
+            const pnlColor = totalProfitUsc >= 0 ? 'var(--success)' : 'var(--error)';
+
+            // Render Journal Summary Ribbon
+            if (ribbonEl) {
+                ribbonEl.innerHTML = `
+                    <div class="ribbon-item">
+                        <i data-lucide="trending-up" style="width:13px; height:13px; color:${pnlColor};"></i>
+                        <span>Net Profit: <strong style="color:${pnlColor};">${totalProfitUsc >= 0 ? '+' : ''}${formatRupiah(totalProfitIdr)}</strong> <span style="font-size:0.65rem; color:var(--text-muted);">(${totalProfitUsc >= 0 ? '+' : ''}${formatDecimal(totalProfitUsc)} USC)</span></span>
+                    </div>
+                    <div class="ribbon-divider"></div>
+                    <div class="ribbon-item">
+                        <i data-lucide="target" style="width:13px; height:13px; color:var(--primary);"></i>
+                        <span>Win Rate: <strong>${winRate}%</strong> <span style="font-size:0.65rem; color:var(--text-muted);">(W:${winCount} | L:${lossCount} | BE:${beCount})</span></span>
+                    </div>
+                    <div class="ribbon-divider"></div>
+                    <div class="ribbon-item">
+                        <i data-lucide="calendar" style="width:13px; height:13px; color:var(--text-muted);"></i>
+                        <span>Hari Trading: <strong>${data.length}</strong> hari</span>
+                    </div>
+                    <div class="ribbon-badge-count">
+                        ${data.length} entri
+                    </div>
+                `;
+            }
             
-            // 3. Sort the data
+            // 4. Sort the data
             data.sort((a, b) => {
                 let valA = a[journalSortCol];
                 let valB = b[journalSortCol];
@@ -2757,8 +2989,8 @@
                         : valB.localeCompare(valA);
                 } else {
                     return journalSortDir === 'asc'
-                        ? valA - valB
-                        : valB - valA;
+                        ? (valA || 0) - (valB || 0)
+                        : (valB || 0) - (valA || 0);
                 }
             });
 
@@ -2768,26 +3000,43 @@
                 if (row.status === 'WIN') statusClass = 'badge-win';
                 else if (row.status === 'LOSS') statusClass = 'badge-loss';
                 
-                const pnlVal = parseFloat(row.profit_usc);
+                const pnlVal = parseFloat(row.profit_usc) || 0;
                 const pnlClass = pnlVal > 0 ? 'profit-text' : (pnlVal < 0 ? 'loss-text' : '');
                 const sign = pnlVal > 0 ? '+' : '';
                 
                 html += `
                     <tr>
                         <td>${row.tanggal}</td>
-                        <td class="${pnlClass}">${sign}${formatDecimal(row.profit_usc)} USC</td>
-                        <td class="${pnlClass}">${pnlVal >= 0 ? '+' : ''}${formatRupiah(row.est_profit_idr_recalc)}</td>
+                        <td class="${pnlClass} num-val">${sign}${formatDecimal(row.profit_usc)} USC</td>
+                        <td class="${pnlClass} num-val">${pnlVal >= 0 ? '+' : ''}${formatRupiah(row.est_profit_idr_recalc)}</td>
                         <td><span class="badge ${statusClass}">${row.status}</span></td>
-                        <td>${formatRupiah(row.akumulasi_idr_recalc)}</td>
+                        <td class="num-val">${formatRupiah(row.akumulasi_idr_recalc)}</td>
                     </tr>
                 `;
             });
+
+            if (data.length > 0) {
+                const totalSign = totalProfitUsc >= 0 ? '+' : '';
+                const totalClass = totalProfitUsc > 0 ? 'profit-text' : (totalProfitUsc < 0 ? 'loss-text' : '');
+                html += `
+                    <tr class="total-row" style="font-weight: 700;">
+                        <td style="text-align: right; color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em;">Total:</td>
+                        <td class="${totalClass} num-val">${totalSign}${formatDecimal(totalProfitUsc)} USC</td>
+                        <td class="${totalClass} num-val">${totalSign}${formatRupiah(totalProfitIdr)}</td>
+                        <td><span class="badge badge-be" style="font-size:0.65rem;">WR: ${winRate}%</span></td>
+                        <td class="num-val" style="color:var(--primary); font-weight:700;">${data.length > 0 ? formatRupiah(data[data.length - 1].akumulasi_idr_recalc) : '-'}</td>
+                    </tr>
+                `;
+            }
+
             const statusText = document.getElementById('sync-text');
             const isLoading = statusText && statusText.innerText.includes('Menghubungkan');
             const fallbackMessage = isLoading
                 ? '<tr><td colspan="5" style="text-align:center; color:var(--text-secondary); padding: 1.5rem;">Memuat data dari Google Sheets...</td></tr>'
                 : '<tr><td colspan="5" style="text-align:center; color:var(--text-secondary);">Tidak ada data jurnal ditemukan</td></tr>';
             body.innerHTML = html || fallbackMessage;
+            
+            lucide.createIcons();
         }
 
         function filterJournal() {
