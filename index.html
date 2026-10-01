@@ -954,6 +954,57 @@
             color: var(--text);
         }
 
+        /* Symmetric Stat Pills */
+        .stat-pills-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            margin-bottom: 3px;
+        }
+
+        .stat-pill {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            border: 1px solid transparent;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .pill-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        .pill-win {
+            background-color: var(--success-bg);
+            color: var(--success);
+            border-color: var(--success-border);
+        }
+        .dot-win { background-color: var(--success); }
+
+        .pill-loss {
+            background-color: var(--error-bg);
+            color: var(--error);
+            border-color: var(--error-border);
+        }
+        .dot-loss { background-color: var(--error); }
+
+        .pill-be {
+            background-color: #f1f5f9;
+            color: var(--text-muted);
+            border-color: var(--border);
+        }
+        .dot-be { background-color: var(--text-light); }
+
         .win-rate-progress-bar {
             width: 100%;
             height: 6px;
@@ -1186,11 +1237,32 @@
         [data-bs-theme="dark"] .stat-metric-label, [data-theme="dark"] .stat-metric-label {
             color: #94a3b8;
         }
-        [data-bs-theme="dark"] .stat-metric-val, [data-theme="dark"] .stat-metric-val {
-            color: #f8fafc;
-        }
         [data-bs-theme="dark"] .win-rate-progress-bar, [data-theme="dark"] .win-rate-progress-bar {
             background: #334155;
+        }
+        [data-bs-theme="dark"] .pill-win, [data-theme="dark"] .pill-win {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border-color: rgba(52, 211, 153, 0.3);
+        }
+        [data-bs-theme="dark"] .dot-win, [data-theme="dark"] .dot-win {
+            background-color: #34d399;
+        }
+        [data-bs-theme="dark"] .pill-loss, [data-theme="dark"] .pill-loss {
+            background-color: rgba(244, 63, 94, 0.15);
+            color: #f87171;
+            border-color: rgba(251, 113, 133, 0.3);
+        }
+        [data-bs-theme="dark"] .dot-loss, [data-theme="dark"] .dot-loss {
+            background-color: #f87171;
+        }
+        [data-bs-theme="dark"] .pill-be, [data-theme="dark"] .pill-be {
+            background-color: #0f172a;
+            color: #94a3b8;
+            border-color: #334155;
+        }
+        [data-bs-theme="dark"] .dot-be, [data-theme="dark"] .dot-be {
+            background-color: #64748b;
         }
 
         footer {
@@ -1464,14 +1536,20 @@
             <div id="panel-dashboard" class="tab-panel active">
                 <!-- Analytics & Charts Grid -->
                 <div class="dashboard-analytics-grid">
-                    <!-- 1. Equity Curve Chart -->
+                    <!-- 1. Main Equity / Daily PnL Chart -->
                     <div class="analytics-card main-chart-card">
                         <div class="analytics-card-header">
                             <div class="analytics-card-title">
-                                <i data-lucide="trending-up"></i>
-                                <span>Kurva Pertumbuhan Akumulasi (Equity Curve)</span>
+                                <i data-lucide="trending-up" id="chart-type-icon"></i>
+                                <span id="chart-main-title">Kurva Pertumbuhan Akumulasi (Equity Curve)</span>
                             </div>
                             <div class="chart-controls">
+                                <!-- Mode Switcher: Akumulasi vs Harian -->
+                                <div class="chart-unit-switcher">
+                                    <button type="button" class="btn-chart-tab active" id="btn-mode-accum" onclick="setChartMode('accum')">Akumulasi</button>
+                                    <button type="button" class="btn-chart-tab" id="btn-mode-daily" onclick="setChartMode('daily')">Harian</button>
+                                </div>
+                                <!-- Currency Switcher: IDR vs USC -->
                                 <div class="chart-unit-switcher">
                                     <button type="button" class="btn-chart-tab active" id="btn-chart-idr" onclick="setChartCurrency('IDR')">IDR</button>
                                     <button type="button" class="btn-chart-tab" id="btn-chart-usc" onclick="setChartCurrency('USC')">USC</button>
@@ -1497,23 +1575,7 @@
                     </div>
                 </div>
 
-                <!-- 3. Monthly PnL Bar Chart -->
-                <div class="analytics-card monthly-chart-card" style="margin-bottom: 10px;">
-                    <div class="analytics-card-header">
-                        <div class="analytics-card-title">
-                            <i data-lucide="bar-chart-3"></i>
-                            <span>Performa Profit Bersih Bulanan (PnL Rekapitulasi)</span>
-                        </div>
-                        <div class="chart-badge-summary" id="monthly-chart-summary">
-                            <!-- Total info -->
-                        </div>
-                    </div>
-                    <div class="chart-canvas-wrapper" style="height: 200px;">
-                        <canvas id="monthlyPnLChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- 4. Monthly Summary Table -->
+                <!-- Monthly Summary Table -->
                 <div class="sub-header-bar">
                     <div class="sub-header-title">
                         <i data-lucide="calendar"></i> Rekapitulasi Bulanan 2026
@@ -2710,8 +2772,17 @@
 
         // --- Chart.js Analytics & Visualizations ---
         let equityChart = null;
-        let monthlyPnLChart = null;
+        let currentChartMode = 'accum'; // 'accum' or 'daily'
         let currentChartCurrency = 'IDR'; // 'IDR' or 'USC'
+
+        function setChartMode(mode) {
+            currentChartMode = mode;
+            const btnAccum = document.getElementById('btn-mode-accum');
+            const btnDaily = document.getElementById('btn-mode-daily');
+            if (btnAccum) btnAccum.classList.toggle('active', mode === 'accum');
+            if (btnDaily) btnDaily.classList.toggle('active', mode === 'daily');
+            renderCharts();
+        }
 
         function setChartCurrency(currency) {
             currentChartCurrency = currency;
@@ -2737,14 +2808,19 @@
             const textColor = isDark ? '#94a3b8' : '#64748b';
             const tooltipBg = isDark ? '#0f172a' : '#1e293b';
             const primaryTeal = isDark ? '#14b8a6' : '#0f766e';
+            const winColor = isDark ? '#10b981' : '#059669';
+            const lossColor = isDark ? '#f43f5e' : '#ef4444';
 
-            // --- 1. EQUITY CURVE (ACCUMULATED PROFIT) ---
+            // --- 1. MAIN CHART (EQUITY CURVE OR DAILY PNL) ---
             const sortedJournal = [...data.journalRows]
                 .filter(r => r.tanggal && r.tanggal.trim() !== '')
                 .sort((a, b) => a.tanggal.localeCompare(b.tanggal));
 
             const labels = [];
             const equityValues = [];
+            const dailyValues = [];
+            const dailyBarBGs = [];
+            const dailyBarBorders = [];
             let runningAccum = 0;
             const monthsAbbr = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
 
@@ -2762,7 +2838,31 @@
                 }
 
                 equityValues.push(runningAccum);
+                dailyValues.push(profit);
+
+                if (profit > 0) {
+                    dailyBarBGs.push(isDark ? 'rgba(16, 185, 129, 0.75)' : 'rgba(5, 150, 105, 0.75)');
+                    dailyBarBorders.push(winColor);
+                } else if (profit < 0) {
+                    dailyBarBGs.push(isDark ? 'rgba(244, 63, 94, 0.75)' : 'rgba(239, 68, 68, 0.75)');
+                    dailyBarBorders.push(lossColor);
+                } else {
+                    dailyBarBGs.push(isDark ? 'rgba(148, 163, 184, 0.4)' : 'rgba(148, 163, 184, 0.4)');
+                    dailyBarBorders.push(isDark ? '#64748b' : '#94a3b8');
+                }
             });
+
+            // Update title & icon based on mode
+            const mainTitle = document.getElementById('chart-main-title');
+            const mainIcon = document.getElementById('chart-type-icon');
+            if (mainTitle) {
+                mainTitle.innerText = currentChartMode === 'accum' 
+                    ? 'Kurva Pertumbuhan Akumulasi (Equity Curve)' 
+                    : 'Distribusi Profit Harian (Daily PnL)';
+            }
+            if (mainIcon) {
+                mainIcon.setAttribute('data-lucide', currentChartMode === 'accum' ? 'trending-up' : 'bar-chart-2');
+            }
 
             const equityCanvas = document.getElementById('equityCurveChart');
             if (equityCanvas) {
@@ -2771,99 +2871,155 @@
                     equityChart.destroy();
                 }
 
-                const gradient = ctx.createLinearGradient(0, 0, 0, 240);
-                gradient.addColorStop(0, isDark ? 'rgba(20, 184, 166, 0.35)' : 'rgba(15, 118, 110, 0.22)');
-                gradient.addColorStop(1, isDark ? 'rgba(20, 184, 166, 0.00)' : 'rgba(15, 118, 110, 0.00)');
+                let chartConfig;
 
-                equityChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: currentChartCurrency === 'IDR' ? 'Akumulasi Profit (IDR)' : 'Akumulasi Profit (USC)',
-                            data: equityValues,
-                            borderColor: primaryTeal,
-                            borderWidth: 2,
-                            backgroundColor: gradient,
-                            fill: true,
-                            tension: 0.35,
-                            pointRadius: sortedJournal.length > 40 ? 0 : 3,
-                            pointHoverRadius: 5,
-                            pointBackgroundColor: primaryTeal,
-                            pointBorderColor: '#ffffff',
-                            pointBorderWidth: 1.5
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        interaction: {
-                            intersect: false,
-                            mode: 'index'
+                if (currentChartMode === 'accum') {
+                    // Line Area Chart
+                    const gradient = ctx.createLinearGradient(0, 0, 0, 240);
+                    gradient.addColorStop(0, isDark ? 'rgba(20, 184, 166, 0.35)' : 'rgba(15, 118, 110, 0.22)');
+                    gradient.addColorStop(1, isDark ? 'rgba(20, 184, 166, 0.00)' : 'rgba(15, 118, 110, 0.00)');
+
+                    chartConfig = {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: currentChartCurrency === 'IDR' ? 'Akumulasi Profit (IDR)' : 'Akumulasi Profit (USC)',
+                                data: equityValues,
+                                borderColor: primaryTeal,
+                                borderWidth: 2,
+                                backgroundColor: gradient,
+                                fill: true,
+                                tension: 0.35,
+                                pointRadius: sortedJournal.length > 40 ? 0 : 3,
+                                pointHoverRadius: 5,
+                                pointBackgroundColor: primaryTeal,
+                                pointBorderColor: '#ffffff',
+                                pointBorderWidth: 1.5
+                            }]
                         },
-                        plugins: {
-                            legend: {
-                                display: false
-                            },
-                            tooltip: {
-                                backgroundColor: tooltipBg,
-                                titleColor: '#ffffff',
-                                bodyColor: '#f1f5f9',
-                                borderColor: isDark ? '#334155' : '#e2e8f0',
-                                borderWidth: 1,
-                                padding: 8,
-                                titleFont: { family: 'Plus Jakarta Sans', size: 11, weight: 'bold' },
-                                bodyFont: { family: 'Consolas', size: 11 },
-                                displayColors: false,
-                                callbacks: {
-                                    label: function(context) {
-                                        const val = context.parsed.y;
-                                        if (currentChartCurrency === 'IDR') {
-                                            return ' Akumulasi: ' + formatRupiah(val);
-                                        } else {
-                                            return ' Akumulasi: ' + formatDecimal(val) + ' USC';
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            interaction: { intersect: false, mode: 'index' },
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: tooltipBg,
+                                    titleColor: '#ffffff',
+                                    bodyColor: '#f1f5f9',
+                                    borderColor: isDark ? '#334155' : '#e2e8f0',
+                                    borderWidth: 1,
+                                    padding: 8,
+                                    titleFont: { family: 'Plus Jakarta Sans', size: 11, weight: 'bold' },
+                                    bodyFont: { family: 'Consolas', size: 11 },
+                                    displayColors: false,
+                                    callbacks: {
+                                        label: function(context) {
+                                            const val = context.parsed.y;
+                                            return currentChartCurrency === 'IDR'
+                                                ? ' Akumulasi: ' + formatRupiah(val)
+                                                : ' Akumulasi: ' + formatDecimal(val) + ' USC';
                                         }
                                     }
                                 }
-                            }
-                        },
-                        scales: {
-                            x: {
-                                grid: {
-                                    color: gridColor,
-                                    drawTicks: false
-                                },
-                                ticks: {
-                                    color: textColor,
-                                    font: { family: 'Inter', size: 10 },
-                                    maxRotation: 0,
-                                    autoSkip: true,
-                                    maxTicksLimit: 8
-                                }
                             },
-                            y: {
-                                grid: {
-                                    color: gridColor,
-                                    drawTicks: false
+                            scales: {
+                                x: {
+                                    grid: { color: gridColor, drawTicks: false },
+                                    ticks: { color: textColor, font: { family: 'Inter', size: 10 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 8 }
                                 },
-                                ticks: {
-                                    color: textColor,
-                                    font: { family: 'Consolas', size: 10 },
-                                    callback: function(val) {
-                                        if (currentChartCurrency === 'IDR') {
-                                            if (Math.abs(val) >= 1000000) return (val / 1000000).toFixed(1) + 'M';
-                                            if (Math.abs(val) >= 1000) return (val / 1000).toFixed(0) + 'k';
-                                            return val;
-                                        } else {
-                                            if (Math.abs(val) >= 1000) return (val / 1000).toFixed(1) + 'k';
-                                            return val;
+                                y: {
+                                    grid: { color: gridColor, drawTicks: false },
+                                    ticks: {
+                                        color: textColor,
+                                        font: { family: 'Consolas', size: 10 },
+                                        callback: function(val) {
+                                            if (currentChartCurrency === 'IDR') {
+                                                if (Math.abs(val) >= 1000000) return (val / 1000000).toFixed(1) + 'M';
+                                                if (Math.abs(val) >= 1000) return (val / 1000).toFixed(0) + 'k';
+                                                return val;
+                                            } else {
+                                                if (Math.abs(val) >= 1000) return (val / 1000).toFixed(1) + 'k';
+                                                return val;
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                });
+                    };
+                } else {
+                    // Daily Bar Chart
+                    chartConfig = {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: currentChartCurrency === 'IDR' ? 'Profit Harian (IDR)' : 'Profit Harian (USC)',
+                                data: dailyValues,
+                                backgroundColor: dailyBarBGs,
+                                borderColor: dailyBarBorders,
+                                borderWidth: 1,
+                                borderRadius: 3,
+                                maxBarThickness: 12
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            interaction: { intersect: false, mode: 'index' },
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: tooltipBg,
+                                    titleColor: '#ffffff',
+                                    bodyColor: '#f1f5f9',
+                                    borderColor: isDark ? '#334155' : '#e2e8f0',
+                                    borderWidth: 1,
+                                    padding: 8,
+                                    titleFont: { family: 'Plus Jakarta Sans', size: 11, weight: 'bold' },
+                                    bodyFont: { family: 'Consolas', size: 11 },
+                                    displayColors: false,
+                                    callbacks: {
+                                        label: function(context) {
+                                            const val = context.parsed.y;
+                                            const sign = val > 0 ? '+' : '';
+                                            return currentChartCurrency === 'IDR'
+                                                ? ' Profit: ' + sign + formatRupiah(val)
+                                                : ' Profit: ' + sign + formatDecimal(val) + ' USC';
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    grid: { color: gridColor, drawTicks: false },
+                                    ticks: { color: textColor, font: { family: 'Inter', size: 10 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 8 }
+                                },
+                                y: {
+                                    grid: { color: gridColor, drawTicks: false },
+                                    ticks: {
+                                        color: textColor,
+                                        font: { family: 'Consolas', size: 10 },
+                                        callback: function(val) {
+                                            if (currentChartCurrency === 'IDR') {
+                                                if (Math.abs(val) >= 1000000) return (val / 1000000).toFixed(1) + 'M';
+                                                if (Math.abs(val) >= 1000) return (val / 1000).toFixed(0) + 'k';
+                                                return val;
+                                            } else {
+                                                if (Math.abs(val) >= 1000) return (val / 1000).toFixed(1) + 'k';
+                                                return val;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    };
+                }
+
+                equityChart = new Chart(ctx, chartConfig);
             }
 
             // --- 2. STATISTIK PERFORMA TRADING ---
@@ -2885,6 +3041,15 @@
             const maxProfitIdr = (maxProfitUsc / 100) * currentKurs;
             const avgWinIdr = (avgWinUsc / 100) * currentKurs;
 
+            // Calculate ROI Penarikan Modal
+            let totalModalIdr = 0;
+            let totalWithdrawIdr = 0;
+            if (data.cashflowRows) {
+                totalModalIdr = data.cashflowRows.filter(r => r.tipe.toLowerCase() === 'deposit').reduce((sum, r) => sum + r.nominal_idr, 0);
+                totalWithdrawIdr = data.cashflowRows.filter(r => r.tipe.toLowerCase() === 'withdraw').reduce((sum, r) => sum + r.nominal_idr, 0);
+            }
+            const roiPercent = totalModalIdr > 0 ? ((totalWithdrawIdr / totalModalIdr) * 100).toFixed(1) : '0';
+
             const statsContainer = document.getElementById('trading-stats-container');
             if (statsContainer) {
                 statsContainer.innerHTML = `
@@ -2892,14 +3057,23 @@
                         <div class="stat-metric-label">
                             <i data-lucide="target"></i> Win Rate Akurasi
                         </div>
-                        <div class="stat-metric-val" style="color: var(--success);">${winRate}%</div>
+                        <div class="stat-metric-val" style="color: var(--success); font-size: 0.9rem;">${winRate}%</div>
                     </div>
                     
-                    <div style="padding: 0 4px;">
-                        <div style="display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-muted); font-weight: 600; margin-bottom: 2px;">
-                            <span style="color: var(--success);">${wins} Win (${winPercentages}%)</span>
-                            <span style="color: var(--error);">${losses} Loss (${lossPercentages}%)</span>
-                            <span style="color: var(--text-muted);">${be} BE</span>
+                    <div style="padding: 1px 0;">
+                        <div class="stat-pills-row">
+                            <div class="stat-pill pill-win">
+                                <span class="pill-dot dot-win"></span>
+                                <span class="pill-text">${wins} Win (${winPercentages}%)</span>
+                            </div>
+                            <div class="stat-pill pill-loss">
+                                <span class="pill-dot dot-loss"></span>
+                                <span class="pill-text">${losses} Loss (${lossPercentages}%)</span>
+                            </div>
+                            <div class="stat-pill pill-be">
+                                <span class="pill-dot dot-be"></span>
+                                <span class="pill-text">${be} BE (${bePercentages}%)</span>
+                            </div>
                         </div>
                         <div class="win-rate-progress-bar">
                             <div class="progress-win" style="width: ${winPercentages}%;"></div>
@@ -2928,131 +3102,14 @@
                         </div>
                         <div class="stat-metric-val">+${formatRupiah(avgWinIdr)}</div>
                     </div>
+
+                    <div class="stat-metric-row">
+                        <div class="stat-metric-label">
+                            <i data-lucide="shield-check"></i> Modal Telah Ditarik
+                        </div>
+                        <div class="stat-metric-val" style="color: var(--primary);">${roiPercent}% (${formatRupiah(totalWithdrawIdr)})</div>
+                    </div>
                 `;
-            }
-
-            // --- 3. MONTHLY PROFIT & LOSS BAR CHART ---
-            const monthlyData = (data.monthlySummary || []).filter(r => r.bulan !== 'TOTAL');
-            const monthLabels = [];
-            const monthlyPnLValues = [];
-            const barBackgrounds = [];
-            const barBorders = [];
-
-            const winColor = isDark ? '#10b981' : '#059669';
-            const lossColor = isDark ? '#f43f5e' : '#ef4444';
-
-            monthlyData.forEach(m => {
-                monthLabels.push(m.bulan);
-                const pUsc = parseFloat(m.profit_usc) || 0;
-                const pVal = currentChartCurrency === 'IDR' ? (pUsc / 100) * currentKurs : pUsc;
-                monthlyPnLValues.push(pVal);
-
-                if (pVal >= 0) {
-                    barBackgrounds.push(isDark ? 'rgba(16, 185, 129, 0.75)' : 'rgba(5, 150, 105, 0.75)');
-                    barBorders.push(winColor);
-                } else {
-                    barBackgrounds.push(isDark ? 'rgba(244, 63, 94, 0.75)' : 'rgba(239, 68, 68, 0.75)');
-                    barBorders.push(lossColor);
-                }
-            });
-
-            const monthlySummaryBadge = document.getElementById('monthly-chart-summary');
-            if (monthlySummaryBadge && data.kpis) {
-                const totalProfitUsc = data.kpis.total_trading_profit_usc || 0;
-                const totalProfitIdr = (totalProfitUsc / 100) * currentKurs;
-                const sign = totalProfitUsc >= 0 ? '+' : '';
-                monthlySummaryBadge.innerText = `Total Realized: ${sign}${formatRupiah(totalProfitIdr)}`;
-            }
-
-            const monthlyCanvas = document.getElementById('monthlyPnLChart');
-            if (monthlyCanvas) {
-                const ctx = monthlyCanvas.getContext('2d');
-                if (monthlyPnLChart) {
-                    monthlyPnLChart.destroy();
-                }
-
-                monthlyPnLChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: monthLabels,
-                        datasets: [{
-                            label: currentChartCurrency === 'IDR' ? 'Profit/Loss (IDR)' : 'Profit/Loss (USC)',
-                            data: monthlyPnLValues,
-                            backgroundColor: barBackgrounds,
-                            borderColor: barBorders,
-                            borderWidth: 1.5,
-                            borderRadius: 4,
-                            maxBarThickness: 45
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        interaction: {
-                            intersect: false,
-                            mode: 'index'
-                        },
-                        plugins: {
-                            legend: {
-                                display: false
-                            },
-                            tooltip: {
-                                backgroundColor: tooltipBg,
-                                titleColor: '#ffffff',
-                                bodyColor: '#f1f5f9',
-                                borderColor: isDark ? '#334155' : '#e2e8f0',
-                                borderWidth: 1,
-                                padding: 8,
-                                titleFont: { family: 'Plus Jakarta Sans', size: 11, weight: 'bold' },
-                                bodyFont: { family: 'Consolas', size: 11 },
-                                displayColors: false,
-                                callbacks: {
-                                    label: function(context) {
-                                        const val = context.parsed.y;
-                                        const sign = val > 0 ? '+' : '';
-                                        if (currentChartCurrency === 'IDR') {
-                                            return ' Net PnL: ' + sign + formatRupiah(val);
-                                        } else {
-                                            return ' Net PnL: ' + sign + formatDecimal(val) + ' USC';
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            x: {
-                                grid: {
-                                    color: gridColor,
-                                    drawTicks: false
-                                },
-                                ticks: {
-                                    color: textColor,
-                                    font: { family: 'Inter', size: 10 }
-                                }
-                            },
-                            y: {
-                                grid: {
-                                    color: gridColor,
-                                    drawTicks: false
-                                },
-                                ticks: {
-                                    color: textColor,
-                                    font: { family: 'Consolas', size: 10 },
-                                    callback: function(val) {
-                                        if (currentChartCurrency === 'IDR') {
-                                            if (Math.abs(val) >= 1000000) return (val / 1000000).toFixed(1) + 'M';
-                                            if (Math.abs(val) >= 1000) return (val / 1000).toFixed(0) + 'k';
-                                            return val;
-                                        } else {
-                                            if (Math.abs(val) >= 1000) return (val / 1000).toFixed(1) + 'k';
-                                            return val;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
             }
 
             lucide.createIcons();
