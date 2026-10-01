@@ -3041,14 +3041,31 @@
             const maxProfitIdr = (maxProfitUsc / 100) * currentKurs;
             const avgWinIdr = (avgWinUsc / 100) * currentKurs;
 
+            const bestDayFormatted = currentChartCurrency === 'IDR' 
+                ? '+' + formatRupiah(maxProfitIdr) 
+                : '+' + formatDecimal(maxProfitUsc) + ' USC';
+
+            const avgWinFormatted = currentChartCurrency === 'IDR' 
+                ? '+' + formatRupiah(avgWinIdr) 
+                : '+' + formatDecimal(avgWinUsc) + ' USC';
+
             // Calculate ROI Penarikan Modal
             let totalModalIdr = 0;
             let totalWithdrawIdr = 0;
+            let totalModalUsc = 0;
+            let totalWithdrawUsc = 0;
+
             if (data.cashflowRows) {
                 totalModalIdr = data.cashflowRows.filter(r => r.tipe.toLowerCase() === 'deposit').reduce((sum, r) => sum + r.nominal_idr, 0);
                 totalWithdrawIdr = data.cashflowRows.filter(r => r.tipe.toLowerCase() === 'withdraw').reduce((sum, r) => sum + r.nominal_idr, 0);
+                totalModalUsc = data.cashflowRows.filter(r => r.tipe.toLowerCase() === 'deposit').reduce((sum, r) => sum + r.nominal_usc, 0);
+                totalWithdrawUsc = data.cashflowRows.filter(r => r.tipe.toLowerCase() === 'withdraw').reduce((sum, r) => sum + r.nominal_usc, 0);
             }
             const roiPercent = totalModalIdr > 0 ? ((totalWithdrawIdr / totalModalIdr) * 100).toFixed(1) : '0';
+
+            const withdrawAmountFormatted = currentChartCurrency === 'IDR'
+                ? formatRupiah(totalWithdrawIdr)
+                : formatDecimal(totalWithdrawUsc) + ' USC';
 
             const statsContainer = document.getElementById('trading-stats-container');
             if (statsContainer) {
@@ -3093,21 +3110,21 @@
                         <div class="stat-metric-label">
                             <i data-lucide="zap"></i> Best Day Profit
                         </div>
-                        <div class="stat-metric-val" style="color: var(--success);">+${formatRupiah(maxProfitIdr)}</div>
+                        <div class="stat-metric-val" style="color: var(--success);">${bestDayFormatted}</div>
                     </div>
 
                     <div class="stat-metric-row">
                         <div class="stat-metric-label">
                             <i data-lucide="activity"></i> Rata-rata Win/Hari
                         </div>
-                        <div class="stat-metric-val">+${formatRupiah(avgWinIdr)}</div>
+                        <div class="stat-metric-val">${avgWinFormatted}</div>
                     </div>
 
                     <div class="stat-metric-row">
                         <div class="stat-metric-label">
                             <i data-lucide="shield-check"></i> Modal Telah Ditarik
                         </div>
-                        <div class="stat-metric-val" style="color: var(--primary);">${roiPercent}% (${formatRupiah(totalWithdrawIdr)})</div>
+                        <div class="stat-metric-val" style="color: var(--primary);">${roiPercent}% (${withdrawAmountFormatted})</div>
                     </div>
                 `;
             }
