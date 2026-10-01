@@ -1725,16 +1725,10 @@
                     </div>
                 </div>
 
-                <!-- Summary Table (Monthly / Weekly Switcher) -->
+                <!-- Summary Table (Monthly Recap) -->
                 <div class="sub-header-bar">
                     <div class="sub-header-title">
                         <i data-lucide="calendar"></i> <span id="recap-title">Rekapitulasi Bulanan 2026</span>
-                    </div>
-                    <div class="filter-controls">
-                        <div class="chart-unit-switcher">
-                            <button type="button" class="btn-chart-tab active" id="btn-recap-monthly" onclick="setRecapMode('monthly')">Bulanan</button>
-                            <button type="button" class="btn-chart-tab" id="btn-recap-weekly" onclick="setRecapMode('weekly')">Mingguan</button>
-                        </div>
                     </div>
                 </div>
                 <!-- Monthly Summary Table -->
@@ -1754,27 +1748,6 @@
                             </tr>
                         </thead>
                         <tbody id="monthly-summary-body">
-                            <!-- Loaded dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-                <!-- Weekly Accumulation Table (Dashboard) -->
-                <div class="table-container card-body" id="recap-weekly-table-wrap" style="display: none;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Minggu</th>
-                                <th>Periode Tanggal</th>
-                                <th>Hari Aktif</th>
-                                <th>Win Rate</th>
-                                <th class="col-group-profit">Profit/Loss (USC)</th>
-                                <th class="col-group-profit">Est. Profit (IDR)</th>
-                                <th>Status</th>
-                                <th style="color: var(--primary);">Akumulasi (IDR)</th>
-                                <th style="color: var(--primary);">Akumulasi (USC)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dashboard-weekly-summary-body">
                             <!-- Loaded dynamically -->
                         </tbody>
                     </table>
@@ -1847,13 +1820,9 @@
             <div id="panel-journal" class="tab-panel">
                 <div class="sub-header-bar">
                     <div class="sub-header-title">
-                        <i data-lucide="book-open"></i> <span id="journal-header-title">Jurnal Trading Harian (Metatrader)</span>
+                        <i data-lucide="book-open"></i> <span>Jurnal Trading Harian (Metatrader)</span>
                     </div>
                     <div class="filter-controls table-controls">
-                        <div class="chart-unit-switcher">
-                            <button type="button" class="btn-chart-tab active" id="btn-journal-daily" onclick="setJournalView('daily')">Harian</button>
-                            <button type="button" class="btn-chart-tab" id="btn-journal-weekly" onclick="setJournalView('weekly')">Mingguan</button>
-                        </div>
                         <select id="journal-month-filter" class="select-filter filter-select" onchange="filterJournal()">
                             <option value="all">Semua Bulan</option>
                             <option value="01">Januari</option>
@@ -1881,8 +1850,8 @@
                 <div class="filter-summary-ribbon" id="journal-summary-ribbon">
                     <!-- Populated dynamically via renderJournal() -->
                 </div>
-                <!-- Daily Table Container -->
-                <div class="table-container card-body" id="journal-daily-table-wrap">
+                <!-- Journal Table Container -->
+                <div class="table-container card-body" id="journal-table-wrap">
                     <table>
                         <thead>
                             <tr>
@@ -1901,48 +1870,12 @@
                                 <th onclick="setJournalSort('akumulasi_idr')" style="cursor: pointer; user-select: none;">
                                     Akumulasi (IDR) <span id="sort-icon-journal-akumulasi_idr"></span>
                                 </th>
+                                <th onclick="setJournalSort('weekly_idr')" style="cursor: pointer; user-select: none;">
+                                    Akumulasi Mingguan (IDR) <span id="sort-icon-journal-weekly_idr"></span>
+                                </th>
                             </tr>
                         </thead>
                         <tbody id="journal-table-body">
-                            <!-- Loaded dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-                <!-- Weekly Accumulation Table Container -->
-                <div class="table-container card-body" id="journal-weekly-table-wrap" style="display: none;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th onclick="setJournalWeeklySort('weekNumber')" style="cursor: pointer; user-select: none;">
-                                    Minggu <span id="sort-icon-weekly-weekNumber">▲</span>
-                                </th>
-                                <th onclick="setJournalWeeklySort('startDate')" style="cursor: pointer; user-select: none;">
-                                    Periode Tanggal <span id="sort-icon-weekly-startDate"></span>
-                                </th>
-                                <th onclick="setJournalWeeklySort('activeDays')" style="cursor: pointer; user-select: none;">
-                                    Hari Aktif <span id="sort-icon-weekly-activeDays"></span>
-                                </th>
-                                <th onclick="setJournalWeeklySort('winRate')" style="cursor: pointer; user-select: none;">
-                                    Win Rate <span id="sort-icon-weekly-winRate"></span>
-                                </th>
-                                <th onclick="setJournalWeeklySort('profitUsc')" style="cursor: pointer; user-select: none;">
-                                    Profit/Loss (USC) <span id="sort-icon-weekly-profitUsc"></span>
-                                </th>
-                                <th onclick="setJournalWeeklySort('profitIdr')" style="cursor: pointer; user-select: none;">
-                                    Est. Profit (IDR) <span id="sort-icon-weekly-profitIdr"></span>
-                                </th>
-                                <th onclick="setJournalWeeklySort('status')" style="cursor: pointer; user-select: none;">
-                                    Status <span id="sort-icon-weekly-status"></span>
-                                </th>
-                                <th onclick="setJournalWeeklySort('accumIdr')" style="cursor: pointer; user-select: none;">
-                                    Akumulasi (IDR) <span id="sort-icon-weekly-accumIdr"></span>
-                                </th>
-                                <th onclick="setJournalWeeklySort('accumUsc')" style="cursor: pointer; user-select: none;">
-                                    Akumulasi (USC) <span id="sort-icon-weekly-accumUsc"></span>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody id="journal-weekly-table-body">
                             <!-- Loaded dynamically -->
                         </tbody>
                     </table>
@@ -2258,12 +2191,16 @@
                 
                 const journalDate = row[6];
                 if (journalDate && journalDate.trim() !== '') {
+                    const weeklyText = (row[11] || '').trim();
+                    const hasWeekly = weeklyText.includes('Rp');
                     journalRows.push({
                         tanggal: journalDate,
                         profit_usc: cleanUSC(row[7]),
                         est_profit_idr: cleanIDR(row[8]),
                         status: row[9] || '',
-                        akumulasi_idr: cleanIDR(row[10])
+                        akumulasi_idr: cleanIDR(row[10]),
+                        weekly_raw_idr: hasWeekly ? cleanIDR(weeklyText) : null,
+                        has_weekly: hasWeekly
                     });
                 }
             }
@@ -2781,193 +2718,10 @@
             // 3. Populate Cashflow & Journal tables initially
             renderCashflow();
             renderJournal();
-            renderWeeklyRecap();
             renderCharts();
             
             // Refresh icons dynamically loaded
             lucide.createIcons();
-        }
-
-        // --- Weekly Accumulation Calculator (Starts from first date in Journal) ---
-        function computeWeeklySummary(journalRows, kurs) {
-            if (!journalRows || journalRows.length === 0) return [];
-
-            // Filter valid rows with a date
-            const validRows = journalRows.filter(r => r.tanggal && r.tanggal.trim() !== '');
-            if (validRows.length === 0) return [];
-
-            // Sort ascending by date to guarantee chronological order starting from the very first entry
-            const sorted = [...validRows].sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
-            const firstDate = new Date(sorted[0].tanggal + 'T00:00:00');
-            const lastDate = new Date(sorted[sorted.length - 1].tanggal + 'T00:00:00');
-
-            const weeks = [];
-            let weekIndex = 1;
-            let currentWeekStart = new Date(firstDate);
-            let runningAccumIdr = 0;
-            let runningAccumUsc = 0;
-
-            const monthNames = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-
-            while (currentWeekStart <= lastDate) {
-                const currentWeekEnd = new Date(currentWeekStart);
-                currentWeekEnd.setDate(currentWeekEnd.getDate() + 6);
-
-                const startStr = currentWeekStart.toISOString().split('T')[0];
-                const endStr = currentWeekEnd.toISOString().split('T')[0];
-
-                const startParts = startStr.split('-');
-                const endParts = endStr.split('-');
-                const startMonthName = monthNames[parseInt(startParts[1])] || startParts[1];
-                const endMonthName = monthNames[parseInt(endParts[1])] || endParts[1];
-
-                const periodLabel = startParts[1] === endParts[1]
-                    ? `${startParts[2]} - ${endParts[2]} ${startMonthName} ${startParts[0]}`
-                    : `${startParts[2]} ${startMonthName} - ${endParts[2]} ${endMonthName} ${endParts[0]}`;
-
-                // Find rows falling into this week [startStr, endStr] that have trade status
-                const weekRows = sorted.filter(r => r.tanggal >= startStr && r.tanggal <= endStr && r.status && r.status.trim() !== '');
-
-                if (weekRows.length > 0) {
-                    let weekProfitUsc = 0;
-                    let weekProfitIdr = 0;
-                    let winCount = 0;
-                    let lossCount = 0;
-                    let beCount = 0;
-
-                    weekRows.forEach(r => {
-                        const pUsc = parseFloat(r.profit_usc) || 0;
-                        const pIdr = (pUsc / 100) * kurs;
-                        weekProfitUsc += pUsc;
-                        weekProfitIdr += pIdr;
-
-                        if (r.status === 'WIN') winCount++;
-                        else if (r.status === 'LOSS') lossCount++;
-                        else if (r.status === 'BREAK EVEN' || r.status === 'BE') beCount++;
-                    });
-
-                    runningAccumUsc += weekProfitUsc;
-                    runningAccumIdr += weekProfitIdr;
-
-                    const totalTrades = winCount + lossCount;
-                    const winRate = totalTrades > 0 ? ((winCount / totalTrades) * 100).toFixed(1) : (beCount > 0 ? '0.0' : '-');
-
-                    weeks.push({
-                        weekNumber: weekIndex,
-                        startDate: startStr,
-                        endDate: endStr,
-                        periodLabel: periodLabel,
-                        startMonth: startParts[1],
-                        endMonth: endParts[1],
-                        activeDays: weekRows.length,
-                        winCount,
-                        lossCount,
-                        beCount,
-                        winRate: winRate,
-                        profitUsc: weekProfitUsc,
-                        profitIdr: weekProfitIdr,
-                        accumUsc: runningAccumUsc,
-                        accumIdr: runningAccumIdr,
-                        status: weekProfitUsc > 0 ? 'WIN' : (weekProfitUsc < 0 ? 'LOSS' : 'BE')
-                    });
-                }
-
-                // Advance to next 7 days
-                currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-                weekIndex++;
-            }
-
-            return weeks;
-        }
-
-        // --- Dashboard Rekapitulasi Switcher (Bulanan vs Mingguan) ---
-        let currentRecapMode = 'monthly';
-
-        function setRecapMode(mode) {
-            currentRecapMode = mode;
-            const btnMonthly = document.getElementById('btn-recap-monthly');
-            const btnWeekly = document.getElementById('btn-recap-weekly');
-            const wrapMonthly = document.getElementById('recap-monthly-table-wrap');
-            const wrapWeekly = document.getElementById('recap-weekly-table-wrap');
-            const titleEl = document.getElementById('recap-title');
-
-            if (btnMonthly) btnMonthly.classList.toggle('active', mode === 'monthly');
-            if (btnWeekly) btnWeekly.classList.toggle('active', mode === 'weekly');
-
-            if (mode === 'monthly') {
-                if (wrapMonthly) wrapMonthly.style.display = '';
-                if (wrapWeekly) wrapWeekly.style.display = 'none';
-                if (titleEl) titleEl.innerText = 'Rekapitulasi Bulanan 2026';
-            } else {
-                if (wrapMonthly) wrapMonthly.style.display = 'none';
-                if (wrapWeekly) wrapWeekly.style.display = '';
-                if (titleEl) titleEl.innerText = 'Rekapitulasi Mingguan 2026 (Akumulasi)';
-                renderWeeklyRecap();
-            }
-        }
-
-        function renderWeeklyRecap() {
-            const body = document.getElementById('dashboard-weekly-summary-body');
-            if (!body) return;
-
-            const weeks = computeWeeklySummary(activeData.journalRows, currentKurs);
-            let html = '';
-            let totalProfitUsc = 0;
-            let totalProfitIdr = 0;
-            let totalWins = 0;
-            let totalLosses = 0;
-            let totalTrades = 0;
-
-            weeks.forEach(w => {
-                totalProfitUsc += w.profitUsc;
-                totalProfitIdr += w.profitIdr;
-                totalWins += w.winCount;
-                totalLosses += w.lossCount;
-                totalTrades += (w.winCount + w.lossCount);
-
-                let statusBadge = 'badge-be';
-                if (w.status === 'WIN') statusBadge = 'badge-win';
-                else if (w.status === 'LOSS') statusBadge = 'badge-loss';
-
-                const pnlClass = w.profitUsc > 0 ? 'profit-text' : (w.profitUsc < 0 ? 'loss-text' : '');
-                const sign = w.profitUsc > 0 ? '+' : '';
-
-                html += `
-                    <tr>
-                        <td><strong>Minggu ${w.weekNumber}</strong></td>
-                        <td>${w.periodLabel}</td>
-                        <td>${w.activeDays} Hari</td>
-                        <td>${w.winRate !== '-' ? w.winRate + '%' : '-'} <span style="font-size:0.65rem; color:var(--text-muted);">(W:${w.winCount} L:${w.lossCount})</span></td>
-                        <td class="col-group-profit ${pnlClass} num-val">${sign}${formatDecimal(w.profitUsc)}</td>
-                        <td class="col-group-profit ${pnlClass} num-val">${sign}${formatRupiah(w.profitIdr)}</td>
-                        <td><span class="badge ${statusBadge}">${w.status === 'WIN' ? 'PROFIT' : w.status}</span></td>
-                        <td class="num-val" style="font-weight:700; color:var(--primary);">${formatRupiah(w.accumIdr)}</td>
-                        <td class="num-val" style="font-weight:700; color:var(--primary);">${formatDecimal(w.accumUsc)}</td>
-                    </tr>
-                `;
-            });
-
-            if (weeks.length > 0) {
-                const overallWinRate = totalTrades > 0 ? ((totalWins / totalTrades) * 100).toFixed(1) : 0;
-                const totalSign = totalProfitUsc >= 0 ? '+' : '';
-                const totalClass = totalProfitUsc > 0 ? 'profit-text' : (totalProfitUsc < 0 ? 'loss-text' : '');
-                const lastAccumIdr = weeks[weeks.length - 1].accumIdr;
-                const lastAccumUsc = weeks[weeks.length - 1].accumUsc;
-
-                html += `
-                    <tr class="total-row" style="font-weight: 700;">
-                        <td colspan="3" style="text-align: right; color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em;">Total:</td>
-                        <td><span class="badge badge-be" style="font-size:0.65rem;">WR: ${overallWinRate}%</span></td>
-                        <td class="col-group-profit ${totalClass} num-val">${totalSign}${formatDecimal(totalProfitUsc)}</td>
-                        <td class="col-group-profit ${totalClass} num-val">${totalSign}${formatRupiah(totalProfitIdr)}</td>
-                        <td><span class="badge ${totalProfitUsc >= 0 ? 'badge-win' : 'badge-loss'}">${totalProfitUsc >= 0 ? 'PROFIT' : 'LOSS'}</span></td>
-                        <td class="num-val" style="color:var(--primary); font-weight:700;">${formatRupiah(lastAccumIdr)}</td>
-                        <td class="num-val" style="color:var(--primary); font-weight:700;">${formatDecimal(lastAccumUsc)}</td>
-                    </tr>
-                `;
-            }
-
-            body.innerHTML = html || '<tr><td colspan="9" style="text-align:center; color:var(--text-secondary);">Tidak ada data mingguan</td></tr>';
         }
 
         let cashflowSortCol = 'tanggal';
@@ -3008,7 +2762,7 @@
                 journalSortDir = 'desc';
             }
 
-            const cols = ['tanggal', 'profit_usc', 'est_profit_idr', 'status', 'akumulasi_idr'];
+            const cols = ['tanggal', 'profit_usc', 'est_profit_idr', 'status', 'akumulasi_idr', 'weekly_idr'];
             cols.forEach(c => {
                 const el = document.getElementById(`sort-icon-journal-${c}`);
                 if (el) {
@@ -3020,61 +2774,6 @@
                     }
                 }
             });
-
-            renderJournal();
-        }
-
-        // --- Weekly Sort in Journal MT ---
-        let journalWeeklySortCol = 'weekNumber';
-        let journalWeeklySortDir = 'asc';
-
-        function setJournalWeeklySort(col) {
-            if (journalWeeklySortCol === col) {
-                journalWeeklySortDir = journalWeeklySortDir === 'asc' ? 'desc' : 'asc';
-            } else {
-                journalWeeklySortCol = col;
-                journalWeeklySortDir = 'asc';
-            }
-
-            const cols = ['weekNumber', 'startDate', 'activeDays', 'winRate', 'profitUsc', 'profitIdr', 'status', 'accumIdr', 'accumUsc'];
-            cols.forEach(c => {
-                const el = document.getElementById(`sort-icon-weekly-${c}`);
-                if (el) {
-                    if (c === journalWeeklySortCol) {
-                        el.innerText = journalWeeklySortDir === 'asc' ? ' ▲' : ' ▼';
-                        el.style.color = 'var(--primary-color)';
-                    } else {
-                        el.innerText = '';
-                    }
-                }
-            });
-
-            renderJournal();
-        }
-
-        // --- View Mode in Journal MT (Harian vs Mingguan) ---
-        let currentJournalView = 'daily';
-
-        function setJournalView(mode) {
-            currentJournalView = mode;
-            const btnDaily = document.getElementById('btn-journal-daily');
-            const btnWeekly = document.getElementById('btn-journal-weekly');
-            const wrapDaily = document.getElementById('journal-daily-table-wrap');
-            const wrapWeekly = document.getElementById('journal-weekly-table-wrap');
-            const titleEl = document.getElementById('journal-header-title');
-
-            if (btnDaily) btnDaily.classList.toggle('active', mode === 'daily');
-            if (btnWeekly) btnWeekly.classList.toggle('active', mode === 'weekly');
-
-            if (mode === 'daily') {
-                if (wrapDaily) wrapDaily.style.display = '';
-                if (wrapWeekly) wrapWeekly.style.display = 'none';
-                if (titleEl) titleEl.innerText = 'Jurnal Trading Harian (Metatrader)';
-            } else {
-                if (wrapDaily) wrapDaily.style.display = 'none';
-                if (wrapWeekly) wrapWeekly.style.display = '';
-                if (titleEl) titleEl.innerText = 'Jurnal Akumulasi Mingguan (Metatrader)';
-            }
 
             renderJournal();
         }
@@ -3230,329 +2929,207 @@
             renderCashflow();
         }
 
-        // Render Journal worksheet table (Supports both Daily and Weekly views)
+        // Render Journal worksheet table (with Column L: Akumulasi Mingguan)
         function renderJournal() {
+            const body = document.getElementById('journal-table-body');
             const ribbonEl = document.getElementById('journal-summary-ribbon');
             const monthFilter = document.getElementById('journal-month-filter').value;
             const filter = document.getElementById('journal-filter').value;
             const statusText = document.getElementById('sync-text');
             const isLoading = statusText && statusText.innerText.includes('Menghubungkan');
+            const rawData = activeData ? activeData.journalRows : [];
 
-            if (currentJournalView === 'weekly') {
-                // ================= WEEKLY VIEW RENDERING =================
-                const weeklyBody = document.getElementById('journal-weekly-table-body');
-                const rawWeeks = computeWeeklySummary(activeData.journalRows, currentKurs);
-                let weeks = [...rawWeeks];
+            // Sort chronologically ascending to compute running accumulation and weekly totals accurately
+            const validRows = rawData.filter(r => r.tanggal && r.tanggal.trim() !== '');
+            const chronological = [...validRows].sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
+            let runningAccum = 0;
+            let runningWeekUsc = 0;
 
-                // 1. Filter by Month (if start or end of week touches selected month)
-                if (monthFilter !== 'all') {
-                    weeks = weeks.filter(w => w.startMonth === monthFilter || w.endMonth === monthFilter);
-                }
-
-                // 2. Filter by Status (WIN / LOSS / BREAK EVEN)
-                if (filter !== 'all') {
-                    if (filter === 'WIN') weeks = weeks.filter(w => w.status === 'WIN');
-                    else if (filter === 'LOSS') weeks = weeks.filter(w => w.status === 'LOSS');
-                    else if (filter === 'BREAK EVEN') weeks = weeks.filter(w => w.status === 'BE');
-                }
-
-                // Calculate summary metrics for Weekly Ribbon
-                let totalProfitUsc = 0;
-                let totalProfitIdr = 0;
-                let totalWins = 0;
-                let totalLosses = 0;
-                let totalBE = 0;
-                let bestWeekProfitIdr = -Infinity;
-                let bestWeekNum = null;
-
-                weeks.forEach(w => {
-                    totalProfitUsc += w.profitUsc;
-                    totalProfitIdr += w.profitIdr;
-                    if (w.status === 'WIN') totalWins++;
-                    else if (w.status === 'LOSS') totalLosses++;
-                    else totalBE++;
-
-                    if (w.profitIdr > bestWeekProfitIdr) {
-                        bestWeekProfitIdr = w.profitIdr;
-                        bestWeekNum = w.weekNumber;
-                    }
-                });
-
-                const completedWeeks = totalWins + totalLosses;
-                const winRateWeeks = completedWeeks > 0 ? ((totalWins / completedWeeks) * 100).toFixed(1) : 0;
-                const pnlColor = totalProfitUsc >= 0 ? 'var(--success)' : 'var(--error)';
-
-                if (ribbonEl) {
-                    ribbonEl.innerHTML = `
-                        <div class="ribbon-card">
-                            <div class="ribbon-card-header">
-                                <i data-lucide="trending-up" style="color:${pnlColor};"></i>
-                                <span>Net Profit Mingguan</span>
-                            </div>
-                            <div class="ribbon-card-body">
-                                <span class="ribbon-card-val" style="color:${pnlColor};">${totalProfitUsc >= 0 ? '+' : ''}${formatRupiah(totalProfitIdr)}</span>
-                                <span class="ribbon-card-sub">${totalProfitUsc >= 0 ? '+' : ''}${formatDecimal(totalProfitUsc)} USC</span>
-                            </div>
-                        </div>
-                        <div class="ribbon-card">
-                            <div class="ribbon-card-header">
-                                <i data-lucide="target" style="color:var(--primary);"></i>
-                                <span>Win Rate Mingguan</span>
-                            </div>
-                            <div class="ribbon-card-body">
-                                <span class="ribbon-card-val">${winRateWeeks}%</span>
-                                <span class="ribbon-card-sub">${completedWeeks} Minggu closed</span>
-                            </div>
-                        </div>
-                        <div class="ribbon-card">
-                            <div class="ribbon-card-header">
-                                <i data-lucide="award" style="color:var(--warning);"></i>
-                                <span>Hasil Minggu</span>
-                            </div>
-                            <div class="ribbon-card-body">
-                                <span class="ribbon-card-val" style="font-size:0.75rem;">W:${totalWins} L:${totalLosses} BE:${totalBE}</span>
-                                <span class="ribbon-card-sub">Distribusi Minggu</span>
-                            </div>
-                        </div>
-                        <div class="ribbon-card">
-                            <div class="ribbon-card-header">
-                                <i data-lucide="calendar" style="color:var(--text-muted);"></i>
-                                <span>Total Periode</span>
-                            </div>
-                            <div class="ribbon-card-body">
-                                <span class="ribbon-card-val">${weeks.length} Minggu</span>
-                                <span class="ribbon-card-sub">Akumulasi Berjalan</span>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                // 3. Sort the weekly data
-                weeks.sort((a, b) => {
-                    let valA = a[journalWeeklySortCol];
-                    let valB = b[journalWeeklySortCol];
-
-                    if (typeof valA === 'string') {
-                        return journalWeeklySortDir === 'asc' 
-                            ? valA.localeCompare(valB) 
-                            : valB.localeCompare(valA);
-                    } else {
-                        return journalWeeklySortDir === 'asc'
-                            ? (valA || 0) - (valB || 0)
-                            : (valB || 0) - (valA || 0);
-                    }
-                });
-
-                let weeklyHtml = '';
-                weeks.forEach(w => {
-                    let statusClass = 'badge-be';
-                    if (w.status === 'WIN') statusClass = 'badge-win';
-                    else if (w.status === 'LOSS') statusClass = 'badge-loss';
-
-                    const pnlClass = w.profitUsc > 0 ? 'profit-text' : (w.profitUsc < 0 ? 'loss-text' : '');
-                    const sign = w.profitUsc > 0 ? '+' : '';
-
-                    weeklyHtml += `
-                        <tr>
-                            <td><strong>Minggu ${w.weekNumber}</strong></td>
-                            <td>${w.periodLabel}</td>
-                            <td>${w.activeDays} Hari</td>
-                            <td>${w.winRate !== '-' ? w.winRate + '%' : '-'} <span style="font-size:0.65rem; color:var(--text-muted);">(W:${w.winCount} L:${w.lossCount})</span></td>
-                            <td class="${pnlClass} num-val">${sign}${formatDecimal(w.profitUsc)} USC</td>
-                            <td class="${pnlClass} num-val">${sign}${formatRupiah(w.profitIdr)}</td>
-                            <td><span class="badge ${statusClass}">${w.status === 'WIN' ? 'PROFIT' : w.status}</span></td>
-                            <td class="num-val" style="font-weight:700;">${formatRupiah(w.accumIdr)}</td>
-                            <td class="num-val" style="font-weight:700;">${formatDecimal(w.accumUsc)} USC</td>
-                        </tr>
-                    `;
-                });
-
-                if (weeks.length > 0) {
-                    const totalSign = totalProfitUsc >= 0 ? '+' : '';
-                    const totalClass = totalProfitUsc > 0 ? 'profit-text' : (totalProfitUsc < 0 ? 'loss-text' : '');
-                    const lastAccumIdr = weeks[weeks.length - 1].accumIdr;
-                    const lastAccumUsc = weeks[weeks.length - 1].accumUsc;
-
-                    weeklyHtml += `
-                        <tr class="total-row" style="font-weight: 700;">
-                            <td colspan="4" style="text-align: right; color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em;">Total Terfilter:</td>
-                            <td class="${totalClass} num-val">${totalSign}${formatDecimal(totalProfitUsc)} USC</td>
-                            <td class="${totalClass} num-val">${totalSign}${formatRupiah(totalProfitIdr)}</td>
-                            <td><span class="badge badge-be" style="font-size:0.65rem;">WR: ${winRateWeeks}%</span></td>
-                            <td class="num-val" style="color:var(--primary); font-weight:700;">${formatRupiah(lastAccumIdr)}</td>
-                            <td class="num-val" style="color:var(--primary); font-weight:700;">${formatDecimal(lastAccumUsc)} USC</td>
-                        </tr>
-                    `;
-                }
-
-                const fallbackMessage = isLoading
-                    ? '<tr><td colspan="9" style="text-align:center; color:var(--text-secondary); padding: 1.5rem;">Memuat data dari Google Sheets...</td></tr>'
-                    : '<tr><td colspan="9" style="text-align:center; color:var(--text-secondary);">Tidak ada data mingguan ditemukan</td></tr>';
-                if (weeklyBody) weeklyBody.innerHTML = weeklyHtml || fallbackMessage;
-
-            } else {
-                // ================= DAILY VIEW RENDERING =================
-                const body = document.getElementById('journal-table-body');
-                const rawData = activeData.journalRows;
-                
-                // Recalculate running accumulation based on recalculated values
-                let runningAccum = 0;
-                let data = rawData.map(row => {
-                    const pnlVal = parseFloat(row.profit_usc) || 0;
-                    const estProfitIdr = (pnlVal / 100) * currentKurs;
-                    if (row.status !== '') {
-                        runningAccum += estProfitIdr;
-                    }
-                    return {
-                        ...row,
-                        est_profit_idr_recalc: estProfitIdr,
-                        akumulasi_idr_recalc: runningAccum
-                    };
-                });
-                
-                // 1. Filter by Month
-                if (monthFilter !== 'all') {
-                    data = data.filter(row => {
-                        const parts = row.tanggal.split('-');
-                        return parts[1] === monthFilter;
-                    });
+            const processed = chronological.map((row, idx) => {
+                const pnlVal = parseFloat(row.profit_usc) || 0;
+                const estProfitIdr = (pnlVal / 100) * currentKurs;
+                if (row.status !== '') {
+                    runningAccum += estProfitIdr;
                 }
                 
-                // 2. Filter by Status
-                if (filter !== 'all') {
-                    data = data.filter(row => row.status === filter);
-                }
-
-                // Calculate filtered performance metrics for Journal Ribbon & Footer
-                let totalProfitUsc = 0;
-                let totalProfitIdr = 0;
-                let winCount = 0;
-                let lossCount = 0;
-                let beCount = 0;
-
-                data.forEach(row => {
-                    const pnlVal = parseFloat(row.profit_usc) || 0;
-                    totalProfitUsc += pnlVal;
-                    totalProfitIdr += row.est_profit_idr_recalc;
-                    if (row.status === 'WIN') winCount++;
-                    else if (row.status === 'LOSS') lossCount++;
-                    else if (row.status === 'BREAK EVEN' || row.status === 'BE') beCount++;
-                });
-
-                const completedTrades = winCount + lossCount;
-                const winRate = completedTrades > 0 ? ((winCount / completedTrades) * 100).toFixed(1) : 0;
-                const pnlColor = totalProfitUsc >= 0 ? 'var(--success)' : 'var(--error)';
-
-                // Render Journal Summary Ribbon with Clean Modern Cards
-                if (ribbonEl) {
-                    ribbonEl.innerHTML = `
-                        <div class="ribbon-card">
-                            <div class="ribbon-card-header">
-                                <i data-lucide="trending-up" style="color:${pnlColor};"></i>
-                                <span>Net Profit</span>
-                            </div>
-                            <div class="ribbon-card-body">
-                                <span class="ribbon-card-val" style="color:${pnlColor};">${totalProfitUsc >= 0 ? '+' : ''}${formatRupiah(totalProfitIdr)}</span>
-                                <span class="ribbon-card-sub">${totalProfitUsc >= 0 ? '+' : ''}${formatDecimal(totalProfitUsc)} USC</span>
-                            </div>
-                        </div>
-                        <div class="ribbon-card">
-                            <div class="ribbon-card-header">
-                                <i data-lucide="target" style="color:var(--primary);"></i>
-                                <span>Win Rate</span>
-                            </div>
-                            <div class="ribbon-card-body">
-                                <span class="ribbon-card-val">${winRate}%</span>
-                                <span class="ribbon-card-sub">${completedTrades} closed</span>
-                            </div>
-                        </div>
-                        <div class="ribbon-card">
-                            <div class="ribbon-card-header">
-                                <i data-lucide="award" style="color:var(--warning);"></i>
-                                <span>Hasil Trade</span>
-                            </div>
-                            <div class="ribbon-card-body">
-                                <span class="ribbon-card-val" style="font-size:0.75rem;">W:${winCount} L:${lossCount} BE:${beCount}</span>
-                                <span class="ribbon-card-sub">Distribusi</span>
-                            </div>
-                        </div>
-                        <div class="ribbon-card">
-                            <div class="ribbon-card-header">
-                                <i data-lucide="calendar" style="color:var(--text-muted);"></i>
-                                <span>Hari Trading</span>
-                            </div>
-                            <div class="ribbon-card-body">
-                                <span class="ribbon-card-val">${data.length} Hari</span>
-                                <span class="ribbon-card-sub">Aktif</span>
-                            </div>
-                        </div>
-                    `;
-                }
+                runningWeekUsc += pnlVal;
+                const hasWeekly = !!row.has_weekly;
+                let weeklyIdr = null;
+                let weeklyUsc = null;
                 
-                // 3. Sort the data
-                data.sort((a, b) => {
-                    let valA = a[journalSortCol];
-                    let valB = b[journalSortCol];
-                    
-                    if (journalSortCol === 'est_profit_idr') {
-                        valA = a.est_profit_idr_recalc;
-                        valB = b.est_profit_idr_recalc;
-                    } else if (journalSortCol === 'akumulasi_idr') {
-                        valA = a.akumulasi_idr_recalc;
-                        valB = b.akumulasi_idr_recalc;
-                    }
-                    
-                    if (typeof valA === 'string') {
-                        return journalSortDir === 'asc' 
-                            ? valA.localeCompare(valB) 
-                            : valB.localeCompare(valA);
-                    } else {
-                        return journalSortDir === 'asc'
-                            ? (valA || 0) - (valB || 0)
-                            : (valB || 0) - (valA || 0);
-                    }
-                });
-
-                let html = '';
-                data.forEach(row => {
-                    let statusClass = 'badge-be';
-                    if (row.status === 'WIN') statusClass = 'badge-win';
-                    else if (row.status === 'LOSS') statusClass = 'badge-loss';
-                    
-                    const pnlVal = parseFloat(row.profit_usc) || 0;
-                    const pnlClass = pnlVal > 0 ? 'profit-text' : (pnlVal < 0 ? 'loss-text' : '');
-                    const sign = pnlVal > 0 ? '+' : '';
-                    
-                    html += `
-                        <tr>
-                            <td>${row.tanggal}</td>
-                            <td class="${pnlClass} num-val">${sign}${formatDecimal(row.profit_usc)} USC</td>
-                            <td class="${pnlClass} num-val">${pnlVal >= 0 ? '+' : ''}${formatRupiah(row.est_profit_idr_recalc)}</td>
-                            <td><span class="badge ${statusClass}">${row.status}</span></td>
-                            <td class="num-val">${formatRupiah(row.akumulasi_idr_recalc)}</td>
-                        </tr>
-                    `;
-                });
-
-                if (data.length > 0) {
-                    const totalSign = totalProfitUsc >= 0 ? '+' : '';
-                    const totalClass = totalProfitUsc > 0 ? 'profit-text' : (totalProfitUsc < 0 ? 'loss-text' : '');
-                    html += `
-                        <tr class="total-row" style="font-weight: 700;">
-                            <td style="text-align: right; color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em;">Total:</td>
-                            <td class="${totalClass} num-val">${totalSign}${formatDecimal(totalProfitUsc)} USC</td>
-                            <td class="${totalClass} num-val">${totalSign}${formatRupiah(totalProfitIdr)}</td>
-                            <td><span class="badge badge-be" style="font-size:0.65rem;">WR: ${winRate}%</span></td>
-                            <td class="num-val" style="color:var(--primary); font-weight:700;">${data.length > 0 ? formatRupiah(data[data.length - 1].akumulasi_idr_recalc) : '-'}</td>
-                        </tr>
-                    `;
+                if (hasWeekly) {
+                    weeklyUsc = runningWeekUsc;
+                    weeklyIdr = (runningWeekUsc / 100) * currentKurs;
+                    runningWeekUsc = 0; // reset for next 7-day period
                 }
 
-                const fallbackMessage = isLoading
-                    ? '<tr><td colspan="5" style="text-align:center; color:var(--text-secondary); padding: 1.5rem;">Memuat data dari Google Sheets...</td></tr>'
-                    : '<tr><td colspan="5" style="text-align:center; color:var(--text-secondary);">Tidak ada data jurnal ditemukan</td></tr>';
-                if (body) body.innerHTML = html || fallbackMessage;
+                return {
+                    ...row,
+                    est_profit_idr_recalc: estProfitIdr,
+                    akumulasi_idr_recalc: runningAccum,
+                    weekly_idr_recalc: weeklyIdr,
+                    weekly_usc_recalc: weeklyUsc,
+                    has_weekly_flag: hasWeekly
+                };
+            });
+
+            let data = [...processed];
+
+            // 1. Filter by Month
+            if (monthFilter !== 'all') {
+                data = data.filter(row => {
+                    const parts = row.tanggal.split('-');
+                    return parts[1] === monthFilter;
+                });
             }
+
+            // 2. Filter by Status
+            if (filter !== 'all') {
+                data = data.filter(row => row.status === filter);
+            }
+
+            // Calculate filtered performance metrics for Journal Ribbon & Footer
+            let totalProfitUsc = 0;
+            let totalProfitIdr = 0;
+            let winCount = 0;
+            let lossCount = 0;
+            let beCount = 0;
+
+            data.forEach(row => {
+                const pnlVal = parseFloat(row.profit_usc) || 0;
+                totalProfitUsc += pnlVal;
+                totalProfitIdr += row.est_profit_idr_recalc;
+                if (row.status === 'WIN') winCount++;
+                else if (row.status === 'LOSS') lossCount++;
+                else if (row.status === 'BREAK EVEN' || row.status === 'BE') beCount++;
+            });
+
+            const completedTrades = winCount + lossCount;
+            const winRate = completedTrades > 0 ? ((winCount / completedTrades) * 100).toFixed(1) : 0;
+            const pnlColor = totalProfitUsc >= 0 ? 'var(--success)' : 'var(--error)';
+
+            // Render Journal Summary Ribbon
+            if (ribbonEl) {
+                ribbonEl.innerHTML = `
+                    <div class="ribbon-card">
+                        <div class="ribbon-card-header">
+                            <i data-lucide="trending-up" style="color:${pnlColor};"></i>
+                            <span>Net Profit</span>
+                        </div>
+                        <div class="ribbon-card-body">
+                            <span class="ribbon-card-val" style="color:${pnlColor};">${totalProfitUsc >= 0 ? '+' : ''}${formatRupiah(totalProfitIdr)}</span>
+                            <span class="ribbon-card-sub">${totalProfitUsc >= 0 ? '+' : ''}${formatDecimal(totalProfitUsc)} USC</span>
+                        </div>
+                    </div>
+                    <div class="ribbon-card">
+                        <div class="ribbon-card-header">
+                            <i data-lucide="target" style="color:var(--primary);"></i>
+                            <span>Win Rate</span>
+                        </div>
+                        <div class="ribbon-card-body">
+                            <span class="ribbon-card-val">${winRate}%</span>
+                            <span class="ribbon-card-sub">${completedTrades} closed</span>
+                        </div>
+                    </div>
+                    <div class="ribbon-card">
+                        <div class="ribbon-card-header">
+                            <i data-lucide="award" style="color:var(--warning);"></i>
+                            <span>Hasil Trade</span>
+                        </div>
+                        <div class="ribbon-card-body">
+                            <span class="ribbon-card-val" style="font-size:0.75rem;">W:${winCount} L:${lossCount} BE:${beCount}</span>
+                            <span class="ribbon-card-sub">Distribusi</span>
+                        </div>
+                    </div>
+                    <div class="ribbon-card">
+                        <div class="ribbon-card-header">
+                            <i data-lucide="calendar" style="color:var(--text-muted);"></i>
+                            <span>Hari Trading</span>
+                        </div>
+                        <div class="ribbon-card-body">
+                            <span class="ribbon-card-val">${data.length} Hari</span>
+                            <span class="ribbon-card-sub">Aktif</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 3. Sort the data
+            data.sort((a, b) => {
+                let valA = a[journalSortCol];
+                let valB = b[journalSortCol];
+
+                if (journalSortCol === 'est_profit_idr') {
+                    valA = a.est_profit_idr_recalc;
+                    valB = b.est_profit_idr_recalc;
+                } else if (journalSortCol === 'akumulasi_idr') {
+                    valA = a.akumulasi_idr_recalc;
+                    valB = b.akumulasi_idr_recalc;
+                } else if (journalSortCol === 'weekly_idr') {
+                    valA = a.weekly_idr_recalc !== null ? a.weekly_idr_recalc : (journalSortDir === 'asc' ? 999999999999 : -999999999999);
+                    valB = b.weekly_idr_recalc !== null ? b.weekly_idr_recalc : (journalSortDir === 'asc' ? 999999999999 : -999999999999);
+                }
+
+                if (typeof valA === 'string') {
+                    return journalSortDir === 'asc' 
+                        ? valA.localeCompare(valB) 
+                        : valB.localeCompare(valA);
+                } else {
+                    return journalSortDir === 'asc'
+                        ? (valA || 0) - (valB || 0)
+                        : (valB || 0) - (valA || 0);
+                }
+            });
+
+            let html = '';
+            data.forEach(row => {
+                let statusClass = 'badge-be';
+                if (row.status === 'WIN') statusClass = 'badge-win';
+                else if (row.status === 'LOSS') statusClass = 'badge-loss';
+
+                const pnlVal = parseFloat(row.profit_usc) || 0;
+                const pnlClass = pnlVal > 0 ? 'profit-text' : (pnlVal < 0 ? 'loss-text' : '');
+                const sign = pnlVal > 0 ? '+' : '';
+
+                let weeklyContent = '<span style="color:var(--text-light);">-</span>';
+                if (row.weekly_idr_recalc !== null) {
+                    const wVal = row.weekly_idr_recalc;
+                    const wClass = wVal > 0 ? 'profit-text' : (wVal < 0 ? 'loss-text' : '');
+                    const wSign = wVal > 0 ? '+' : '';
+                    weeklyContent = `<span class="${wClass} num-val" style="font-weight:700;">${wSign}${formatRupiah(wVal)}</span>`;
+                }
+
+                html += `
+                    <tr>
+                        <td>${row.tanggal}</td>
+                        <td class="${pnlClass} num-val">${sign}${formatDecimal(row.profit_usc)} USC</td>
+                        <td class="${pnlClass} num-val">${pnlVal >= 0 ? '+' : ''}${formatRupiah(row.est_profit_idr_recalc)}</td>
+                        <td><span class="badge ${statusClass}">${row.status}</span></td>
+                        <td class="num-val">${formatRupiah(row.akumulasi_idr_recalc)}</td>
+                        <td>${weeklyContent}</td>
+                    </tr>
+                `;
+            });
+
+            if (data.length > 0) {
+                const totalSign = totalProfitUsc >= 0 ? '+' : '';
+                const totalClass = totalProfitUsc > 0 ? 'profit-text' : (totalProfitUsc < 0 ? 'loss-text' : '');
+                html += `
+                    <tr class="total-row" style="font-weight: 700;">
+                        <td style="text-align: right; color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em;">Total:</td>
+                        <td class="${totalClass} num-val">${totalSign}${formatDecimal(totalProfitUsc)} USC</td>
+                        <td class="${totalClass} num-val">${totalSign}${formatRupiah(totalProfitIdr)}</td>
+                        <td><span class="badge badge-be" style="font-size:0.65rem;">WR: ${winRate}%</span></td>
+                        <td class="num-val" style="color:var(--primary); font-weight:700;">${data.length > 0 ? formatRupiah(data[data.length - 1].akumulasi_idr_recalc) : '-'}</td>
+                        <td class="num-val" style="color:var(--primary); font-weight:700;">${totalSign}${formatRupiah(totalProfitIdr)}</td>
+                    </tr>
+                `;
+            }
+
+            const fallbackMessage = isLoading
+                ? '<tr><td colspan="6" style="text-align:center; color:var(--text-secondary); padding: 1.5rem;">Memuat data dari Google Sheets...</td></tr>'
+                : '<tr><td colspan="6" style="text-align:center; color:var(--text-secondary);">Tidak ada data jurnal ditemukan</td></tr>';
+            if (body) body.innerHTML = html || fallbackMessage;
 
             lucide.createIcons();
         }

@@ -166,15 +166,19 @@ async function run() {
       });
     }
     
-    // Right Table: journal (indices 6-10)
+    // Right Table: journal (indices 6-11)
     const journalDate = row[6];
     if (journalDate && journalDate.trim() !== '') {
+      const weeklyText = (row[11] || '').trim();
+      const hasWeekly = weeklyText.includes('Rp');
       journalRows.push({
         tanggal: journalDate,
         profit_usc: cleanUSC(row[7]),
         est_profit_idr: cleanIDR(row[8]),
         status: row[9] || '',
-        akumulasi_idr: cleanIDR(row[10])
+        akumulasi_idr: cleanIDR(row[10]),
+        weekly_raw_idr: hasWeekly ? cleanIDR(weeklyText) : null,
+        has_weekly: hasWeekly
       });
     }
   }
