@@ -3057,17 +3057,27 @@
             const lossPercentages = totalTrades > 0 ? ((losses / totalTrades) * 100).toFixed(0) : 0;
             const bePercentages = totalTrades > 0 ? ((be / totalTrades) * 100).toFixed(0) : 0;
 
+            // Calculate best & worst single day and average win day
             const winRows = sortedJournal.filter(r => parseFloat(r.profit_usc) > 0);
+            const lossRows = sortedJournal.filter(r => parseFloat(r.profit_usc) < 0);
+
             const maxProfitUsc = winRows.length > 0 ? Math.max(...winRows.map(r => parseFloat(r.profit_usc))) : 0;
+            const maxLossUsc = lossRows.length > 0 ? Math.min(...lossRows.map(r => parseFloat(r.profit_usc))) : 0; // negative number
+
             const totalWinUsc = winRows.reduce((sum, r) => sum + parseFloat(r.profit_usc), 0);
             const avgWinUsc = winRows.length > 0 ? totalWinUsc / winRows.length : 0;
 
             const maxProfitIdr = (maxProfitUsc / 100) * currentKurs;
+            const maxLossIdr = (maxLossUsc / 100) * currentKurs;
             const avgWinIdr = (avgWinUsc / 100) * currentKurs;
 
             const bestDayFormatted = currentChartCurrency === 'IDR' 
                 ? '+' + formatRupiah(maxProfitIdr) 
                 : '+' + formatDecimal(maxProfitUsc) + ' USC';
+
+            const worstDayFormatted = currentChartCurrency === 'IDR' 
+                ? formatRupiah(maxLossIdr) 
+                : formatDecimal(maxLossUsc) + ' USC';
 
             const avgWinFormatted = currentChartCurrency === 'IDR' 
                 ? '+' + formatRupiah(avgWinIdr) 
@@ -3135,6 +3145,13 @@
                             <i data-lucide="zap"></i> Best Day Profit
                         </div>
                         <div class="stat-metric-val" style="color: var(--success);">${bestDayFormatted}</div>
+                    </div>
+
+                    <div class="stat-metric-row">
+                        <div class="stat-metric-label">
+                            <i data-lucide="trending-down"></i> Worst Day Loss
+                        </div>
+                        <div class="stat-metric-val" style="color: var(--error);">${worstDayFormatted}</div>
                     </div>
 
                     <div class="stat-metric-row">
