@@ -785,6 +785,161 @@
             opacity: 0.65;
         }
 
+        /* Weekly Grouping & Milestone Row Styling */
+        tr.tr-week-milestone td {
+            background-color: rgba(20, 184, 166, 0.05) !important;
+            border-bottom: 2px solid var(--border-dark) !important;
+        }
+
+        tr.tr-week-alt td {
+            background-color: rgba(248, 250, 252, 0.6);
+        }
+
+        [data-bs-theme="dark"] tr.tr-week-milestone td,
+        [data-theme="dark"] tr.tr-week-milestone td {
+            background-color: rgba(20, 184, 166, 0.1) !important;
+            border-bottom: 2px solid #334155 !important;
+        }
+
+        [data-bs-theme="dark"] tr.tr-week-alt td,
+        [data-theme="dark"] tr.tr-week-alt td {
+            background-color: rgba(30, 41, 59, 0.35);
+        }
+
+        /* Day Tag */
+        .day-chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.61rem;
+            font-weight: 700;
+            padding: 1px 4px;
+            border-radius: 3px;
+            background: #e2e8f0;
+            color: var(--text-muted);
+            margin-left: 4px;
+            vertical-align: middle;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+        [data-bs-theme="dark"] .day-chip,
+        [data-theme="dark"] .day-chip {
+            background: #334155;
+            color: #94a3b8;
+        }
+
+        .day-chip.day-sun {
+            background: rgba(239, 68, 68, 0.12);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.25);
+        }
+        [data-bs-theme="dark"] .day-chip.day-sun,
+        [data-theme="dark"] .day-chip.day-sun {
+            background: rgba(244, 63, 94, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(244, 63, 94, 0.35);
+        }
+
+        /* Weekly Recap Card Badge */
+        .weekly-recap-badge {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 3px 8px;
+            border-radius: 5px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+            line-height: 1.25;
+            min-width: 110px;
+        }
+
+        .weekly-recap-badge.badge-win-recap {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+        .weekly-recap-badge.badge-loss-recap {
+            background: rgba(244, 63, 94, 0.12);
+            border: 1px solid rgba(244, 63, 94, 0.35);
+        }
+        .weekly-recap-badge.badge-be-recap {
+            background: #f1f5f9;
+            border: 1px solid var(--border-dark);
+        }
+
+        [data-bs-theme="dark"] .weekly-recap-badge.badge-win-recap,
+        [data-theme="dark"] .weekly-recap-badge.badge-win-recap {
+            background: rgba(16, 185, 129, 0.18);
+            border-color: rgba(52, 211, 153, 0.4);
+        }
+        [data-bs-theme="dark"] .weekly-recap-badge.badge-loss-recap,
+        [data-theme="dark"] .weekly-recap-badge.badge-loss-recap {
+            background: rgba(244, 63, 94, 0.18);
+            border-color: rgba(251, 113, 133, 0.4);
+        }
+        [data-bs-theme="dark"] .weekly-recap-badge.badge-be-recap,
+        [data-theme="dark"] .weekly-recap-badge.badge-be-recap {
+            background: #1e293b;
+            border-color: #475569;
+        }
+
+        .weekly-recap-label {
+            font-size: 0.58rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            opacity: 0.9;
+        }
+        .badge-win-recap .weekly-recap-label { color: #059669; }
+        .badge-loss-recap .weekly-recap-label { color: #e11d48; }
+        .badge-be-recap .weekly-recap-label { color: var(--text-muted); }
+
+        [data-bs-theme="dark"] .badge-win-recap .weekly-recap-label { color: #34d399; }
+        [data-bs-theme="dark"] .badge-loss-recap .weekly-recap-label { color: #fb7185; }
+
+        .weekly-recap-value {
+            font-size: 0.76rem;
+            font-weight: 800;
+            font-family: 'Consolas', monospace;
+        }
+        .badge-win-recap .weekly-recap-value { color: var(--success); }
+        .badge-loss-recap .weekly-recap-value { color: var(--error); }
+        .badge-be-recap .weekly-recap-value { color: var(--text); }
+
+        /* Running Daily Progress in Weekly column */
+        .weekly-running-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.72rem;
+            opacity: 0.82;
+        }
+
+        .weekly-running-val {
+            font-weight: 600;
+        }
+
+        .weekly-day-counter {
+            font-size: 0.58rem;
+            font-weight: 700;
+            background: #f1f5f9;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 0.5px 4px;
+            border-radius: 3px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: 0.02em;
+        }
+
+        [data-bs-theme="dark"] .weekly-day-counter,
+        [data-theme="dark"] .weekly-day-counter {
+            background: #1e293b;
+            border-color: #334155;
+            color: #94a3b8;
+        }
+
         /* Tab Content Panel */
         .tab-panel {
             display: none;
@@ -2929,7 +3084,7 @@
             renderCashflow();
         }
 
-        // Render Journal worksheet table (with Column L: Akumulasi Mingguan)
+        // Render Journal worksheet table (with Column L: Akumulasi Mingguan & Progressive Grouping)
         function renderJournal() {
             const body = document.getElementById('journal-table-body');
             const ribbonEl = document.getElementById('journal-summary-ribbon');
@@ -2942,8 +3097,12 @@
             // Sort chronologically ascending to compute running accumulation and weekly totals accurately
             const validRows = rawData.filter(r => r.tanggal && r.tanggal.trim() !== '');
             const chronological = [...validRows].sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
+            
+            const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
             let runningAccum = 0;
             let runningWeekUsc = 0;
+            let weekNumber = 1;
+            let dayInWeek = 1;
 
             const processed = chronological.map((row, idx) => {
                 const pnlVal = parseFloat(row.profit_usc) || 0;
@@ -2953,7 +3112,15 @@
                 }
                 
                 runningWeekUsc += pnlVal;
+                const runningWeekIdr = (runningWeekUsc / 100) * currentKurs;
                 const hasWeekly = !!row.has_weekly;
+                
+                const dObj = new Date(row.tanggal + 'T00:00:00');
+                const dayName = isNaN(dObj.getDay()) ? '-' : dayNames[dObj.getDay()];
+                
+                const currentWeekNum = weekNumber;
+                const currentDayInWeek = dayInWeek;
+                
                 let weeklyIdr = null;
                 let weeklyUsc = null;
                 
@@ -2961,15 +3128,25 @@
                     weeklyUsc = runningWeekUsc;
                     weeklyIdr = (runningWeekUsc / 100) * currentKurs;
                     runningWeekUsc = 0; // reset for next 7-day period
+                    weekNumber++;
+                    dayInWeek = 1;
+                } else {
+                    dayInWeek++;
                 }
 
                 return {
                     ...row,
+                    day_name: dayName,
                     est_profit_idr_recalc: estProfitIdr,
                     akumulasi_idr_recalc: runningAccum,
+                    week_number: currentWeekNum,
+                    day_in_week: currentDayInWeek,
+                    running_week_idr: runningWeekIdr,
+                    running_week_usc: runningWeekUsc,
+                    is_week_end: hasWeekly,
+                    is_week_alt: (currentWeekNum % 2 === 0),
                     weekly_idr_recalc: weeklyIdr,
-                    weekly_usc_recalc: weeklyUsc,
-                    has_weekly_flag: hasWeekly
+                    weekly_usc_recalc: weeklyUsc
                 };
             });
 
@@ -3066,8 +3243,8 @@
                     valA = a.akumulasi_idr_recalc;
                     valB = b.akumulasi_idr_recalc;
                 } else if (journalSortCol === 'weekly_idr') {
-                    valA = a.weekly_idr_recalc !== null ? a.weekly_idr_recalc : (journalSortDir === 'asc' ? 999999999999 : -999999999999);
-                    valB = b.weekly_idr_recalc !== null ? b.weekly_idr_recalc : (journalSortDir === 'asc' ? 999999999999 : -999999999999);
+                    valA = a.weekly_idr_recalc !== null ? a.weekly_idr_recalc : a.running_week_idr;
+                    valB = b.weekly_idr_recalc !== null ? b.weekly_idr_recalc : b.running_week_idr;
                 }
 
                 if (typeof valA === 'string') {
@@ -3091,17 +3268,60 @@
                 const pnlClass = pnlVal > 0 ? 'profit-text' : (pnlVal < 0 ? 'loss-text' : '');
                 const sign = pnlVal > 0 ? '+' : '';
 
-                let weeklyContent = '<span style="color:var(--text-light);">-</span>';
-                if (row.weekly_idr_recalc !== null) {
-                    const wVal = row.weekly_idr_recalc;
-                    const wClass = wVal > 0 ? 'profit-text' : (wVal < 0 ? 'loss-text' : '');
-                    const wSign = wVal > 0 ? '+' : '';
-                    weeklyContent = `<span class="${wClass} num-val" style="font-weight:700;">${wSign}${formatRupiah(wVal)}</span>`;
+                // Row classes for weekly grouping
+                let trClass = '';
+                if (row.is_week_end) {
+                    trClass = 'tr-week-milestone';
+                } else if (row.is_week_alt) {
+                    trClass = 'tr-week-alt';
                 }
 
+                // Weekly column content
+                let weeklyContent = '';
+                if (row.weekly_idr_recalc !== null) {
+                    const wVal = row.weekly_idr_recalc;
+                    let wBadgeClass = 'badge-be-recap';
+                    let wSign = '';
+                    if (wVal > 0) {
+                        wBadgeClass = 'badge-win-recap';
+                        wSign = '+';
+                    } else if (wVal < 0) {
+                        wBadgeClass = 'badge-loss-recap';
+                        wSign = '';
+                    }
+                    weeklyContent = `
+                        <div class="weekly-recap-badge ${wBadgeClass}">
+                            <div class="weekly-recap-label">
+                                <i data-lucide="award" style="width:10px; height:10px;"></i>
+                                <span>Rekap M${row.week_number} (7 Hari)</span>
+                            </div>
+                            <div class="weekly-recap-value">${wSign}${formatRupiah(wVal)}</div>
+                        </div>
+                    `;
+                } else {
+                    const runVal = row.running_week_idr;
+                    const runSign = runVal > 0 ? '+' : '';
+                    const runClass = runVal > 0 ? 'profit-text' : (runVal < 0 ? 'loss-text' : '');
+                    weeklyContent = `
+                        <div class="weekly-running-box" title="Akumulasi berjalan Minggu ${row.week_number} (Hari ke-${row.day_in_week} dari 7)">
+                            <span class="weekly-running-val ${runClass}">${runSign}${formatRupiah(runVal)}</span>
+                            <span class="weekly-day-counter">H${row.day_in_week}</span>
+                        </div>
+                    `;
+                }
+
+                // TGL with day badge
+                const dayChipClass = row.day_name === 'Min' ? 'day-chip day-sun' : 'day-chip';
+                const tglContent = `
+                    <div style="display:flex; align-items:center; gap:3px;">
+                        <span class="num-val">${row.tanggal}</span>
+                        <span class="${dayChipClass}">${row.day_name}</span>
+                    </div>
+                `;
+
                 html += `
-                    <tr>
-                        <td>${row.tanggal}</td>
+                    <tr class="${trClass}">
+                        <td>${tglContent}</td>
                         <td class="${pnlClass} num-val">${sign}${formatDecimal(row.profit_usc)} USC</td>
                         <td class="${pnlClass} num-val">${pnlVal >= 0 ? '+' : ''}${formatRupiah(row.est_profit_idr_recalc)}</td>
                         <td><span class="badge ${statusClass}">${row.status}</span></td>
