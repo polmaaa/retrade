@@ -13,6 +13,9 @@
     <!-- Lucide Icons -->
     <script src="lucide.js"></script>
     
+    <!-- Chart.js Engine -->
+    <script src="chart.umd.js"></script>
+    
     <!-- Static Offline Database Fallback -->
     <script src="dashboard_data.js"></script>
     
@@ -813,6 +816,158 @@
             animation: slideFromLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
 
+        /* Analytics & Charts Components */
+        .dashboard-analytics-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .analytics-card {
+            background-color: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .analytics-card:hover {
+            border-color: var(--border-dark);
+        }
+
+        .analytics-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 6px;
+        }
+
+        .analytics-card-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .analytics-card-title i, .analytics-card-title svg {
+            color: var(--primary);
+            width: 15px;
+            height: 15px;
+        }
+
+        .chart-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chart-unit-switcher {
+            display: flex;
+            background: #f1f5f9;
+            padding: 2px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        .btn-chart-tab {
+            border: none;
+            background: transparent;
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            padding: 2px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-chart-tab.active {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .chart-badge-summary {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: 'Consolas', monospace;
+            background: var(--primary-light);
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--primary-border);
+        }
+
+        .chart-canvas-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        /* Trading Stats Mini Widget Grid */
+        .trading-stats-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            height: 100%;
+            justify-content: space-around;
+        }
+
+        .stat-metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 8px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+        }
+
+        .stat-metric-label {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-metric-label i, .stat-metric-label svg {
+            width: 12px;
+            height: 12px;
+            color: var(--primary);
+        }
+
+        .stat-metric-val {
+            font-size: 0.78rem;
+            font-weight: 700;
+            font-family: 'Consolas', monospace;
+            color: var(--text);
+        }
+
+        .win-rate-progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+            display: flex;
+            margin-top: 2px;
+        }
+
+        .progress-win { background-color: var(--success); height: 100%; }
+        .progress-loss { background-color: var(--error); height: 100%; }
+        .progress-be { background-color: var(--text-light); height: 100%; }
+
         /* Dark Mode Theme Component Overrides */
         [data-bs-theme="dark"] .container, [data-theme="dark"] .container {
             background: #111827;
@@ -997,6 +1152,47 @@
         [data-bs-theme="dark"] .col-group-server, [data-theme="dark"] .col-group-server { background-color: rgba(251, 191, 36, 0.06) !important; }
         [data-bs-theme="dark"] .col-group-profit, [data-theme="dark"] .col-group-profit { background-color: rgba(52, 211, 153, 0.06) !important; }
 
+        [data-bs-theme="dark"] .analytics-card, [data-theme="dark"] .analytics-card {
+            background-color: #1e293b;
+            border-color: #334155;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        [data-bs-theme="dark"] .analytics-card-header, [data-theme="dark"] .analytics-card-header {
+            border-bottom-color: #334155;
+        }
+        [data-bs-theme="dark"] .analytics-card-title, [data-theme="dark"] .analytics-card-title {
+            color: #f8fafc;
+        }
+        [data-bs-theme="dark"] .chart-unit-switcher, [data-theme="dark"] .chart-unit-switcher {
+            background: #0f172a;
+            border-color: #334155;
+        }
+        [data-bs-theme="dark"] .btn-chart-tab, [data-theme="dark"] .btn-chart-tab {
+            color: #94a3b8;
+        }
+        [data-bs-theme="dark"] .btn-chart-tab.active, [data-theme="dark"] .btn-chart-tab.active {
+            background: #14b8a6;
+            color: #ffffff;
+        }
+        [data-bs-theme="dark"] .chart-badge-summary, [data-theme="dark"] .chart-badge-summary {
+            background: rgba(20, 184, 166, 0.15);
+            color: #2dd4bf;
+            border-color: rgba(45, 212, 191, 0.3);
+        }
+        [data-bs-theme="dark"] .stat-metric-row, [data-theme="dark"] .stat-metric-row {
+            background: #0f172a;
+            border-color: #334155;
+        }
+        [data-bs-theme="dark"] .stat-metric-label, [data-theme="dark"] .stat-metric-label {
+            color: #94a3b8;
+        }
+        [data-bs-theme="dark"] .stat-metric-val, [data-theme="dark"] .stat-metric-val {
+            color: #f8fafc;
+        }
+        [data-bs-theme="dark"] .win-rate-progress-bar, [data-theme="dark"] .win-rate-progress-bar {
+            background: #334155;
+        }
+
         footer {
             border-top: 1px solid var(--border);
             padding: 8px 0 0;
@@ -1008,6 +1204,12 @@
 
         /* Responsive Mobile changes */
         @media (max-width: 768px) {
+            .dashboard-analytics-grid {
+                grid-template-columns: 1fr !important;
+            }
+            .chart-canvas-wrapper {
+                height: 220px !important;
+            }
             body {
                 padding: 6px;
             }
@@ -1260,6 +1462,58 @@
 
             <!-- TAB: DASHBOARD -->
             <div id="panel-dashboard" class="tab-panel active">
+                <!-- Analytics & Charts Grid -->
+                <div class="dashboard-analytics-grid">
+                    <!-- 1. Equity Curve Chart -->
+                    <div class="analytics-card main-chart-card">
+                        <div class="analytics-card-header">
+                            <div class="analytics-card-title">
+                                <i data-lucide="trending-up"></i>
+                                <span>Kurva Pertumbuhan Akumulasi (Equity Curve)</span>
+                            </div>
+                            <div class="chart-controls">
+                                <div class="chart-unit-switcher">
+                                    <button type="button" class="btn-chart-tab active" id="btn-chart-idr" onclick="setChartCurrency('IDR')">IDR</button>
+                                    <button type="button" class="btn-chart-tab" id="btn-chart-usc" onclick="setChartCurrency('USC')">USC</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart-canvas-wrapper" style="height: 250px;">
+                            <canvas id="equityCurveChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 2. Performance Stats Widget -->
+                    <div class="analytics-card stats-widget-card">
+                        <div class="analytics-card-header">
+                            <div class="analytics-card-title">
+                                <i data-lucide="award"></i>
+                                <span>Statistik Performa Trading</span>
+                            </div>
+                        </div>
+                        <div class="trading-stats-grid" id="trading-stats-container">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Monthly PnL Bar Chart -->
+                <div class="analytics-card monthly-chart-card" style="margin-bottom: 10px;">
+                    <div class="analytics-card-header">
+                        <div class="analytics-card-title">
+                            <i data-lucide="bar-chart-3"></i>
+                            <span>Performa Profit Bersih Bulanan (PnL Rekapitulasi)</span>
+                        </div>
+                        <div class="chart-badge-summary" id="monthly-chart-summary">
+                            <!-- Total info -->
+                        </div>
+                    </div>
+                    <div class="chart-canvas-wrapper" style="height: 200px;">
+                        <canvas id="monthlyPnLChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 4. Monthly Summary Table -->
                 <div class="sub-header-bar">
                     <div class="sub-header-title">
                         <i data-lucide="calendar"></i> Rekapitulasi Bulanan 2026
@@ -1437,6 +1691,7 @@
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
             updateThemeIcon(newTheme);
+            renderCharts();
         }
 
         function updateThemeIcon(theme) {
@@ -1458,6 +1713,7 @@
                 document.documentElement.setAttribute('data-bs-theme', autoTheme);
                 document.documentElement.setAttribute('data-theme', autoTheme);
                 updateThemeIcon(autoTheme);
+                renderCharts();
             }
         });
 
@@ -1516,6 +1772,10 @@
             });
             // Add active to clicked button
             btnElement.classList.add('active');
+
+            if (tabName === 'dashboard') {
+                setTimeout(renderCharts, 50);
+            }
         }
 
         let activeData = null; // Will point to live spreadsheet data or local fallback
@@ -2229,6 +2489,7 @@
             // 3. Populate Cashflow & Journal tables initially
             renderCashflow();
             renderJournal();
+            renderCharts();
             
             // Refresh icons dynamically loaded
             lucide.createIcons();
@@ -2445,6 +2706,356 @@
 
         function filterJournal() {
             renderJournal();
+        }
+
+        // --- Chart.js Analytics & Visualizations ---
+        let equityChart = null;
+        let monthlyPnLChart = null;
+        let currentChartCurrency = 'IDR'; // 'IDR' or 'USC'
+
+        function setChartCurrency(currency) {
+            currentChartCurrency = currency;
+            const btnIdr = document.getElementById('btn-chart-idr');
+            const btnUsc = document.getElementById('btn-chart-usc');
+            if (btnIdr) btnIdr.classList.toggle('active', currency === 'IDR');
+            if (btnUsc) btnUsc.classList.toggle('active', currency === 'USC');
+            renderCharts();
+        }
+
+        function renderCharts() {
+            if (typeof Chart === 'undefined') {
+                return;
+            }
+
+            const data = activeData;
+            if (!data || !data.journalRows) return;
+
+            const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark' || document.documentElement.getAttribute('data-theme') === 'dark';
+            
+            // Theme colors
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)';
+            const textColor = isDark ? '#94a3b8' : '#64748b';
+            const tooltipBg = isDark ? '#0f172a' : '#1e293b';
+            const primaryTeal = isDark ? '#14b8a6' : '#0f766e';
+
+            // --- 1. EQUITY CURVE (ACCUMULATED PROFIT) ---
+            const sortedJournal = [...data.journalRows]
+                .filter(r => r.tanggal && r.tanggal.trim() !== '')
+                .sort((a, b) => a.tanggal.localeCompare(b.tanggal));
+
+            const labels = [];
+            const equityValues = [];
+            let runningAccum = 0;
+            const monthsAbbr = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
+
+            sortedJournal.forEach(row => {
+                const pnlVal = parseFloat(row.profit_usc) || 0;
+                const profit = currentChartCurrency === 'IDR' ? (pnlVal / 100) * currentKurs : pnlVal;
+                runningAccum += profit;
+
+                const parts = row.tanggal.split('-');
+                if (parts.length === 3) {
+                    const mIdx = parseInt(parts[1], 10) - 1;
+                    labels.push(`${parseInt(parts[2], 10)} ${monthsAbbr[mIdx] || ''}`);
+                } else {
+                    labels.push(row.tanggal);
+                }
+
+                equityValues.push(runningAccum);
+            });
+
+            const equityCanvas = document.getElementById('equityCurveChart');
+            if (equityCanvas) {
+                const ctx = equityCanvas.getContext('2d');
+                if (equityChart) {
+                    equityChart.destroy();
+                }
+
+                const gradient = ctx.createLinearGradient(0, 0, 0, 240);
+                gradient.addColorStop(0, isDark ? 'rgba(20, 184, 166, 0.35)' : 'rgba(15, 118, 110, 0.22)');
+                gradient.addColorStop(1, isDark ? 'rgba(20, 184, 166, 0.00)' : 'rgba(15, 118, 110, 0.00)');
+
+                equityChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: currentChartCurrency === 'IDR' ? 'Akumulasi Profit (IDR)' : 'Akumulasi Profit (USC)',
+                            data: equityValues,
+                            borderColor: primaryTeal,
+                            borderWidth: 2,
+                            backgroundColor: gradient,
+                            fill: true,
+                            tension: 0.35,
+                            pointRadius: sortedJournal.length > 40 ? 0 : 3,
+                            pointHoverRadius: 5,
+                            pointBackgroundColor: primaryTeal,
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 1.5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: tooltipBg,
+                                titleColor: '#ffffff',
+                                bodyColor: '#f1f5f9',
+                                borderColor: isDark ? '#334155' : '#e2e8f0',
+                                borderWidth: 1,
+                                padding: 8,
+                                titleFont: { family: 'Plus Jakarta Sans', size: 11, weight: 'bold' },
+                                bodyFont: { family: 'Consolas', size: 11 },
+                                displayColors: false,
+                                callbacks: {
+                                    label: function(context) {
+                                        const val = context.parsed.y;
+                                        if (currentChartCurrency === 'IDR') {
+                                            return ' Akumulasi: ' + formatRupiah(val);
+                                        } else {
+                                            return ' Akumulasi: ' + formatDecimal(val) + ' USC';
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    color: gridColor,
+                                    drawTicks: false
+                                },
+                                ticks: {
+                                    color: textColor,
+                                    font: { family: 'Inter', size: 10 },
+                                    maxRotation: 0,
+                                    autoSkip: true,
+                                    maxTicksLimit: 8
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    color: gridColor,
+                                    drawTicks: false
+                                },
+                                ticks: {
+                                    color: textColor,
+                                    font: { family: 'Consolas', size: 10 },
+                                    callback: function(val) {
+                                        if (currentChartCurrency === 'IDR') {
+                                            if (Math.abs(val) >= 1000000) return (val / 1000000).toFixed(1) + 'M';
+                                            if (Math.abs(val) >= 1000) return (val / 1000).toFixed(0) + 'k';
+                                            return val;
+                                        } else {
+                                            if (Math.abs(val) >= 1000) return (val / 1000).toFixed(1) + 'k';
+                                            return val;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // --- 2. STATISTIK PERFORMA TRADING ---
+            const totalTrades = sortedJournal.length;
+            const wins = sortedJournal.filter(r => r.status === 'WIN').length;
+            const losses = sortedJournal.filter(r => r.status === 'LOSS').length;
+            const be = sortedJournal.filter(r => r.status === 'BREAK EVEN' || r.status === 'BE').length;
+            const winRate = totalTrades > 0 ? ((wins / (wins + losses || 1)) * 100).toFixed(1) : '0';
+
+            const winPercentages = totalTrades > 0 ? ((wins / totalTrades) * 100).toFixed(0) : 0;
+            const lossPercentages = totalTrades > 0 ? ((losses / totalTrades) * 100).toFixed(0) : 0;
+            const bePercentages = totalTrades > 0 ? ((be / totalTrades) * 100).toFixed(0) : 0;
+
+            const winRows = sortedJournal.filter(r => parseFloat(r.profit_usc) > 0);
+            const maxProfitUsc = winRows.length > 0 ? Math.max(...winRows.map(r => parseFloat(r.profit_usc))) : 0;
+            const totalWinUsc = winRows.reduce((sum, r) => sum + parseFloat(r.profit_usc), 0);
+            const avgWinUsc = winRows.length > 0 ? totalWinUsc / winRows.length : 0;
+
+            const maxProfitIdr = (maxProfitUsc / 100) * currentKurs;
+            const avgWinIdr = (avgWinUsc / 100) * currentKurs;
+
+            const statsContainer = document.getElementById('trading-stats-container');
+            if (statsContainer) {
+                statsContainer.innerHTML = `
+                    <div class="stat-metric-row">
+                        <div class="stat-metric-label">
+                            <i data-lucide="target"></i> Win Rate Akurasi
+                        </div>
+                        <div class="stat-metric-val" style="color: var(--success);">${winRate}%</div>
+                    </div>
+                    
+                    <div style="padding: 0 4px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-muted); font-weight: 600; margin-bottom: 2px;">
+                            <span style="color: var(--success);">${wins} Win (${winPercentages}%)</span>
+                            <span style="color: var(--error);">${losses} Loss (${lossPercentages}%)</span>
+                            <span style="color: var(--text-muted);">${be} BE</span>
+                        </div>
+                        <div class="win-rate-progress-bar">
+                            <div class="progress-win" style="width: ${winPercentages}%;"></div>
+                            <div class="progress-loss" style="width: ${lossPercentages}%;"></div>
+                            <div class="progress-be" style="width: ${bePercentages}%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-metric-row">
+                        <div class="stat-metric-label">
+                            <i data-lucide="calendar"></i> Total Hari Trading
+                        </div>
+                        <div class="stat-metric-val">${totalTrades} Hari</div>
+                    </div>
+
+                    <div class="stat-metric-row">
+                        <div class="stat-metric-label">
+                            <i data-lucide="zap"></i> Best Day Profit
+                        </div>
+                        <div class="stat-metric-val" style="color: var(--success);">+${formatRupiah(maxProfitIdr)}</div>
+                    </div>
+
+                    <div class="stat-metric-row">
+                        <div class="stat-metric-label">
+                            <i data-lucide="activity"></i> Rata-rata Win/Hari
+                        </div>
+                        <div class="stat-metric-val">+${formatRupiah(avgWinIdr)}</div>
+                    </div>
+                `;
+            }
+
+            // --- 3. MONTHLY PROFIT & LOSS BAR CHART ---
+            const monthlyData = (data.monthlySummary || []).filter(r => r.bulan !== 'TOTAL');
+            const monthLabels = [];
+            const monthlyPnLValues = [];
+            const barBackgrounds = [];
+            const barBorders = [];
+
+            const winColor = isDark ? '#10b981' : '#059669';
+            const lossColor = isDark ? '#f43f5e' : '#ef4444';
+
+            monthlyData.forEach(m => {
+                monthLabels.push(m.bulan);
+                const pUsc = parseFloat(m.profit_usc) || 0;
+                const pVal = currentChartCurrency === 'IDR' ? (pUsc / 100) * currentKurs : pUsc;
+                monthlyPnLValues.push(pVal);
+
+                if (pVal >= 0) {
+                    barBackgrounds.push(isDark ? 'rgba(16, 185, 129, 0.75)' : 'rgba(5, 150, 105, 0.75)');
+                    barBorders.push(winColor);
+                } else {
+                    barBackgrounds.push(isDark ? 'rgba(244, 63, 94, 0.75)' : 'rgba(239, 68, 68, 0.75)');
+                    barBorders.push(lossColor);
+                }
+            });
+
+            const monthlySummaryBadge = document.getElementById('monthly-chart-summary');
+            if (monthlySummaryBadge && data.kpis) {
+                const totalProfitUsc = data.kpis.total_trading_profit_usc || 0;
+                const totalProfitIdr = (totalProfitUsc / 100) * currentKurs;
+                const sign = totalProfitUsc >= 0 ? '+' : '';
+                monthlySummaryBadge.innerText = `Total Realized: ${sign}${formatRupiah(totalProfitIdr)}`;
+            }
+
+            const monthlyCanvas = document.getElementById('monthlyPnLChart');
+            if (monthlyCanvas) {
+                const ctx = monthlyCanvas.getContext('2d');
+                if (monthlyPnLChart) {
+                    monthlyPnLChart.destroy();
+                }
+
+                monthlyPnLChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: monthLabels,
+                        datasets: [{
+                            label: currentChartCurrency === 'IDR' ? 'Profit/Loss (IDR)' : 'Profit/Loss (USC)',
+                            data: monthlyPnLValues,
+                            backgroundColor: barBackgrounds,
+                            borderColor: barBorders,
+                            borderWidth: 1.5,
+                            borderRadius: 4,
+                            maxBarThickness: 45
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: tooltipBg,
+                                titleColor: '#ffffff',
+                                bodyColor: '#f1f5f9',
+                                borderColor: isDark ? '#334155' : '#e2e8f0',
+                                borderWidth: 1,
+                                padding: 8,
+                                titleFont: { family: 'Plus Jakarta Sans', size: 11, weight: 'bold' },
+                                bodyFont: { family: 'Consolas', size: 11 },
+                                displayColors: false,
+                                callbacks: {
+                                    label: function(context) {
+                                        const val = context.parsed.y;
+                                        const sign = val > 0 ? '+' : '';
+                                        if (currentChartCurrency === 'IDR') {
+                                            return ' Net PnL: ' + sign + formatRupiah(val);
+                                        } else {
+                                            return ' Net PnL: ' + sign + formatDecimal(val) + ' USC';
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    color: gridColor,
+                                    drawTicks: false
+                                },
+                                ticks: {
+                                    color: textColor,
+                                    font: { family: 'Inter', size: 10 }
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    color: gridColor,
+                                    drawTicks: false
+                                },
+                                ticks: {
+                                    color: textColor,
+                                    font: { family: 'Consolas', size: 10 },
+                                    callback: function(val) {
+                                        if (currentChartCurrency === 'IDR') {
+                                            if (Math.abs(val) >= 1000000) return (val / 1000000).toFixed(1) + 'M';
+                                            if (Math.abs(val) >= 1000) return (val / 1000).toFixed(0) + 'k';
+                                            return val;
+                                        } else {
+                                            if (Math.abs(val) >= 1000) return (val / 1000).toFixed(1) + 'k';
+                                            return val;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            lucide.createIcons();
         }
 
         // Touch Swiping and Dragging handler for Mobile Tab Navigation
