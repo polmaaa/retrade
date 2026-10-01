@@ -1024,7 +1024,7 @@
         /* Filter Summary Ribbon & Cards for Tables */
         .filter-summary-ribbon {
             display: grid;
-            grid-template-columns: repeat(4, 1fr) auto;
+            grid-template-columns: repeat(4, 1fr);
             gap: 8px;
             align-items: stretch;
             margin-bottom: 8px;
@@ -1077,22 +1077,6 @@
             color: var(--text-muted);
             font-family: 'Consolas', monospace;
             font-weight: 500;
-        }
-
-        .ribbon-badge-count {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 6px 12px;
-            background: var(--primary-light);
-            border: 1px solid var(--primary-border);
-            border-radius: 6px;
-            color: var(--primary);
-            font-size: 0.72rem;
-            font-weight: 700;
-            white-space: nowrap;
-            text-align: center;
         }
 
         /* Dark Mode Theme Component Overrides */
@@ -1375,11 +1359,6 @@
         [data-bs-theme="dark"] .ribbon-card-sub, [data-theme="dark"] .ribbon-card-sub {
             color: #64748b;
         }
-        [data-bs-theme="dark"] .ribbon-badge-count, [data-theme="dark"] .ribbon-badge-count {
-            background: rgba(20, 184, 166, 0.15);
-            color: #2dd4bf;
-            border-color: rgba(45, 212, 191, 0.3);
-        }
 
         footer {
             border-top: 1px solid var(--border);
@@ -1634,14 +1613,6 @@
             .ribbon-card-sub {
                 font-size: 0.62rem !important;
                 line-height: 1.1 !important;
-            }
-            .ribbon-badge-count {
-                grid-column: 1 / -1 !important;
-                flex-direction: row !important;
-                gap: 5px !important;
-                padding: 4px 6px !important;
-                font-size: 0.68rem !important;
-                border-radius: 5px !important;
             }
         }
     </style>
@@ -2885,10 +2856,6 @@
                             <span class="ribbon-card-sub">${netCashflowIdr >= 0 ? 'Surplus' : 'Defisit'}</span>
                         </div>
                     </div>
-                    <div class="ribbon-badge-count">
-                        <strong>${data.length}</strong>
-                        <span>Transaksi</span>
-                    </div>
                 `;
             }
             
@@ -3052,10 +3019,6 @@
                             <span class="ribbon-card-val">${data.length} Hari</span>
                             <span class="ribbon-card-sub">Aktif</span>
                         </div>
-                    </div>
-                    <div class="ribbon-badge-count">
-                        <strong>${data.length}</strong>
-                        <span>Entri</span>
                     </div>
                 `;
             }
