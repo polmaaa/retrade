@@ -1021,49 +1021,78 @@
         .progress-loss { background-color: var(--error); height: 100%; }
         .progress-be { background-color: var(--text-light); height: 100%; }
 
-        /* Filter Summary Ribbon for Tables */
+        /* Filter Summary Ribbon & Cards for Tables */
         .filter-summary-ribbon {
-            display: flex;
-            align-items: center;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr) auto;
             gap: 8px;
-            flex-wrap: wrap;
+            align-items: stretch;
             margin-bottom: 8px;
-            padding: 6px 10px;
-            background: #f8fafc;
-            border: 1px solid var(--border);
-            border-radius: 6px;
         }
 
-        .ribbon-item {
+        .ribbon-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 6px 10px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+            gap: 2px;
+        }
+
+        .ribbon-card-header {
             display: flex;
             align-items: center;
-            gap: 4px;
-            font-size: 0.72rem;
+            gap: 5px;
+            font-size: 0.68rem;
             font-weight: 600;
             color: var(--text-muted);
         }
 
-        .ribbon-item strong {
-            color: var(--text);
-            font-family: 'Consolas', monospace;
+        .ribbon-card-header i, .ribbon-card-header svg {
+            width: 13px;
+            height: 13px;
+            flex-shrink: 0;
         }
 
-        .ribbon-divider {
-            width: 1px;
-            height: 14px;
-            background: var(--border-dark);
-            margin: 0 4px;
+        .ribbon-card-body {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .ribbon-card-val {
+            font-size: 0.82rem;
+            font-weight: 700;
+            font-family: 'Consolas', monospace;
+            color: var(--text);
+        }
+
+        .ribbon-card-sub {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-family: 'Consolas', monospace;
+            font-weight: 500;
         }
 
         .ribbon-badge-count {
-            margin-left: auto;
-            font-size: 0.68rem;
-            font-weight: 700;
-            color: var(--primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 12px;
             background: var(--primary-light);
-            padding: 2px 6px;
-            border-radius: 4px;
             border: 1px solid var(--primary-border);
+            border-radius: 6px;
+            color: var(--primary);
+            font-size: 0.72rem;
+            font-weight: 700;
+            white-space: nowrap;
+            text-align: center;
         }
 
         /* Dark Mode Theme Component Overrides */
@@ -1330,17 +1359,21 @@
             background-color: #64748b;
         }
         [data-bs-theme="dark"] .filter-summary-ribbon, [data-theme="dark"] .filter-summary-ribbon {
-            background: #0f172a;
-            border-color: #334155;
+            background: transparent;
         }
-        [data-bs-theme="dark"] .ribbon-item, [data-theme="dark"] .ribbon-item {
+        [data-bs-theme="dark"] .ribbon-card, [data-theme="dark"] .ribbon-card {
+            background: #1e293b;
+            border-color: #334155;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        [data-bs-theme="dark"] .ribbon-card-header, [data-theme="dark"] .ribbon-card-header {
             color: #94a3b8;
         }
-        [data-bs-theme="dark"] .ribbon-item strong, [data-theme="dark"] .ribbon-item strong {
+        [data-bs-theme="dark"] .ribbon-card-val, [data-theme="dark"] .ribbon-card-val {
             color: #f8fafc;
         }
-        [data-bs-theme="dark"] .ribbon-divider, [data-theme="dark"] .ribbon-divider {
-            background: #334155;
+        [data-bs-theme="dark"] .ribbon-card-sub, [data-theme="dark"] .ribbon-card-sub {
+            color: #64748b;
         }
         [data-bs-theme="dark"] .ribbon-badge-count, [data-theme="dark"] .ribbon-badge-count {
             background: rgba(20, 184, 166, 0.15);
@@ -1571,6 +1604,45 @@
                 align-items: flex-start !important;
                 gap: 6px !important;
             }
+            .filter-summary-ribbon {
+                grid-template-columns: 1fr 1fr !important;
+                gap: 5px !important;
+                margin-bottom: 8px !important;
+            }
+            .ribbon-card {
+                padding: 5px 8px !important;
+                border-radius: 5px !important;
+            }
+            .ribbon-card-header {
+                font-size: 0.64rem !important;
+                gap: 4px !important;
+                margin-bottom: 1px !important;
+            }
+            .ribbon-card-header i, .ribbon-card-header svg {
+                width: 11px !important;
+                height: 11px !important;
+            }
+            .ribbon-card-body {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 0 !important;
+            }
+            .ribbon-card-val {
+                font-size: 0.76rem !important;
+                line-height: 1.2 !important;
+            }
+            .ribbon-card-sub {
+                font-size: 0.62rem !important;
+                line-height: 1.1 !important;
+            }
+            .ribbon-badge-count {
+                grid-column: 1 / -1 !important;
+                flex-direction: row !important;
+                gap: 5px !important;
+                padding: 4px 6px !important;
+                font-size: 0.68rem !important;
+                border-radius: 5px !important;
+            }
         }
     </style>
 </head>
@@ -1717,10 +1789,6 @@
                         <i data-lucide="wallet"></i> Arus Kas dan Biaya (Tabungan)
                     </div>
                     <div class="filter-controls table-controls">
-                        <div class="search-container">
-                            <i data-lucide="search" class="search-icon"></i>
-                            <input type="text" id="cashflow-search-input" class="search-input" placeholder="Cari keterangan..." oninput="filterCashflow()">
-                        </div>
                         <select id="cashflow-month-filter" class="select-filter filter-select" onchange="filterCashflow()">
                             <option value="all">Semua Bulan</option>
                             <option value="01">Januari</option>
@@ -1753,7 +1821,7 @@
                         <thead>
                             <tr>
                                 <th onclick="setCashflowSort('tanggal')" style="cursor: pointer; user-select: none;">
-                                    TGL <span id="sort-icon-cashflow-tanggal">▼</span>
+                                     TGL <span id="sort-icon-cashflow-tanggal">▼</span>
                                 </th>
                                 <th onclick="setCashflowSort('tipe')" style="cursor: pointer; user-select: none;">
                                     Tipe <span id="sort-icon-cashflow-tipe"></span>
@@ -1783,10 +1851,6 @@
                         <i data-lucide="book-open"></i> Jurnal Trading Harian (Metatrader)
                     </div>
                     <div class="filter-controls table-controls">
-                        <div class="search-container">
-                            <i data-lucide="search" class="search-icon"></i>
-                            <input type="text" id="journal-search-input" class="search-input" placeholder="Cari tanggal..." oninput="filterJournal()">
-                        </div>
                         <select id="journal-month-filter" class="select-filter filter-select" onchange="filterJournal()">
                             <option value="all">Semua Bulan</option>
                             <option value="01">Januari</option>
@@ -2742,8 +2806,6 @@
             
             const monthFilter = document.getElementById('cashflow-month-filter').value;
             const typeFilter = document.getElementById('cashflow-filter').value;
-            const searchInput = document.getElementById('cashflow-search-input');
-            const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
             
             // 1. Filter by Month
             if (monthFilter !== 'all') {
@@ -2756,16 +2818,6 @@
             // 2. Filter by Type
             if (typeFilter !== 'all') {
                 data = data.filter(row => row.tipe.toLowerCase() === typeFilter.toLowerCase());
-            }
-
-            // 3. Filter by Search Query (keterangan, tanggal, tipe)
-            if (query !== '') {
-                data = data.filter(row => {
-                    const ket = (row.keterangan || '').toLowerCase();
-                    const tgl = (row.tanggal || '').toLowerCase();
-                    const tip = (row.tipe || '').toLowerCase();
-                    return ket.includes(query) || tgl.includes(query) || tip.includes(query);
-                });
             }
 
             // Calculate filtered totals for ribbon & footer
@@ -2790,35 +2842,57 @@
 
             const netCashflowIdr = totalDepIdr - totalWdIdr - totalServerIdr;
 
-            // Render Summary Ribbon
+            // Render Summary Ribbon with Clean Modern Cards
             if (ribbonEl) {
                 ribbonEl.innerHTML = `
-                    <div class="ribbon-item">
-                        <i data-lucide="arrow-down-circle" style="width:13px; height:13px; color:var(--success);"></i>
-                        <span>Deposit: <strong>${formatRupiah(totalDepIdr)}</strong> <span style="font-size:0.65rem; color:var(--text-muted);">(${formatDecimal(totalDepUsc)} USC)</span></span>
+                    <div class="ribbon-card">
+                        <div class="ribbon-card-header">
+                            <i data-lucide="arrow-down-circle" style="color:var(--success);"></i>
+                            <span>Deposit</span>
+                        </div>
+                        <div class="ribbon-card-body">
+                            <span class="ribbon-card-val">${formatRupiah(totalDepIdr)}</span>
+                            <span class="ribbon-card-sub">${formatDecimal(totalDepUsc)} USC</span>
+                        </div>
                     </div>
-                    <div class="ribbon-divider"></div>
-                    <div class="ribbon-item">
-                        <i data-lucide="arrow-up-circle" style="width:13px; height:13px; color:#db2777;"></i>
-                        <span>Withdraw: <strong>${formatRupiah(totalWdIdr)}</strong> <span style="font-size:0.65rem; color:var(--text-muted);">(${formatDecimal(totalWdUsc)} USC)</span></span>
+                    <div class="ribbon-card">
+                        <div class="ribbon-card-header">
+                            <i data-lucide="arrow-up-circle" style="color:#db2777;"></i>
+                            <span>Withdraw</span>
+                        </div>
+                        <div class="ribbon-card-body">
+                            <span class="ribbon-card-val">${formatRupiah(totalWdIdr)}</span>
+                            <span class="ribbon-card-sub">${formatDecimal(totalWdUsc)} USC</span>
+                        </div>
                     </div>
-                    <div class="ribbon-divider"></div>
-                    <div class="ribbon-item">
-                        <i data-lucide="server" style="width:13px; height:13px; color:var(--warning);"></i>
-                        <span>Biaya Server: <strong>${formatRupiah(totalServerIdr)}</strong></span>
+                    <div class="ribbon-card">
+                        <div class="ribbon-card-header">
+                            <i data-lucide="server" style="color:var(--warning);"></i>
+                            <span>Biaya Server</span>
+                        </div>
+                        <div class="ribbon-card-body">
+                            <span class="ribbon-card-val">${formatRupiah(totalServerIdr)}</span>
+                            <span class="ribbon-card-sub">Operasional</span>
+                        </div>
                     </div>
-                    <div class="ribbon-divider"></div>
-                    <div class="ribbon-item">
-                        <i data-lucide="wallet" style="width:13px; height:13px; color:var(--primary);"></i>
-                        <span>Net Kas: <strong style="color:${netCashflowIdr >= 0 ? 'var(--success)' : 'var(--error)'};">${formatRupiah(netCashflowIdr)}</strong></span>
+                    <div class="ribbon-card">
+                        <div class="ribbon-card-header">
+                            <i data-lucide="wallet" style="color:var(--primary);"></i>
+                            <span>Net Arus Kas</span>
+                        </div>
+                        <div class="ribbon-card-body">
+                            <span class="ribbon-card-val" style="color:${netCashflowIdr >= 0 ? 'var(--success)' : 'var(--error)'};">${netCashflowIdr >= 0 ? '+' : ''}${formatRupiah(netCashflowIdr)}</span>
+                            <span class="ribbon-card-sub">${netCashflowIdr >= 0 ? 'Surplus' : 'Defisit'}</span>
+                        </div>
                     </div>
                     <div class="ribbon-badge-count">
-                        ${data.length} transaksi
+                        <strong>${data.length}</strong>
+                        <span>Transaksi</span>
                     </div>
                 `;
             }
             
-            // 4. Sort the data
+            // 3. Sort the data
             data.sort((a, b) => {
                 let valA = a[cashflowSortCol];
                 let valB = b[cashflowSortCol];
@@ -2902,8 +2976,6 @@
             
             const monthFilter = document.getElementById('journal-month-filter').value;
             const filter = document.getElementById('journal-filter').value;
-            const searchInput = document.getElementById('journal-search-input');
-            const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
             
             // 1. Filter by Month
             if (monthFilter !== 'all') {
@@ -2916,15 +2988,6 @@
             // 2. Filter by Status
             if (filter !== 'all') {
                 data = data.filter(row => row.status === filter);
-            }
-
-            // 3. Filter by Search Query (tanggal, status)
-            if (query !== '') {
-                data = data.filter(row => {
-                    const tgl = (row.tanggal || '').toLowerCase();
-                    const st = (row.status || '').toLowerCase();
-                    return tgl.includes(query) || st.includes(query);
-                });
             }
 
             // Calculate filtered performance metrics for Journal Ribbon & Footer
@@ -2947,30 +3010,57 @@
             const winRate = completedTrades > 0 ? ((winCount / completedTrades) * 100).toFixed(1) : 0;
             const pnlColor = totalProfitUsc >= 0 ? 'var(--success)' : 'var(--error)';
 
-            // Render Journal Summary Ribbon
+            // Render Journal Summary Ribbon with Clean Modern Cards
             if (ribbonEl) {
                 ribbonEl.innerHTML = `
-                    <div class="ribbon-item">
-                        <i data-lucide="trending-up" style="width:13px; height:13px; color:${pnlColor};"></i>
-                        <span>Net Profit: <strong style="color:${pnlColor};">${totalProfitUsc >= 0 ? '+' : ''}${formatRupiah(totalProfitIdr)}</strong> <span style="font-size:0.65rem; color:var(--text-muted);">(${totalProfitUsc >= 0 ? '+' : ''}${formatDecimal(totalProfitUsc)} USC)</span></span>
+                    <div class="ribbon-card">
+                        <div class="ribbon-card-header">
+                            <i data-lucide="trending-up" style="color:${pnlColor};"></i>
+                            <span>Net Profit</span>
+                        </div>
+                        <div class="ribbon-card-body">
+                            <span class="ribbon-card-val" style="color:${pnlColor};">${totalProfitUsc >= 0 ? '+' : ''}${formatRupiah(totalProfitIdr)}</span>
+                            <span class="ribbon-card-sub">${totalProfitUsc >= 0 ? '+' : ''}${formatDecimal(totalProfitUsc)} USC</span>
+                        </div>
                     </div>
-                    <div class="ribbon-divider"></div>
-                    <div class="ribbon-item">
-                        <i data-lucide="target" style="width:13px; height:13px; color:var(--primary);"></i>
-                        <span>Win Rate: <strong>${winRate}%</strong> <span style="font-size:0.65rem; color:var(--text-muted);">(W:${winCount} | L:${lossCount} | BE:${beCount})</span></span>
+                    <div class="ribbon-card">
+                        <div class="ribbon-card-header">
+                            <i data-lucide="target" style="color:var(--primary);"></i>
+                            <span>Win Rate</span>
+                        </div>
+                        <div class="ribbon-card-body">
+                            <span class="ribbon-card-val">${winRate}%</span>
+                            <span class="ribbon-card-sub">${completedTrades} closed</span>
+                        </div>
                     </div>
-                    <div class="ribbon-divider"></div>
-                    <div class="ribbon-item">
-                        <i data-lucide="calendar" style="width:13px; height:13px; color:var(--text-muted);"></i>
-                        <span>Hari Trading: <strong>${data.length}</strong> hari</span>
+                    <div class="ribbon-card">
+                        <div class="ribbon-card-header">
+                            <i data-lucide="award" style="color:var(--warning);"></i>
+                            <span>Hasil Trade</span>
+                        </div>
+                        <div class="ribbon-card-body">
+                            <span class="ribbon-card-val" style="font-size:0.75rem;">W:${winCount} L:${lossCount} BE:${beCount}</span>
+                            <span class="ribbon-card-sub">Distribusi</span>
+                        </div>
+                    </div>
+                    <div class="ribbon-card">
+                        <div class="ribbon-card-header">
+                            <i data-lucide="calendar" style="color:var(--text-muted);"></i>
+                            <span>Hari Trading</span>
+                        </div>
+                        <div class="ribbon-card-body">
+                            <span class="ribbon-card-val">${data.length} Hari</span>
+                            <span class="ribbon-card-sub">Aktif</span>
+                        </div>
                     </div>
                     <div class="ribbon-badge-count">
-                        ${data.length} entri
+                        <strong>${data.length}</strong>
+                        <span>Entri</span>
                     </div>
                 `;
             }
             
-            // 4. Sort the data
+            // 3. Sort the data
             data.sort((a, b) => {
                 let valA = a[journalSortCol];
                 let valB = b[journalSortCol];
