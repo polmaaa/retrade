@@ -704,10 +704,6 @@
             border-right: none;
         }
 
-        tr:hover td {
-            background-color: #f1f5f9;
-        }
-
         .num-val {
             font-family: 'Consolas', monospace;
             font-weight: 600;
@@ -818,39 +814,7 @@
             background-color: rgba(30, 41, 59, 0.22);
         }
 
-        /* Day Tag */
-        .day-chip {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.61rem;
-            font-weight: 700;
-            padding: 1px 4px;
-            border-radius: 3px;
-            background: #e2e8f0;
-            color: var(--text-muted);
-            margin-left: 4px;
-            vertical-align: middle;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-        }
-        [data-bs-theme="dark"] .day-chip,
-        [data-theme="dark"] .day-chip {
-            background: #334155;
-            color: #94a3b8;
-        }
 
-        .day-chip.day-sun {
-            background: rgba(239, 68, 68, 0.12);
-            color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.25);
-        }
-        [data-bs-theme="dark"] .day-chip.day-sun,
-        [data-theme="dark"] .day-chip.day-sun {
-            background: rgba(244, 63, 94, 0.2);
-            color: #f87171;
-            border: 1px solid rgba(244, 63, 94, 0.35);
-        }
 
         /* Tab Content Panel */
         .tab-panel {
@@ -3215,15 +3179,6 @@
                     let trClass = gw.week_number % 2 === 0 ? 'week-group-even' : '';
                     if (isLastInWeek) trClass += ' tr-week-group-end';
 
-                    // TGL with day badge
-                    const dayChipClass = row.day_name === 'Min' ? 'day-chip day-sun' : 'day-chip';
-                    const tglContent = `
-                        <div style="display:flex; align-items:center; gap:3px;">
-                            <span class="num-val">${row.tanggal}</span>
-                            <span class="${dayChipClass}">${row.day_name}</span>
-                        </div>
-                    `;
-
                     // Merged weekly column cell only on first row of week group
                     let weeklyCell = '';
                     if (isFirstInWeek) {
@@ -3236,7 +3191,7 @@
 
                     html += `
                         <tr class="${trClass}">
-                            <td>${tglContent}</td>
+                            <td>${row.tanggal}</td>
                             <td class="${pnlClass} num-val">${sign}${formatDecimal(row.profit_usc)} USC</td>
                             <td class="${pnlClass} num-val">${pnlVal >= 0 ? '+' : ''}${formatRupiah(row.est_profit_idr_recalc)}</td>
                             <td><span class="badge ${statusClass}">${row.status}</span></td>
