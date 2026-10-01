@@ -784,7 +784,7 @@
         /* Merged Weekly Column & Week Group Styling */
         td.merged-weekly-cell {
             vertical-align: middle !important;
-            text-align: right !important;
+            text-align: center !important;
             padding: 6px 10px !important;
             border-left: 1px solid var(--border);
             border-bottom: 2px solid var(--border-dark) !important;
@@ -1901,7 +1901,7 @@
                                 <th onclick="setJournalSort('akumulasi_idr')" style="cursor: pointer; user-select: none;">
                                     Akumulasi (IDR) <span id="sort-icon-journal-akumulasi_idr"></span>
                                 </th>
-                                <th onclick="setJournalSort('weekly_idr')" style="cursor: pointer; user-select: none;">
+                                <th onclick="setJournalSort('weekly_idr')" style="cursor: pointer; user-select: none; text-align: center;">
                                     Akumulasi Mingguan (IDR) <span id="sort-icon-journal-weekly_idr"></span>
                                 </th>
                             </tr>
@@ -3212,7 +3212,7 @@
                         <td class="${totalClass} num-val">${totalSign}${formatRupiah(totalProfitIdr)}</td>
                         <td><span class="badge badge-be" style="font-size:0.65rem;">WR: ${winRate}%</span></td>
                         <td class="num-val" style="color:var(--primary); font-weight:700;">${data.length > 0 ? formatRupiah(data[data.length - 1].akumulasi_idr_recalc) : '-'}</td>
-                        <td class="${totalClass} num-val" style="font-weight:700; text-align:right;">${totalSign}${formatRupiah(totalProfitIdr)}</td>
+                        <td class="${totalClass} num-val" style="font-weight:700; text-align:center;">${totalSign}${formatRupiah(totalProfitIdr)}</td>
                     </tr>
                 `;
             }
