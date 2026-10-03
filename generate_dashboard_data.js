@@ -148,7 +148,7 @@ async function run() {
   
   // Extract Cashflow and Trading Journal tables
   const cashflowRows = [];
-  const journalRows = [];
+  const journalMap = new Map();
   
   for (let i = cashflowHeaderIdx + 2; i < excelData.length; i++) {
     const row = excelData[i];
@@ -167,11 +167,11 @@ async function run() {
     }
     
     // Right Table: journal (indices 6-11)
-    const journalDate = row[6];
-    if (journalDate && journalDate.trim() !== '') {
+    const journalDate = (row[6] || '').trim();
+    if (journalDate !== '') {
       const weeklyText = (row[11] || '').trim();
       const hasWeekly = weeklyText.includes('Rp');
-      journalRows.push({
+      journalMap.set(journalDate, {
         tanggal: journalDate,
         profit_usc: cleanUSC(row[7]),
         est_profit_idr: cleanIDR(row[8]),
@@ -182,6 +182,7 @@ async function run() {
       });
     }
   }
+  const journalRows = Array.from(journalMap.values());
 
   // Compile output JS without raw trades or CSV metrics
   const outputData = {

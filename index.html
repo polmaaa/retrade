@@ -2204,7 +2204,7 @@
             }
 
             const cashflowRows = [];
-            const journalRows = [];
+            const journalMap = new Map();
             for (let i = cashflowHeaderIdx + 2; i < lines.length; i++) {
                 const row = lines[i];
                 if (!row) continue;
@@ -2220,11 +2220,11 @@
                     });
                 }
                 
-                const journalDate = row[6];
-                if (journalDate && journalDate.trim() !== '') {
+                const journalDate = (row[6] || '').trim();
+                if (journalDate !== '') {
                     const weeklyText = (row[11] || '').trim();
                     const hasWeekly = weeklyText.includes('Rp');
-                    journalRows.push({
+                    journalMap.set(journalDate, {
                         tanggal: journalDate,
                         profit_usc: cleanUSC(row[7]),
                         est_profit_idr: cleanIDR(row[8]),
@@ -2235,6 +2235,7 @@
                     });
                 }
             }
+            const journalRows = Array.from(journalMap.values());
 
             return { kpis, monthlySummary, cashflowRows, journalRows };
         }
