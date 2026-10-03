@@ -55,7 +55,7 @@ function cleanUSC(val) {
 
 async function run() {
   console.log('Fetching live data from Google Sheets...');
-  const googleSheetsUrl = 'https://docs.google.com/spreadsheets/d/1jbm4tDMYOAMpYnDbRz82QNvcMrBj5shV/export?format=csv&gid=1272196974&t=' + Date.now();
+  const googleSheetsUrl = 'https://docs.google.com/spreadsheets/d/147EHrm_ghelsvi8mxY9IpCX_7t2KE4D2iy4ZmmHbmpM/export?format=csv&gid=1272196974&t=' + Date.now();
   
   const response = await fetch(googleSheetsUrl);
   if (!response.ok) {
